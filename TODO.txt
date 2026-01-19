@@ -3,11 +3,11 @@ Establish final directory structure:
 		--> one subfolder per conversation?
 	MemoryBank
 		Resources, PDFs
-	Admin/User Interaction Agent
-		System Message
-		Interpretation Prompt
-	Other Agents
-		System Messages
+	
+	System Messages
+		Admin/User Interaction Agent
+			--> Also gets Interpretation Prompt (from GUI/user input? Should be instantiated but possible to load later, if that is necessary.)
+		Other Agents
 	App code:
 		Agent Config Editor
 		GUI
@@ -17,11 +17,16 @@ Establish final directory structure:
 
 
 
+Get an initial setup working to instantiate multiple agents as needed
+
+--> Make sure that Human-in-The-Loop is always an option! (Implementation as "human" agent?)
+
 Make sure each conversation generates a "capsuled-off" output directory with outputted code, results etc.
 
 Implement and test RAG and Coder Agents
 RAG Agent should have persistent memory, however!
 	--> Use shivam's chromadb or other autogen RAG setup (https://docs.ag2.ai/latest/docs/blog/2023/10/18/RetrieveChat/)
+	--> Split retirieving information through vectorized info database from web scraping for new info? Separate Agents! 
 
 Build a simple GUI to edit the Agent config and start a conversation
 	--> Separate Agent to generate system messages for other topic areas' agents?
@@ -30,6 +35,9 @@ Make Agent Conversation structure super easy to configure and edit
 	--> Conversation config file should contain used agents and allowed conversation transitions
 	--> This is, structure-wise, just a graph! Each node is an agent, each edge an allowed transition.
 	--> Edge List structure for the configuration
-	--> Create an Agent for each given System Message in the appropriate folder. This allows for easy scalability and expansion of the agent system.
 
 Properly list dependencies and respective versions
+
+Create visual agent workflow chart to make sure we have enough agents and each one can do its job(s).
+
+(Possible addition: make the agent system more flexible by incorporating an agent to generate system messages for other agents?)
