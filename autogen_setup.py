@@ -21,8 +21,25 @@ if not initial_query.strip():
 llm_config = LLMConfig(config_list={"api_type": "openai", 
                                     "model": "gpt-4o-mini",
                                     "api_key":os.getenv("IZ_API_KEY"),
-                                    "base_url":os.getenv("BASE_URL")})
+                                    "base_url":os.getenv("IZ_BASE_URL")})
 
 
 
-# Create an Agent for each given System Message in the appropriate folder. This allows for easy scalability and expansion of the agent system.
+# 3. Create our LLM agent
+my_agent = ConversableAgent(
+    name="helpful_agent",
+    system_message="You are a poetic AI assistant, respond in rhyme.",
+    llm_config=llm_config
+)
+
+# 4. Run the agent with a prompt
+response = my_agent.run(
+    message=initial_query,
+    max_turns=3,
+)
+
+# 5. Iterate through the chat automatically with console output
+response.process()
+
+# 6. Print the chat
+print(response.messages)

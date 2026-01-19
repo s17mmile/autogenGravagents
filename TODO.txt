@@ -1,0 +1,35 @@
+Establish final directory structure:
+	AgentConversationOutput
+		--> one subfolder per conversation?
+	MemoryBank
+		Resources, PDFs
+	Admin/User Interaction Agent
+		System Message
+		Interpretation Prompt
+	Other Agents
+		System Messages
+	App code:
+		Agent Config Editor
+		GUI
+		Conversation Code
+		RAG Code, DB and management code
+	main.py
+
+
+
+Make sure each conversation generates a "capsuled-off" output directory with outputted code, results etc.
+
+Implement and test RAG and Coder Agents
+RAG Agent should have persistent memory, however!
+	--> Use shivam's chromadb or other autogen RAG setup (https://docs.ag2.ai/latest/docs/blog/2023/10/18/RetrieveChat/)
+
+Build a simple GUI to edit the Agent config and start a conversation
+	--> Separate Agent to generate system messages for other topic areas' agents?
+
+Make Agent Conversation structure super easy to configure and edit
+	--> Conversation config file should contain used agents and allowed conversation transitions
+	--> This is, structure-wise, just a graph! Each node is an agent, each edge an allowed transition.
+	--> Edge List structure for the configuration
+	--> Create an Agent for each given System Message in the appropriate folder. This allows for easy scalability and expansion of the agent system.
+
+Properly list dependencies and respective versions
