@@ -1,4 +1,3 @@
-from typing import Dict
 from autogen import ConversableAgent
 from pydantic import BaseModel
 
@@ -6,17 +5,17 @@ from pydantic import BaseModel
 class queryAgentResponse(BaseModel):
 	isAgentConfigValid: bool		# Whether the current agent configuration supports the user's request
 	recommendedAgentConfig: str		# Suggestions for different agent config if current config is insufficient
-	nextAgentName: str				# Name of the next agent to speak
-	subtasks: Dict[str, str]		# Mapping of agent names to their assigned sub-tasks
+	subtasks: list[str]				# List of sub-tasks
 	messageToUser: str				# Message to the user about the task breakdown and distribution
+	nextAgentName: str				# Name of the next agent to speak
 
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
 # Each Conversation Config must include a Query Agent as the starting point
-def queryAgent(name = "QueryAgent", llm_config) -> ConversableAgent:
+def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 	systemMessage = """
 		You are a QUERY AGENT specializing in breaking down user requests into manageable sub-tasks for a team of specialized agents.
-		You will receive only the user's query.
+		You will receive the user's query as well as a short description of the agent conversation configuration.
 		Based on this query, you should check the capabilities of the available agents and break down the task into manageable sub-tasks to be handled by other agents.
 
 		Your responsibilities:
@@ -29,7 +28,7 @@ def queryAgent(name = "QueryAgent", llm_config) -> ConversableAgent:
 	"""
 
 	query_llm_config = llm_config.copy()
-	query_llm_config["response_model"] = queryAgentResponse
+	query_llm_config["response_format"] = queryAgentResponse
 	query_llm_config["temperature"] = 0.1
 
 	return ConversableAgent(

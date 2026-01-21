@@ -18,15 +18,17 @@ llm_config = LLMConfig(config_list={"api_type": os.getenv("IZ_API_TYPE"),
                                     "base_url":os.getenv("IZ_BASE_URL")})
 
 # Set parameters for conversation execution
-maxTurns = 10
-humanInTheLoop = True
+maxRounds = 10
+
+# If humanInTheLoop is false, the system instantiates a fallback _User agent just in case no other suitable next agent is found.
+humanInTheLoop = False
 
 # Import chat based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-    configPath="flexibleAgents/agentConfigs/config0.txt",
+    configPath="flexibleAgents/agentConfigs/config1.txt",
     llm_config=llm_config,
     humanInTheLoop=humanInTheLoop,
-    maxTurns=maxTurns
+    maxRounds=maxRounds
 )
 
 query = input("Please enter your query: ")
