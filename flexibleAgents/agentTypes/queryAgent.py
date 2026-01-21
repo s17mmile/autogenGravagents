@@ -27,6 +27,11 @@ def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 		Should you or another agent in the system require human input, you may call upon a Human Agent to assist with gathering information or clarifying requirements.
 	"""
 
+	description = """
+		The QUERY AGENT is responsible for breaking down user requests into manageable sub-tasks based on the capabilities of the available agents in the conversation configuration.
+		It ensures that the task flow is supported by the allowed agent transitions and leverages a Human Agent if needed for clarification.
+	"""
+
 	query_llm_config = llm_config.copy()
 	query_llm_config["response_format"] = queryAgentResponse
 	query_llm_config["temperature"] = 0.1
@@ -34,6 +39,7 @@ def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 	return ConversableAgent(
 		name = name,
 		system_message = systemMessage,
+		description = description,
 		llm_config = query_llm_config,
 		human_input_mode="NEVER"
 	)

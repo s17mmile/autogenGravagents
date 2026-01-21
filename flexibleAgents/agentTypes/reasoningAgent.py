@@ -22,6 +22,11 @@ def reasoningAgent(llm_config, name = "ReasoningAgent") -> ConversableAgent:
 		4. This may especially include agents equipped for retrieval augmented generation and/or web surfing to collect facts and data.
 	"""
 
+	description = """
+		The REASONING AGENT is responsible for providing detailed scientific explanations based on the tasks assigned to it.
+		It should leverage other agents in the system as needed to gather information and clarify requirements.
+	"""
+
 	reasoning_llm_config = llm_config.copy()
 	reasoning_llm_config["response_format"] = reasoningAgentResponse
 	reasoning_llm_config["temperature"] = 0.05
@@ -29,6 +34,7 @@ def reasoningAgent(llm_config, name = "ReasoningAgent") -> ConversableAgent:
 	return ConversableAgent(
 		name = name,
 		system_message = systemMessage,
+		description = description,
 		llm_config = reasoning_llm_config,
 		human_input_mode="NEVER"
 	)
