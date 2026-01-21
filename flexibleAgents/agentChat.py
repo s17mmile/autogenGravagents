@@ -3,7 +3,7 @@ from autogen.agentchat import initiate_group_chat
 from autogen.agentchat.group.patterns import AutoPattern
 
 from dataclasses import dataclass
-from typing import List, Dict, Set
+from typing import List, Dict
 
 import os
 
@@ -33,9 +33,7 @@ class agentSpecification:
 @dataclass
 class chatGraph:
     agentSpecs: List[agentSpecification]
-    transitions: Dict[int, Set[int]]
-
-
+    transitions: Dict[str, List[str]]
 
 # Main class that allows flexible agent conversations based on config files
 class flexibleAgentChat:
@@ -46,15 +44,14 @@ class flexibleAgentChat:
 
         self.conversationGraph = self.parse_agent_config(configPath)
 
-        self.agents = self.instantiateAgents()
+        self.instantiateAgents()
 
         # Create Autogen AutoPattern based on agent config
-        # TODO figure out how to encode restricted transitions in the pattern
+        # The restriction for allowed transitions will be enforced in the selectNextSpeaker function, which is attached to each agent at instantiation!
         self.pattern = AutoPattern(
-            agents=self.agents,
-            initial_agent=self.agents[self.queryAgentIndex],
-            user_agent = self.agents[self.humanAgentIndex] if self.humanInTheLoop else None,
-            group_manager_args={"llm_config": llm_config},
+            agents=list(self.agents.values()),
+            initial_agent=self.agents[self.queryAgentName],
+            user_agent = self.agents[self.humanAgentName] if self.humanInTheLoop else None,
             exclude_transit_message=False
         )
 
@@ -68,12 +65,12 @@ class flexibleAgentChat:
             self.config = "\n".join(lines)
 
         agentSpecs: List[agentSpecification] = []
-        transitions: Dict[int, Set[int]] = {}
+        transitions: Dict[str, List[str]] = {}
 
         # Split on first line that looks like an edge definition
         split_index = None
         for i, line in enumerate(lines):
-            if line.replace(" ", "").isdigit():
+            if ":" in line:
                 split_index = i
                 break
 
@@ -87,10 +84,11 @@ class flexibleAgentChat:
             agentSpecs.append(agentSpecification(agentType, name))
 
         # Parse transitions
-        # Syntax: <source_agent_index> <destination_agent_index>
+        # Syntax: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
         for line in lines[split_index:]:
-            src, dst = map(int, line.split())
-            transitions.setdefault(src, set()).add(dst)
+            source, destinations = map(str.strip, line.split(":", 1))
+            destinationList = [dest.strip() for dest in destinations.split(",")]
+            transitions[source] = destinationList
 
         # Check that at least one query agent is present
         # If so, store its index so it can be passed as initial query processor
@@ -98,7 +96,7 @@ class flexibleAgentChat:
         if not has_query_agent:
             raise ValueError("Config invalid: No query processing agent found in config.")
         else:
-            self.queryAgentIndex = next(i for i, agentSpec in enumerate(agentSpecs) if agentSpec.agentType == "queryAgent")
+            self.queryAgentName = next(agentSpec.name for agentSpec in agentSpecs if agentSpec.agentType == "queryAgent")
 
         # Check that a human agent exists if humanInTheLoop is true and that none exist if false
         # If human agent exists, store its index to be passed on properly during chat instantiation
@@ -108,7 +106,7 @@ class flexibleAgentChat:
         elif has_human_agent and not self.humanInTheLoop:
             raise ValueError("Config invalid: Human agent found but human in the loop is disabled.")
         elif has_human_agent and self.humanInTheLoop:
-            self.humanAgentIndex = next(i for i, agentSpec in enumerate(agentSpecs) if agentSpec.agentType == "humanAgent")
+            self.humanAgentName = next(agentSpec.name for agentSpec in agentSpecs if agentSpec.agentType == "humanAgent")
 
         # Package into chatGraph for easy use
         return chatGraph(
@@ -120,23 +118,31 @@ class flexibleAgentChat:
     # Select the next speaker based on the last speaker and allowed transitions
     # This uses the LLM to decide which of the possible next agents should speak
     def selectNextSpeaker(self, last_speaker, agents, messages):
-        possible_next_agents = self.conversationGraph.transitions.get(agents.index(last_speaker), set())
+        possible_next_agents = self.conversationGraph.transitions[last_speaker.name]
         
         # If there is no possible next agent, return None and terminate chat
         if not possible_next_agents:
             return None
-        
-        
-        
-        return agents[next_agent_index]
+
+        # Extract last message's suggested next speaker
+        lastMessage = messages[-1].content if messages else ""
+        suggestedNextSpeaker = lastMessage.nextAgentName
+
+        # Check if suggested next speaker is possible next agent
+        if suggestedNextSpeaker in possible_next_agents:
+            return agents[suggestedNextSpeaker]
+        else:
+            return agents[possible_next_agents[0]]  # Fallback to first possible agent
+
+
 
     # Instantiate agents based on the parsed config
-    def instantiateAgents(self) -> List:
-        agents = []
+    def instantiateAgents(self):
+        self.agents = {}
         for spec in self.conversationGraph.agentSpecs:
             agent = eval(f"{spec.agentType}(llm_config=self.llm_config, name = '{spec.name}')")
-            agents.append(agent)
-        return agents
+            self.agents[spec.name] = agent
+        return
     
 
 
