@@ -126,16 +126,16 @@ class flexibleAgentChat:
             speaker_transitions_type="allowed"
         )
 
-        # Process flow within this group chat is managed by the following manager
+        # Process flow within this group chat is managed by the following manager (wait I don't want this do I)
         manager = GroupChatManager(
             groupchat=groupchat,
             llm_config=self.llm_config,
             name = "FlexibleAgentChatManager"
         )
 
-        # Start the conversation
-        queryAgent = self.chatGraph.agents[self.queryAgentName]
-        result = queryAgent.initiate_chat(
+        # Start the conversation with the prompt coming from the human and being passed to the manager.
+        humanAgent = self.chatGraph.agents[self.humanAgentName]
+        result = humanAgent.initiate_chat(
             manager,
             message=query
         )

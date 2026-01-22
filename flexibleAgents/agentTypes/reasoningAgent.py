@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 # Define reasoning agent response format
 class reasoningAgentResponse(BaseModel):
-	scientificExplanation: str			# Detailed scientific explanation of the topic
+	message: str			# Detailed scientific explanation of the topic
 	isHumanClarificationNeeded: bool	# Whether human clarification is needed for further processing
 	nextAgentName: str					# Name of the next agent to speak
 

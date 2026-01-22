@@ -6,7 +6,7 @@ class queryAgentResponse(BaseModel):
 	isAgentConfigValid: bool		# Whether the current agent configuration supports the user's request
 	recommendedAgentConfig: str		# Suggestions for different agent config if current config is insufficient
 	subtasks: list[str]				# List of sub-tasks
-	messageToUser: str				# Message to the user about the task breakdown and distribution
+	message: str				# Message to the user about the task breakdown and distribution
 	nextAgentName: str				# Name of the next agent to speak
 
 # Query Agent takes in the initial query and then delegates tasks to other agents
