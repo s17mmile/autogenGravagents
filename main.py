@@ -20,14 +20,10 @@ llm_config = LLMConfig(config_list={"api_type": os.getenv("IZ_API_TYPE"),
 # Set parameters for conversation execution
 maxRounds = 10
 
-# If humanInTheLoop is false, the system instantiates a fallback _User agent just in case no other suitable next agent is found.
-humanInTheLoop = False
-
 # Import chat based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
     configPath="flexibleAgents/agentConfigs/config1.txt",
     llm_config=llm_config,
-    humanInTheLoop=humanInTheLoop,
     maxRounds=maxRounds
 )
 

@@ -25,12 +25,11 @@ for file in os.listdir(os.path.dirname(__file__) + "/agentTypes"):
 
 # Main class that allows flexible agent conversations based on config files
 class flexibleAgentChat:
-    def __init__(self, configPath: str, llm_config, humanInTheLoop: bool = True, maxRounds: int = 10):
+    def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
         # Basic setters
         self.configPath = configPath
         self.llm_config = llm_config
         self.maxRounds = maxRounds
-        self.humanInTheLoop = humanInTheLoop
 
         # Instantiate agents based on config in given path.
         # This does not yet initiate the GroupChat instance or start the conversation
@@ -69,25 +68,14 @@ class flexibleAgentChat:
             destinationList = [dest.strip() for dest in destinations.split(",")]
             transitionSpecs[source] = destinationList
 
-        # Check that at least one query agent is present
-        # If so, store its index so it can be passed as initial query processor
-        has_query_agent = any(agentSpec.agentType == "queryAgent" for agentSpec in agentSpecs)
-        if not has_query_agent:
-            raise ValueError("Config invalid: No query processing agent found in config.")
-        else:
-            self.queryAgentName = next(agentSpec.name for agentSpec in agentSpecs if agentSpec.agentType == "queryAgent")
-
-        # Check that a human agent exists if humanInTheLoop is true and that none exist if false
-        # If human agent exists, store its index to be passed on properly during chat instantiation
+        # Check that a human agent exists. Everything else is up to the user.
         has_human_agent = any(agentSpec.agentType == "humanAgent" for agentSpec in agentSpecs)
-        if not has_human_agent and self.humanInTheLoop:
-            raise ValueError("Config invalid: No human agent found but human in the loop requested.")
-        elif has_human_agent and not self.humanInTheLoop:
-            raise ValueError("Config invalid: Human agent found but human in the loop is disabled.")
-        elif has_human_agent and self.humanInTheLoop:
+        if not has_human_agent:
+            raise ValueError("Config invalid: No human agent found (required).")
+        else:
             self.humanAgentName = next(agentSpec.name for agentSpec in agentSpecs if agentSpec.agentType == "humanAgent")
 
-        # Return Specification with which instantiation is made easy
+        # Return parsed specifications for instantiation
         return agentSpecs, transitionSpecs
 
     # Instantiate agents based on the parsed config
