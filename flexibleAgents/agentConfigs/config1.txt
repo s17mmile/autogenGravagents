@@ -1,7 +1,7 @@
+humanAgent, Proxy
 queryAgent, Query_Handler
-reasoningAgent, engineeringAgent
-reasoningAgent, reasoning2
+reasoningAgent, reasoning
 
-Query_Handler: engineeringAgent, reasoning2
-engineeringAgent: Query_Handler, reasoning2
-reasoning2: Query_Handler, engineeringAgent
+Proxy: Query_Handler
+Query_Handler: reasoning
+reasoning: Proxy

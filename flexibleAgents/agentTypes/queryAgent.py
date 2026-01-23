@@ -1,19 +1,18 @@
+from typing import Dict, List
 from autogen import ConversableAgent
 from pydantic import BaseModel
 
 # Define query agent response format
 class queryAgentResponse(BaseModel):
-	isAgentConfigValid: bool		# Whether the current agent configuration supports the user's request
-	recommendedAgentConfig: str		# Suggestions for different agent config if current config is insufficient
-	subtasks: list[str]				# List of sub-tasks
-	message: str				# Message to the user about the task breakdown and distribution
+	message: str					# Message to the user about the task breakdown and distribution
 	nextAgentName: str				# Name of the next agent to speak
+	subtasks: list[str]				# List of sub-tasks
 
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
 # Each Conversation Config must include a Query Agent as the starting point
-def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
-	systemMessage = """
+def queryAgent(llm_config, name = "QueryAgent", allowedTransitions: List[str] = []) -> ConversableAgent:
+	systemMessage = f"""
 		You are a QUERY AGENT specializing in breaking down user requests into manageable sub-tasks for a team of specialized agents.
 		You will receive the user's query as well as a short description of the agent conversation configuration.
 		Based on this query, you should check the capabilities of the available agents and break down the task into manageable sub-tasks to be handled by other agents.
@@ -21,10 +20,10 @@ def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 		Your responsibilities:
 		1. Understand the user's overall goal from their input.
 		2. Decompose the goal into specific sub-tasks that can then be assigned to specialized agents (e.g., coding agent, interpreter agent) by the group chat manager.
-		3. Check if the needed agents are available in the conversation configuration. If not, inform the user that their request requires different agents.
-		4. Check that the allowed agent transitions support the planned task flow. If not, inform the user that their request requires a different configuration.
-
-		Should you or another agent in the system require human input, you may call upon a Human Agent to assist with gathering information or clarifying requirements.
+		
+		Your output includes a message field a nextAgentName field, and a subtasks field:
+		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
+		- The nextAgentName field should include the name of another agent in the agentic system. It must strictly be one of the following names: {allowedTransitions}.
 	"""
 
 	description = """

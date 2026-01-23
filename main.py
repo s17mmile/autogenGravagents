@@ -30,4 +30,4 @@ flexibleChat = agentChat.flexibleAgentChat(
 query = input("Please enter your query: ")
 
 # Start the conversation
-flexibleChat.startConversation(query=query)
+flexibleChat.startConversation(query=query, startingAgentName="Query_Handler")

@@ -35,6 +35,8 @@ class flexibleAgentChat:
         # This does not yet initiate the GroupChat instance or start the conversation
         self.buildChatGraph()
 
+        self.humanQueryRecipient = input(f"Query recipient Name ({self.chatGraph.agents}): ")
+
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
     def parseAgentConfig(self, path: str) -> chatGraph:
@@ -65,7 +67,7 @@ class flexibleAgentChat:
         # Syntax: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
         for line in lines[split_index:]:
             source, destinations = map(str.strip, line.split(":", 1))
-            destinationList = [dest.strip() for dest in destinations.split(",")]
+            destinationList = [dest.strip() for dest in destinations.split(",") if dest.strip()]
             transitionSpecs[source] = destinationList
 
         # Check that a human agent exists. Everything else is up to the user.
@@ -102,8 +104,32 @@ class flexibleAgentChat:
         return
 
 
+    # Enforce chat flow given by config file.
+    # Passed to group chat for next speaker selection.
+    def selectNextSpeaker(self, lastSpeaker, groupchat: GroupChat) -> autogen.ConversableAgent:
+        lastMessage = groupchat.messages[-1]
+        
+        print(lastMessage)
+
+        # The human may speak to any agent they wish, this is stored separately.
+        if lastMessage["name"] == self.humanAgentName:
+            return self.chatGraph.agents[self.humanQueryRecipient]
+        
+        # For all other agents, cross-check their next agent suggestion with the allowed transitions.
+        allowedNextSpeakerNames = self.chatGraph.transitions.get(lastSpeaker, [])
+        nextSpeakerName = lastMessage.nextAgentName if hasattr(lastMessage, 'nextAgentName') else None
+        
+        if nextSpeakerName not in allowedNextSpeakerNames:
+            nextSpeaker = None
+        else:
+            nextSpeaker = self.chatGraph.agents[nextSpeakerName]
+
+        print("Found next speaker:", nextSpeaker)
+
+        return nextSpeaker
+
     # Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
-    def startConversation(self, query: str):
+    def startConversation(self, query: str, startingAgentName: str = None):
         # Initialize a group chat with the instantiated agents and the query
         groupchat = GroupChat(
             agents=list(self.chatGraph.agents.values()),
@@ -111,13 +137,14 @@ class flexibleAgentChat:
             send_introductions=True,
             max_round=self.maxRounds,
             allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
-            speaker_transitions_type="allowed"
+            speaker_transitions_type="allowed",
+            speaker_selection_method=self.selectNextSpeaker
         )
 
         # Process flow within this group chat is managed by the following manager (wait I don't want this do I)
         manager = GroupChatManager(
             groupchat=groupchat,
-            llm_config=self.llm_config,
+            llm_config=False,
             name = "FlexibleAgentChatManager"
         )
 
@@ -125,5 +152,8 @@ class flexibleAgentChat:
         humanAgent = self.chatGraph.agents[self.humanAgentName]
         result = humanAgent.initiate_chat(
             manager,
-            message=query
+            message=query,
+            clear_history=False
         )
+
+        print(result)
