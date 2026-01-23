@@ -24,7 +24,10 @@ def queryAgent(llm_config, name = "QueryAgent", allowedTransitions: List[str] = 
 		Your output includes a message field a nextAgentName field, and a subtasks field:
 		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
 		- The nextAgentName field should include the name of another agent in the agentic system. It must strictly be one of the following names: {allowedTransitions}.
+		Only return an emtpy field (terminating conversation) if no transition is allowed!
 	"""
+
+	print(name, allowedTransitions)
 
 	description = """
 		The QUERY AGENT is responsible for breaking down user requests into manageable sub-tasks based on the capabilities of the available agents in the conversation configuration.

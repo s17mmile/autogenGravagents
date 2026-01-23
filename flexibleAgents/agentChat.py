@@ -1,5 +1,8 @@
 # General imports
 import os
+from pydantic import BaseModel
+from typing import Dict, List
+from enum import Enum
 
 # Autogen imports
 import autogen
@@ -35,7 +38,7 @@ class flexibleAgentChat:
         # This does not yet initiate the GroupChat instance or start the conversation
         self.buildChatGraph()
 
-        self.humanQueryRecipient = input(f"Query recipient Name ({self.chatGraph.agents}): ")
+        self.humanQueryRecipient = self.chatGraph.agents[input(f"Query recipient Name ({self.chatGraph.agents}): ")]
 
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
@@ -59,9 +62,16 @@ class flexibleAgentChat:
 
         # Parse agents (type and name)
         # Syntax: <agentType>, <agent_name>
+        # Along the way, ensure a human agent is provided
+        humanAgentCount = 0
         for line in lines[:split_index]:
             agentType, name = map(str.strip, line.split(",", 1))
             agentSpecs.append(agentSpecification(agentType, name))
+            if agentType == "humanAgent":
+                humanAgentCount += 1
+
+        if humanAgentCount != 1:
+            raise ValueError(f"Config invalid: {humanAgentCount} human agents found (exactly 1 required).")
 
         # Parse transitions
         # Syntax: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
@@ -70,16 +80,23 @@ class flexibleAgentChat:
             destinationList = [dest.strip() for dest in destinations.split(",") if dest.strip()]
             transitionSpecs[source] = destinationList
 
-        # Check that a human agent exists. Everything else is up to the user.
-        has_human_agent = any(agentSpec.agentType == "humanAgent" for agentSpec in agentSpecs)
-        if not has_human_agent:
-            raise ValueError("Config invalid: No human agent found (required).")
-        else:
-            self.humanAgentName = next(agentSpec.name for agentSpec in agentSpecs if agentSpec.agentType == "humanAgent")
-
         # Return parsed specifications for instantiation
         return agentSpecs, transitionSpecs
 
+    # Create Template Response Constraining structure, can be expanded upon by agents in definition functions
+    # TODO when exactly should this be run? All the agents should have already been instantiated. May it's better to not use this?
+    def createResponseFormat(self, agentName: str):
+        # Enumerate possible transitions for this agent
+        allowedTransitions = self.chatGraph.transitions[agentName]
+        print(allowedTransitions)
+        transitionEnum = Enum((agent.name, agent) for agent in allowedTransitions)
+
+        class templateResponse(BaseModel):
+            message: str                    # General message content
+            nextAgentName: str              # Name of the next agent to speak
+
+        return templateResponse
+    
     # Instantiate agents based on the parsed config
     def buildChatGraph(self):
         # Parse agent config file to receive agent and transition specifications
@@ -91,9 +108,12 @@ class flexibleAgentChat:
         )
 
         # Instantiate Agents and save into agents dict
+        # Separately keep track of the human agent name for query routing
         for spec in agentSpecs:
             agent = eval(f"{spec.agentType}(llm_config=self.llm_config, name = '{spec.name}')")
             self.chatGraph.agents[spec.name] = agent
+            if spec.agentType == "humanAgent":
+                self.humanAgent = agent
 
         # Build transitions dict in required format for autogen conversations (essentially just converting keys and values from names to agent instances)
         for source_name, dest_names in transitionSpecs.items():
@@ -108,16 +128,14 @@ class flexibleAgentChat:
     # Passed to group chat for next speaker selection.
     def selectNextSpeaker(self, lastSpeaker, groupchat: GroupChat) -> autogen.ConversableAgent:
         lastMessage = groupchat.messages[-1]
-        
-        print(lastMessage)
 
         # The human may speak to any agent they wish, this is stored separately.
-        if lastMessage["name"] == self.humanAgentName:
-            return self.chatGraph.agents[self.humanQueryRecipient]
+        if lastSpeaker == self.humanAgent:
+            return self.humanQueryRecipient
         
         # For all other agents, cross-check their next agent suggestion with the allowed transitions.
         allowedNextSpeakerNames = self.chatGraph.transitions.get(lastSpeaker, [])
-        nextSpeakerName = lastMessage.nextAgentName if hasattr(lastMessage, 'nextAgentName') else None
+        nextSpeakerName = lastMessage["nextAgentName"] if "nextAgentName" in lastMessage else None
         
         if nextSpeakerName not in allowedNextSpeakerNames:
             nextSpeaker = None
@@ -149,8 +167,7 @@ class flexibleAgentChat:
         )
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
-        humanAgent = self.chatGraph.agents[self.humanAgentName]
-        result = humanAgent.initiate_chat(
+        result = self.humanAgent.initiate_chat(
             manager,
             message=query,
             clear_history=False

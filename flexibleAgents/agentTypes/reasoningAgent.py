@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Literal
 from autogen import ConversableAgent
 from pydantic import BaseModel
 
@@ -26,7 +26,10 @@ def reasoningAgent(llm_config, name = "ReasoningAgent", allowedTransitions: List
 		Your output includes a message field and a nextAgentName field:
 		- The message field should include your scientific reasoning and suggested next steps towards solving the task at hand.
 		- The nextAgentName field should include the name of another agent in the agentic system. It must strictly be one of the following names: {allowedTransitions}.
+		Only return an emtpy field (terminating conversation) if no transition is allowed!
 	"""
+
+	print(name, allowedTransitions)
 
 	description = """
 		The REASONING AGENT is responsible for providing detailed scientific explanations based on the tasks assigned to it.
