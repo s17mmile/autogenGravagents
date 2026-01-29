@@ -144,6 +144,7 @@ class flexibleAgentChat:
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
+        # TODO figure out how exactly to expose the messages as they are generated (probably a hook method?) and expose them to the GUI
         result = self.humanAgent.initiate_chat(
             manager,
             message=query,
