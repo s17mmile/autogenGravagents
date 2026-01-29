@@ -35,10 +35,8 @@ class flexibleAgentChat:
         self.maxRounds = maxRounds
 
         # Instantiate agents based on config in given path.
-        # This does not yet initiate the GroupChat instance or start the conversation
+        # This does not yet initiate the GroupChat instance or start the conversation.
         self.buildChatGraph()
-
-        self.humanQueryRecipient = self.chatGraph.agents[input(f"Query recipient Name ({self.chatGraph.agents}): ")]
 
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
@@ -50,7 +48,8 @@ class flexibleAgentChat:
         agentSpecs: List[agentSpecification] = []
         transitionSpecs: Dict[str, List[str]] = {}
 
-        # Split on first line that looks like an edge definition
+        # Split on first line that looks like a transition definition
+        # If none exists, the transition restrictions will be lifted.
         split_index = None
         for i, line in enumerate(lines):
             if ":" in line:
@@ -65,7 +64,7 @@ class flexibleAgentChat:
 
         # Parse agents (type and name)
         # Syntax: <agentType>, <agent_name>
-        # Along the way, ensure a human agent is provided
+        # Along the way, ensure a human agent is provided. Else error out.
         humanAgentCount = 0
         for line in lines[:split_index]:
             agentType, name = map(str.strip, line.split(",", 1))
@@ -86,20 +85,6 @@ class flexibleAgentChat:
 
         # Return parsed specifications for instantiation
         return agentSpecs, transitionSpecs
-
-    # Create Template Response Constraining structure, can be expanded upon by agents in definition functions
-    # TODO when exactly should this be run? All the agents should have already been instantiated. May it's better to not use this?
-    def createResponseFormat(self, agentName: str):
-        # Enumerate possible transitions for this agent
-        allowedTransitions = self.chatGraph.transitions[agentName]
-        print(allowedTransitions)
-        transitionEnum = Enum((agent.name, agent) for agent in allowedTransitions)
-
-        class templateResponse(BaseModel):
-            message: str                    # General message content
-            nextAgentName: str              # Name of the next agent to speak
-
-        return templateResponse
     
     # Instantiate agents based on the parsed config
     def buildChatGraph(self):
@@ -127,43 +112,15 @@ class flexibleAgentChat:
 
         return
 
-
-    # Enforce chat flow given by config file.
-    # Passed to group chat for next speaker selection if transitions are specified in config.
-    def selectNextSpeaker(self, lastSpeaker, groupchat: GroupChat) -> autogen.ConversableAgent:
-        lastMessage = groupchat.messages[-1]
-
-        # The human may speak to any agent they wish, this is stored separately.
-        if lastSpeaker == self.humanAgent:
-            return self.humanQueryRecipient
-        
-        # For all other agents, cross-check their next agent suggestion with the allowed transitions.
-        allowedNextSpeakerNames = self.chatGraph.transitions.get(lastSpeaker, [])
-        nextSpeakerName = lastMessage["nextAgentName"] if "nextAgentName" in lastMessage else None
-        
-        # Instead of auto-terminating, control will be passed back to the human.
-        if nextSpeakerName not in allowedNextSpeakerNames:
-            print("NO NEXT SPEAKER FOUND, DEFAULTING TO HUMAN AGENT.")
-            nextSpeaker = self.humanAgent
-        else:
-            nextSpeaker = self.chatGraph.agents[nextSpeakerName]
-
-        print("Found next speaker:", nextSpeaker)
-
-        return nextSpeaker
-
     # Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
     def startConversation(self, query: str):
-        # If no transitions are given, default to automatic flow management.
+        # If no transitions were given, we can simply switch the GroupChat to allow all transitions by switching them from allowed to disallowed
         if self.configIncludesTransitions:
-            speakerSelection = self.selectNextSpeaker
-            transitionType="allowed"
-            managerLLMconfig=False
+            transitionType = "allowed"
         else:
-            speakerSelection = "auto"
             transitionType = "disallowed"
-            managerLLMconfig = self.llm_config
 
+        print(self.chatGraph.transitions)
 
         # Initialize a group chat with the instantiated agents and the query
         groupchat = GroupChat(
@@ -173,19 +130,20 @@ class flexibleAgentChat:
             max_round=self.maxRounds,
             allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
             speaker_transitions_type=transitionType,
-            speaker_selection_method=speakerSelection
+            speaker_selection_method="auto"
         )
 
         # Process flow within this group chat is managed by the following manager (necessary even when agents are choosing their own transitions, then it will simply not use an llm but the fixed rules)
         manager = GroupChatManager(
             groupchat=groupchat,
-            llm_config=managerLLMconfig,
+            llm_config=self.llm_config,
             name = "FlexibleAgentChatManager"
         )
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
+        # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
         result = self.humanAgent.initiate_chat(
-            self.humanQueryRecipient,
+            manager,
             message=query,
             clear_history=False
         )

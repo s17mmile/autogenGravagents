@@ -22,7 +22,7 @@ maxRounds = 10
 
 # Import chat based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-    configPath="flexibleAgents/agentConfigs/config1.txt",
+    configPath="flexibleAgents/agentConfigs/config0.txt",
     llm_config=llm_config,
     maxRounds=maxRounds
 )
