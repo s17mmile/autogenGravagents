@@ -7,11 +7,10 @@ from pydantic import BaseModel
 # Define fact checking agent response format
 class factCheckingAgentResponse(BaseModel):
 	message: str						# Rundown of fact-checked information, especially focusing on accuracy and reliability
-	nextAgentName: str					# Name of the next agent to speak
 
 
 
-def factCheckingAgent(llm_config, name = "FactCheckingAgent", allowedTransitions: List[str] = []) -> ConversableAgent:
+def factCheckingAgent(llm_config, name = "FactCheckingAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are a FACT CHECKING AGENT specializing in verifying the accuracy and reliability of information.
 		You will scrutinize analyses provided by other agents in the system.
@@ -23,13 +22,9 @@ def factCheckingAgent(llm_config, name = "FactCheckingAgent", allowedTransitions
 		3. If RAG (Retrieval Augmented Generation) is enabled and you may select an RAG agent to speak next, utilize document search capabilities to back up your fact-checking with credible sources!
 		4. If you are not able to select an RAG agent, proceed with your fact-checking report.
 
-		Your output includes a message field and a nextAgentName field:
+		Your output includes a message field:
 		- The message field should include your fact-checked information, focusing on accuracy and reliability. Keep it concise and to the point, using bullet points if necessary.
-		- The nextAgentName field should include the name of another agent in the agentic system. It must strictly be one of the following names: {allowedTransitions}.
-		Only return an emtpy field (terminating conversation) if no transition is allowed!
 	"""
-
-	print(name, allowedTransitions)
 
 	description = """
 		The FACT CHECKING AGENT is responsible for providing detailed fact-checking of analyses by other agents.
