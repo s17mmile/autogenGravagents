@@ -141,8 +141,10 @@ class flexibleAgentChat:
         allowedNextSpeakerNames = self.chatGraph.transitions.get(lastSpeaker, [])
         nextSpeakerName = lastMessage["nextAgentName"] if "nextAgentName" in lastMessage else None
         
+        # Instead of auto-terminating, control will be passed back to the human.
         if nextSpeakerName not in allowedNextSpeakerNames:
-            nextSpeaker = None
+            print("NO NEXT SPEAKER FOUND, DEFAULTING TO HUMAN AGENT.")
+            nextSpeaker = self.humanAgent
         else:
             nextSpeaker = self.chatGraph.agents[nextSpeakerName]
 
