@@ -21,10 +21,11 @@ def queryAgent(llm_config, name = "QueryAgent", allowedTransitions: List[str] = 
 		1. Understand the user's overall goal from their input.
 		2. Decompose the goal into specific sub-tasks that can then be assigned to specialized agents (e.g., coding agent, interpreter agent) by the group chat manager.
 		
-		Your output includes a message field a nextAgentName field, and a subtasks field:
+		Your output includes a message field, a nextAgentName field, and a subtasks field:
 		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
 		- The nextAgentName field should include the name of another agent in the agentic system. It must strictly be one of the following names: {allowedTransitions}.
 		Only return an emtpy field (terminating conversation) if no transition is allowed!
+		- The subtasks field should contain a breakdown of the overall task into simpler-to-manage tasks for other agents.
 	"""
 
 	print(name, allowedTransitions)
