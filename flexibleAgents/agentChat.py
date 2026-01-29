@@ -1,5 +1,5 @@
 # General imports
-import os
+import os, sys
 from pydantic import BaseModel
 from typing import Dict, List
 from enum import Enum
@@ -14,13 +14,15 @@ from flexibleAgents.typedefs import agentSpecification, chatGraph
 # Dynamic import of agent types from agentTypes dir
 # We want to exclusively import the creation functions for each agent type
 # The creation function must be named the same as the agent type itself
-# I'm aware this is not clean, but it's the best I can currently think of for easy introsuction of new agent types
+# I'm aware this is not clean, but it's the best I can currently think of for easy introduction of new agent types
 # Not entirely sure why importing the agentTypes directory as a whole does not make it possible to access the individual module functions
+sys.path.append(os.path.dirname(__file__))
+print(os.path.dirname(__file__) + "/")
 for file in os.listdir(os.path.dirname(__file__) + "/agentTypes"):
     if file.endswith(".py") and file != "__init__.py":
         module_name = file[:-3]
         try:
-            exec(f"from flexibleAgents.agentTypes.{module_name} import {module_name}")
+            exec(f"from agentTypes.{module_name} import {module_name}")
         except ImportError as e:
             print(f"Error importing module {module_name}: {e}. Skipping this module.")
 
