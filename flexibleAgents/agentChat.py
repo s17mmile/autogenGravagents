@@ -1,5 +1,5 @@
 # General imports
-import os, sys
+import os, sys, shutil
 from pydantic import BaseModel
 from typing import Dict, List
 from enum import Enum
@@ -142,6 +142,9 @@ class flexibleAgentChat:
             name = "FlexibleAgentChatManager"
         )
 
+        # Clear temporary conversation before chat starts
+        shutil.rmtree("tempConversation", ignore_errors=True)
+
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
         # TODO figure out how exactly to expose the messages as they are generated (probably a hook method?) and expose them to the GUI
@@ -151,4 +154,9 @@ class flexibleAgentChat:
             clear_history=False
         )
 
-        print(result)
+        # Save results in temp directory
+        path = "tempConversation/conversation.txt"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            for msg in groupchat.messages:
+                f.write(f"{msg}\n\n")
