@@ -1,3 +1,4 @@
+import os
 from typing import Dict, List
 from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor
@@ -35,7 +36,7 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 
 	executor = LocalCommandLineCodeExecutor(
 		timeout=20,							 # Timeout for each code execution in seconds.
-		work_dir="tempConversation",			# Use the temporary conversation directory as the working directory.
+		work_dir=f"{os.path.dirname(__file__)}/../tempConversation",			# Use the temporary conversation directory as the working directory.
 	)
 
 	return ConversableAgent(

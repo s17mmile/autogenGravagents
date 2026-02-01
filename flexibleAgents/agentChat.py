@@ -153,8 +153,13 @@ class flexibleAgentChat:
         )
 
         # Save conversation history as text file in temp directory
+        # Wanted to simplify to make this a simple loadable json but kinda can't get it to work as json loads keeps failing
         path = f"{os.path.dirname(__file__)}/tempConversation/conversation.txt"
         with open(path, "w", encoding="utf-8") as f:
+            # messages_json = "{"+f"\"messages\":{groupchat.messages}"+"}"
+            # print(messages_json)
+            # f.write(json.dumps(json.loads(messages_json), indent=4))
+
             f.write(f"Conversation Log for query: {query}\n\n")
             for msg in groupchat.messages:
                 # The human agent message is just a string, whereas all othrer agents use a response format that is best parsed/stored as JSON.
