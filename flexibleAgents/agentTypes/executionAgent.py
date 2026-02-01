@@ -7,10 +7,10 @@ from pydantic import BaseModel
 
 # Define execution agent response format
 class executionAgentResponse(BaseModel):
-	incomingMessage: str				# The code snippet received for execution
 	message: str						# Message giving an overview of execution results
 	result: str							# Result or output of the code execution
 	createdFiles: List[str]				# List of files created during execution
+	requiredDependencies: List[str]		# List of any required, but not yet dependencies for the executed code
 
 def injectSnippets(agent, messages, sender, config):
 	# Extract code snippets as single strings from incoming message
@@ -38,10 +38,10 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		When you receive code to execute from another agent, use the code executor to run it.
 
 		Your output includes a message field and a createdFiles field:
-		- The incoming message should EXACTLY match the message you received.
 		- The message field should give a quick overview of the code executed, whether or not the execution was successful and why. If there were errors, provide a brief explanation.
 		- The result field should contain the output or result of the code execution if it can be represented as a short string or number.
 		- The createdFiles field should list any files that were created during the execution process, such as images or text outputs. It should also include the names of the scripts created during execution.
+		- The requiredDependencies field should list any required, but not yet installed dependencies needed to run the code. If dependencies are missing, hand control back to the human agent to install these dependencies.
 	"""
 
 	description = """
