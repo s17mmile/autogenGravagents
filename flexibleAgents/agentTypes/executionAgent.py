@@ -8,6 +8,7 @@ from pydantic import BaseModel
 # Define execution agent response format
 class executionAgentResponse(BaseModel):
 	message: str						# Message giving an overview of execution results
+	result: str
 	createdFiles: List[str]				# List of files created during execution
 
 
@@ -19,7 +20,8 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		When you receive code to execute from another agent, use the code executor to run it.
 
 		Your output includes a message field and a createdFiles field:
-		- The message field should give a quick overview of the code executed, whether or not the execution was successful and why.
+		- The message field should give a quick overview of the code executed, whether or not the execution was successful and why. If there were errors, provide a brief explanation.
+		- The result field should contain the output or result of the code execution if it can be represented as a short string or number.
 		- The createdFiles field should list any files that were created during the execution process, such as images or text outputs.
 	"""
 
@@ -41,5 +43,6 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		system_message = systemMessage,
 		description = description,
 		llm_config = execution_llm_config,
+		code_execution_config={"executor": executor},
 		human_input_mode="NEVER"
 	)

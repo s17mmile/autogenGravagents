@@ -22,13 +22,13 @@ maxRounds = 10
 
 # Import chat based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-    configPath="flexibleAgents/agentConfigs/config0.txt",
+    configPath="flexibleAgents/agentConfigs/config1.txt",
     llm_config=llm_config,
     maxRounds=maxRounds
 )
 
 # query = input("Please enter your query: ")
-query = "Write a Python script that calculates the first n fibonacci numbers."
+query = "Write a Python script that calculates the first n fibonacci numbers and plot the result against n for n up to 10. Save the resulting image as 'fibonacci_plot.png' and tell me what the 150th fibonacci number is."
 
 # Start the conversation
 flexibleChat.startConversation(query=query)
