@@ -1,28 +1,4 @@
-DONE Get an initial setup working to instantiate multiple agents as needed
-
-DONE Make sure that Human-in-The-Loop is always an option! (Implementation as "human" agent?)
-
-NEXT Make sure each conversation generates a "capsuled-off" output directory with outputted code, results etc.
-
-redo human-in-the-loop to ensure the conversation exits at a useful point --> maybe check reasoningAgent requiresClarification and then force human input?
---> Otherwise, do HITL as simply a difference in the conversation graph with no incoming 
---> The human should be prompted to intervene not only if the AI needs more information but also when reasoning so far has resulted in a logical loop or no further progress is made.
-
-Make sure conversations are appropriately terminated.
-
-Disable config checking for now. That can be slapped on later.
-
-make simple GUI to enable easier testing
-
-chat graph kinda only needs the transitions, no? May be cleaner.
-
-Rethink agent output format to include a couple of always-needed fields:
-	- message
-	- nextAgentName
-
 Allow passing of callables as tools outside of the flexibleChat class.
-
-create conversation summarizing agent
 
 Implement and test RAG Agents
 	--> AG2 deep research agent (requires browser-use, playwright)
@@ -38,6 +14,8 @@ Make nicer GUI. Feature ideas:
 	--> Make messages appear as message bubbles, like an actual chat
 	--> Visual graph editor, highlight current speaker node
 	--> Import and continue old conversations
+
+Proper Venv execution environments
 
 END: Properly list dependencies and respective versions
 

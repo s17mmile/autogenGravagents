@@ -18,7 +18,7 @@ llm_config = LLMConfig(config_list={"api_type": os.getenv("IZ_API_TYPE"),
                                     "base_url":os.getenv("IZ_BASE_URL")})
 
 # Set parameters for conversation execution
-maxRounds = 10
+maxRounds = 50
 
 # Import chat based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
@@ -28,7 +28,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 )
 
 # query = input("Please enter your query: ")
-query = "Write a Python script that calculates the first n fibonacci numbers and plot the result against n for n up to 10. Save the resulting image as 'fibonacci_plot.png' and tell me what the 150th fibonacci number is."
+query = "Write a Python script that calculates the first n fibonacci numbers and plot the result against n for n up to 10. Save the resulting image as 'fibonacci_plot.png' and print the resulting list of the first 10 fibonacci numbers."
 
 # Start the conversation
 flexibleChat.startConversation(query=query)

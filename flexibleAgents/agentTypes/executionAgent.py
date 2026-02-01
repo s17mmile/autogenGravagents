@@ -4,12 +4,11 @@ from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor
 from pydantic import BaseModel
 
-
-
 # Define execution agent response format
 class executionAgentResponse(BaseModel):
+	incomingMessage: str				# The code snippet received for execution
 	message: str						# Message giving an overview of execution results
-	result: str
+	result: str							# Result or output of the code execution
 	createdFiles: List[str]				# List of files created during execution
 
 
@@ -21,9 +20,10 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		When you receive code to execute from another agent, use the code executor to run it.
 
 		Your output includes a message field and a createdFiles field:
+		- The incoming message should EXACTLY match the message you received.
 		- The message field should give a quick overview of the code executed, whether or not the execution was successful and why. If there were errors, provide a brief explanation.
 		- The result field should contain the output or result of the code execution if it can be represented as a short string or number.
-		- The createdFiles field should list any files that were created during the execution process, such as images or text outputs.
+		- The createdFiles field should list any files that were created during the execution process, such as images or text outputs. It should also include the names of the scripts created during execution.
 	"""
 
 	description = """
@@ -34,16 +34,22 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 	execution_llm_config["response_format"] = executionAgentResponse
 	execution_llm_config["temperature"] = 0
 
+	# flexibleAgents/tempConversation directory (absolute)
+	# path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tempConversation'))
+	path = os.path.abspath("flexibleAgents/tempConversation")
+	print(path)
+	os.makedirs(path, exist_ok=True)
+
 	executor = LocalCommandLineCodeExecutor(
-		timeout=20,							 # Timeout for each code execution in seconds.
-		work_dir=f"{os.path.dirname(__file__)}/../tempConversation",			# Use the temporary conversation directory as the working directory.
+		timeout=30,                               	# Timeout for each code execution in seconds.
+		work_dir="flexibleAgents/tempConversation",                           	# Use the temporary conversation directory as the working directory.
 	)
 
 	return ConversableAgent(
 		name = name,
 		system_message = systemMessage,
 		description = description,
-		llm_config = execution_llm_config,
+		llm_config = False,
 		code_execution_config={"executor": executor},
 		human_input_mode="NEVER"
 	)

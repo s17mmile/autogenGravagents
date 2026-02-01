@@ -24,9 +24,6 @@ def factCheckingAgent(llm_config, name = "FactCheckingAgent") -> ConversableAgen
 
 		Your output includes a message field:
 		- The message field should include a short rundown of your fact-checked information, focusing on accuracy and reliability. Keep it concise and to the point, using bullet points if necessary.
-
-		Details:
-		- Line breaks should be indicated with just ONE backslash, not two.
 	"""
 
 	description = """
