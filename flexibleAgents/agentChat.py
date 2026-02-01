@@ -1,5 +1,5 @@
 # General imports
-import os, sys, shutil
+import os, sys, shutil, json
 from pydantic import BaseModel
 from typing import Dict, List
 from enum import Enum
@@ -17,7 +17,6 @@ from flexibleAgents.typedefs import agentSpecification, chatGraph
 # I'm aware this is not clean, but it's the best I can currently think of for easy introduction of new agent types
 # Not entirely sure why importing the agentTypes directory as a whole does not make it possible to access the individual module functions
 sys.path.append(os.path.dirname(__file__))
-print(os.path.dirname(__file__) + "/")
 for file in os.listdir(os.path.dirname(__file__) + "/agentTypes"):
     if file.endswith(".py") and file != "__init__.py":
         module_name = file[:-3]
@@ -122,8 +121,6 @@ class flexibleAgentChat:
         else:
             transitionType = "disallowed"
 
-        print(self.chatGraph.transitions)
-
         # Initialize a group chat with the instantiated agents and the query
         groupchat = GroupChat(
             agents=list(self.chatGraph.agents.values()),
@@ -142,8 +139,9 @@ class flexibleAgentChat:
             name = "FlexibleAgentChatManager"
         )
 
-        # Clear temporary conversation before chat starts
-        shutil.rmtree("tempConversation", ignore_errors=True)
+        # Clear conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
+        shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
+        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
@@ -154,9 +152,16 @@ class flexibleAgentChat:
             clear_history=False
         )
 
-        # Save results in temp directory
-        path = "tempConversation/conversation.txt"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
+        # Save conversation history as text file in temp directory
+        path = f"{os.path.dirname(__file__)}/tempConversation/conversation.txt"
         with open(path, "w", encoding="utf-8") as f:
+            f.write(f"Conversation Log for query: {query}\n\n")
             for msg in groupchat.messages:
-                f.write(f"{msg}\n\n")
+                # The human agent message is just a string, whereas all othrer agents use a response format that is best parsed/stored as JSON.
+                if msg["name"] == self.humanAgent.name:
+                    f.write(f"{msg["name"]}:\n{msg["content"]}\n\n")
+                else:
+                    f.write(f"{msg["name"]}:\n")
+                    f.write(json.dumps(json.loads(msg["content"]), indent=4))
+                    f.write("\n\n")
+                

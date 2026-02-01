@@ -23,7 +23,10 @@ def factCheckingAgent(llm_config, name = "FactCheckingAgent") -> ConversableAgen
 		4. If you are not able to select an RAG agent, proceed with your fact-checking report.
 
 		Your output includes a message field:
-		- The message field should include your fact-checked information, focusing on accuracy and reliability. Keep it concise and to the point, using bullet points if necessary.
+		- The message field should include a short rundown of your fact-checked information, focusing on accuracy and reliability. Keep it concise and to the point, using bullet points if necessary.
+
+		Details:
+		- Line breaks should be indicated with just ONE backslash, not two.
 	"""
 
 	description = """

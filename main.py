@@ -27,7 +27,8 @@ flexibleChat = agentChat.flexibleAgentChat(
     maxRounds=maxRounds
 )
 
-query = input("Please enter your query: ")
+# query = input("Please enter your query: ")
+query = "Write a Python script that calculates the first n fibonacci numbers."
 
 # Start the conversation
 flexibleChat.startConversation(query=query)

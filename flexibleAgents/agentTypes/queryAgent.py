@@ -5,7 +5,7 @@ from pydantic import BaseModel
 # Define query agent response format
 class queryAgentResponse(BaseModel):
 	message: str					# Message to the user about the task breakdown and distribution
-	subtasks: list[str]				# List of sub-tasks
+	subtasks: List[str]				# List of sub-tasks
 
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
