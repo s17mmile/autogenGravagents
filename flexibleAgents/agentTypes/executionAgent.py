@@ -12,24 +12,24 @@ class executionAgentResponse(BaseModel):
 	result: str							# Result or output of the code execution
 	createdFiles: List[str]				# List of files created during execution
 
-def injectSnippets(agent, messages, sender, config):	
+def injectSnippets(agent, messages, sender, config):
+	# Extract code snippets as single strings from incoming message
 	lastMessage = json.loads(messages[-1].get("content")) if "content" in messages[-1] else {}
-	print(type(lastMessage), lastMessage)
 	snippets = lastMessage["codeSnippets"] if "codeSnippets" in lastMessage else []
 	
-	print("EXECUTION AGENT [HOOK]: SNIPPETS TO INJECT:", snippets)
 	if not snippets:
 		return False, {}
 	
-	# Inject as single "code prompt" message
+	# Inject as single "code prompt" message --> Yes, this loses the format going in, but that should be fine.
 	code_content = "\n\n".join(f"```python\n{s}\n```" for s in snippets)
 	messages.append({
 		"content": f"Execute these code snippets:\n{code_content}",
 		"role": "user"
 	})
 	
-	print(f"EXECUTION AGENT [HOOK]: Injected {len(snippets)} snippets from {sender.name}")
 	return False, {}
+
+
 
 def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 	systemMessage = f"""
@@ -59,7 +59,7 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 	os.makedirs(path, exist_ok=True)
 
 	executor = LocalCommandLineCodeExecutor(
-		timeout=30,							   	# Timeout for each code execution in seconds.
+		timeout=60,							   	# Timeout for each code execution in seconds.
 		work_dir="flexibleAgents/tempConversation",						   	# Use the temporary conversation directory as the working directory.
 	)
 

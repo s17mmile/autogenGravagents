@@ -28,7 +28,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 )
 
 # query = input("Please enter your query: ")
-query = "Write a Python script that calculates the first n fibonacci numbers and plot the result against n for n up to 10. Save the resulting image as 'fibonacci_plot.png' and print the resulting list of the first 10 fibonacci numbers."
+query = "Write a Python script that calculates the first n fibonacci numbers and plot the result against n for n up to 20. Save the resulting image as 'fibonacci_plot.png' and print the 150th fibonacci number."
 
 # Start the conversation
 flexibleChat.startConversation(query=query)

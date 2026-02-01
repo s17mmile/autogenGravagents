@@ -15,6 +15,7 @@ def codingAgent(llm_config, name = "CodingAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are a Coding Agent whose purpose is to write python code based on given instructions.
 		You have the ability to generate code snippets that can be used by other agents or executed in a local environment.
+		Each code snippet generated must be a single string!
 
 		Your output includes a message field and a codeSnippets field:
 		- The message field should give a quick overview of the code generated and its purpose. Include relevant information about how it addresses the given instructions and - if any - what libraries are used and how.
@@ -27,7 +28,7 @@ def codingAgent(llm_config, name = "CodingAgent") -> ConversableAgent:
 
 	coding_llm_config = llm_config.copy()
 	coding_llm_config["response_format"] = codingAgentResponse
-	coding_llm_config["temperature"] = 0
+	coding_llm_config["temperature"] = 0.01
 
 	return ConversableAgent(
 		name = name,
