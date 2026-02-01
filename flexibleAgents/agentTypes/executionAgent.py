@@ -1,8 +1,9 @@
-import os
+import os, json
 from typing import Dict, List
 from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor
 from pydantic import BaseModel
+
 
 # Define execution agent response format
 class executionAgentResponse(BaseModel):
@@ -11,7 +12,24 @@ class executionAgentResponse(BaseModel):
 	result: str							# Result or output of the code execution
 	createdFiles: List[str]				# List of files created during execution
 
-
+def injectSnippets(agent, messages, sender, config):	
+	lastMessage = json.loads(messages[-1].get("content")) if "content" in messages[-1] else {}
+	print(type(lastMessage), lastMessage)
+	snippets = lastMessage["codeSnippets"] if "codeSnippets" in lastMessage else []
+	
+	print("EXECUTION AGENT [HOOK]: SNIPPETS TO INJECT:", snippets)
+	if not snippets:
+		return False, {}
+	
+	# Inject as single "code prompt" message
+	code_content = "\n\n".join(f"```python\n{s}\n```" for s in snippets)
+	messages.append({
+		"content": f"Execute these code snippets:\n{code_content}",
+		"role": "user"
+	})
+	
+	print(f"EXECUTION AGENT [HOOK]: Injected {len(snippets)} snippets from {sender.name}")
+	return False, {}
 
 def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 	systemMessage = f"""
@@ -41,15 +59,24 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 	os.makedirs(path, exist_ok=True)
 
 	executor = LocalCommandLineCodeExecutor(
-		timeout=30,                               	# Timeout for each code execution in seconds.
-		work_dir="flexibleAgents/tempConversation",                           	# Use the temporary conversation directory as the working directory.
+		timeout=30,							   	# Timeout for each code execution in seconds.
+		work_dir="flexibleAgents/tempConversation",						   	# Use the temporary conversation directory as the working directory.
 	)
 
-	return ConversableAgent(
+	agent = ConversableAgent(
 		name = name,
 		system_message = systemMessage,
 		description = description,
-		llm_config = False,
+		llm_config = llm_config,
 		code_execution_config={"executor": executor},
 		human_input_mode="NEVER"
 	)
+
+	# To enable code execution from pydantic response formats, we need to pull code snippets from their field and inject them into message history. 
+	agent.register_reply(
+		trigger = [ConversableAgent, None],
+		reply_func = injectSnippets,
+		position = 1
+	)
+
+	return agent

@@ -6,7 +6,7 @@ from enum import Enum
 
 # Autogen imports
 import autogen
-from autogen import GroupChat, GroupChatManager
+from autogen import ConversableAgent, GroupChat, GroupChatManager
 
 # Custom local imports
 from flexibleAgents.typedefs import agentSpecification, chatGraph
@@ -26,6 +26,11 @@ for file in os.listdir(os.path.dirname(__file__) + "/agentTypes"):
             print(f"Error importing module {module_name}: {e}. Skipping this module.")
 
 
+def print_message(recipient: ConversableAgent, messages: List[Dict], sender: ConversableAgent, config):
+    last = messages[-1]
+    content = last.get("content")
+    print(f"[{sender.name} → {recipient.name}] {content}")
+    return None, None
 
 # Main class that allows flexible agent conversations based on config files
 class flexibleAgentChat:
@@ -122,8 +127,9 @@ class flexibleAgentChat:
             transitionType = "disallowed"
 
         # Initialize a group chat with the instantiated agents and the query
+        agentList = list(self.chatGraph.agents.values())
         groupchat = GroupChat(
-            agents=list(self.chatGraph.agents.values()),
+            agents=agentList,
             messages=[],
             send_introductions=True,
             max_round=self.maxRounds,
@@ -136,12 +142,19 @@ class flexibleAgentChat:
         manager = GroupChatManager(
             groupchat=groupchat,
             llm_config=self.llm_config,
-            name = "FlexibleAgentChatManager"
+            name = "ManagerAgent"
         )
 
         # Clear conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
         os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
+
+        for agent in agentList:
+            agent.register_reply(
+                [ConversableAgent, None],
+                reply_func = print_message,
+                position = 0
+            )
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
@@ -154,15 +167,24 @@ class flexibleAgentChat:
 
         # Save conversation history as text file in temp directory
         # Wanted to simplify to make this a simple loadable json but kinda can't get it to work as json loads keeps failing
-        path = f"{os.path.dirname(__file__)}/tempConversation/conversation.txt"
+        path = os.path.join(os.path.dirname(__file__), "tempConversation", "conversation.txt")
         with open(path, "w", encoding="utf-8") as f:
             f.write(f"Conversation Log for query: {query}\n\n")
             for msg in groupchat.messages:
-                # The human agent message is just a string, whereas all other agents use a response format that is best parsed/stored as JSON.
-                if msg["name"] == self.humanAgent.name:
-                    f.write(f"{msg["name"]}:\n{msg["content"]}\n\n")
+                name = msg.get("name", "unknown")
+                content = msg.get("content", "")
+
+                # Try to pretty-print JSON content when possible, otherwise write raw content
+                formatted = None
+                if isinstance(content, (dict, list)):
+                    formatted = json.dumps(content, indent=4)
                 else:
-                    f.write(f"{msg["name"]}:\n")
-                    f.write(json.dumps(json.loads(msg["content"]), indent=4))
-                    f.write("\n\n")
+                    try:
+                        parsed = json.loads(content)
+                        formatted = json.dumps(parsed, indent=4)
+                    except Exception:
+                        formatted = str(content)
+
+                # Write to file and also print so manager/summary messages are visible in the terminal
+                f.write(f"{name}:\n{formatted}\n\n")
                 
