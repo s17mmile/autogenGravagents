@@ -14,13 +14,13 @@ from flexibleAgents import agentChat
 # Different agents will add the output format and temperature to this llm config as needed.
 llm_config = LLMConfig(config_list={"api_type": os.getenv("IZ_API_TYPE"), 
                                     "model": os.getenv("IZ_MODEL"),
-                                    "api_key":os.getenv("OPENAI_API_KEY"),
+                                    "api_key":os.getenv("IZ_API_KEY"),
                                     "base_url":os.getenv("IZ_BASE_URL")})
 
 # Set parameters for conversation execution
 maxRounds = 50
 
-# Import chat based on agent config file
+# Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
     configPath="flexibleAgents/agentConfigs/config1.txt",
     llm_config=llm_config,
