@@ -11,7 +11,7 @@ from pydantic import BaseModel
 import chromadb
 import chromadb.utils.embedding_functions as embedding_functions
 
-# Define fact checking agent response format
+# Define doc agent response format
 class documentRetrievalAgentResponse(BaseModel):
 	message: str								# Answer to the query based on retrieved documents
 	retrievedDocumentNames: List[str]			# List of names of retrieved documents (so the human can cross-check sources)

@@ -1,6 +1,8 @@
 from datasets import load_dataset, load_from_disk
 import os, shutil
 
+# TODO load proper dotenv and import necessary LLM systems
+
 # Define function to be executed for each problem
 def run_test(problem):
     # print(f"Running test for problem: {problem}\n\n")
@@ -24,7 +26,7 @@ def run_test(problem):
     # Run problem through basic GPT-4o Agent (only backbone!)
     # TODO
 
-    # Perplexity excluded as I do not have API access - some problems are manually tested separately.
+    # Perplexity excluded as I do not have API access - some problems are manually tested separately :()
 
     # Run each Solution through the critic agent to evaluate against the correct solution
     # TODO
