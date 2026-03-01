@@ -1,3 +1,5 @@
+The following describes the intended system behaviour:
+
 1. GUI opens.
     Elements:
         Conversation Agent Graph (generally unconstrained, except: one (!) humanAgent must exist.)

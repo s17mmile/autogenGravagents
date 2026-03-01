@@ -11,21 +11,6 @@ from autogen import ConversableAgent, GroupChat, GroupChatManager
 # Custom local imports
 from flexibleAgents.typedefs import agentSpecification, chatGraph
 
-# Dynamic import of agent types from agentTypes dir
-# We want to exclusively import the creation functions for each agent type
-# The creation function must be named the same as the agent type itself
-# I'm aware this is not clean, but it's the best I can currently think of for easy introduction of new agent types
-# Not entirely sure why importing the agentTypes directory as a whole does not make it possible to access the individual module functions
-sys.path.append(os.path.dirname(__file__))
-for file in os.listdir(os.path.dirname(__file__) + "/agentTypes"):
-    if file.endswith(".py") and file != "__init__.py":
-        module_name = file[:-3]
-        try:
-            exec(f"from agentTypes.{module_name} import {module_name}")
-        except ImportError as e:
-            print(f"Error importing module {module_name}: {e}. Skipping this module.")
-
-
 def print_message(recipient: ConversableAgent, messages: List[Dict], sender: ConversableAgent, config):
     last = messages[-1]
     content = last.get("content")
@@ -105,12 +90,14 @@ class flexibleAgentChat:
             {}                  # Transitions       Agent: [Agents]
         )
 
-        # Instantiate Agents and save into agents dict
-        # Separately keep track of the human agent name for query routing
+        # Import/Instantiate Agents and save into agents dict
+        sys.path.append(os.path.dirname(__file__))      # Needed for relative local imports
+        glob = globals()
         for spec in agentSpecs:
+            exec(f"from agentTypes.{spec.agentType} import {spec.agentType}", glob, glob)           # The dynamic import must go into the module's globals!
             agent = eval(f"{spec.agentType}(llm_config=self.llm_config, name = '{spec.name}')")
             self.chatGraph.agents[spec.name] = agent
-            if spec.agentType == "humanAgent":
+            if spec.agentType == "humanAgent":          # Separately keep track of the human agent name for query routing
                 self.humanAgent = agent
 
         # Build transitions dict in required format for autogen conversations (essentially just converting keys and values from names to agent instances)
