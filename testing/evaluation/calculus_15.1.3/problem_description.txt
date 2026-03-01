@@ -1,0 +1,27 @@
+Problem Description:
+Use the Midpoint Rule with $m=n=2$ to estimate the value of the integral $\iint_R\left(x-3 y^2\right) d A$, where $R=\{(x, y) \mid 0 \leqslant x \leqslant 2,1 \leqslant y \leqslant 2\}$.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+In using the Midpoint Rule with $m=n=2$, we evaluate $f(x, y)=x-3 y^2$ at the centers of the four subrectangles. So $\bar{X}_1=\frac{1}{2}, \bar{X}_2=\frac{3}{2}, \bar{y}_1=\frac{5}{4}$, and $\bar{y}_2=\frac{7}{4}$. The area of each subrectangle is $\Delta A=\frac{1}{2}$. Thus
+$$
+\begin{aligned}
+\iint_R\left(x-3 y^2\right) d A & \approx \sum_{i=1}^2 \sum_{j=1}^2 f\left(\bar{x}_i, \bar{y}_j\right) \Delta A \\
+& =f\left(\bar{x}_1, \bar{y}_1\right) \Delta A+f\left(\bar{x}_1, \bar{y}_2\right) \Delta A+f\left(\bar{x}_2, \bar{y}_1\right) \Delta A+f\left(\bar{x}_2, \bar{y}_2\right) \Delta A \\
+& =f\left(\frac{1}{2}, \frac{5}{4}\right) \Delta A+f\left(\frac{1}{2}, \frac{7}{4}\right) \Delta A+f\left(\frac{3}{2}, \frac{5}{4}\right) \Delta A+f\left(\frac{3}{2}, \frac{7}{4}\right) \Delta A \\
+& =\left(-\frac{67}{16}\right) \frac{1}{2}+\left(-\frac{139}{16}\right) \frac{1}{2}+\left(-\frac{51}{16}\right) \frac{1}{2}+\left(-\frac{123}{16}\right) \frac{1}{2} \\
+& =-\frac{95}{8}=-11.875
+\end{aligned}
+$$
+Thus we have
+$$
+\iint_R\left(x-3 y^2\right) d A \approx-11.875
+$$
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+-11.875  

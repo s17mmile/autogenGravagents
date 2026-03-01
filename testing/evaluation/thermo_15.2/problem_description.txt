@@ -1,0 +1,32 @@
+Problem Description:
+For an ensemble consisting of 1.00 moles of particles having two energy levels separated by $h v=1.00 \times 10^{-20} \mathrm{~J}$, at what temperature will the internal energy of this system equal $1.00 \mathrm{~kJ}$ ?
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+Using the expression for total energy and recognizing that $N=n N_A$,
+$$
+U=-\left(\frac{\partial \ln Q}{\partial \beta}\right)_V=-n N_A\left(\frac{\partial \ln q}{\partial \beta}\right)_V
+$$
+Evaluating the preceding expression and paying particular attention to units, we get
+$$
+\begin{aligned}
+& U=-n N_A\left(\frac{\partial}{\partial \beta} \ln q\right)_V=-\frac{n N_A}{q}\left(\frac{\partial q}{\partial \beta}\right)_V \\
+& \frac{U}{n N_A}=\frac{-1}{\left(1+e^{-\beta h \nu}\right)}\left(\frac{\partial}{\partial \beta}\left(1+e^{-\beta h \nu}\right)\right)_V \\
+&=\frac{h \nu e^{-\beta h \nu}}{1+e^{-\beta h \nu}}=\frac{h \nu}{e^{\beta h \nu}+1} \\
+& \frac{n N_A h \nu}{U}-1=e^{\beta h \nu} \\
+& \ln \left(\frac{n N_A h \nu}{U}-1\right)=\beta h \nu=\frac{h \nu}{k T}
+\end{aligned}
+$$
+$$
+\begin{aligned}
+T & =\frac{h \nu}{k \ln \left(\frac{n N_A h \nu}{U}-1\right)} \\
+= & \frac{1.00 \times 10^{-20} \mathrm{~J}}{\left(1.38 \times 10^{-23} \mathrm{~J} \mathrm{~K}^{-1}\right) \ln \left(\frac{(1.00 \mathrm{~mol})\left(6.022 \times 10^{23} \mathrm{~mol}^{-1}\right)\left(1.00 \times 10^{-20} \mathrm{~J}\right)}{\left(1.00 \times 10^3 \mathrm{~J}\right)}-1\right)} \\
+& =449 \mathrm{~K}
+\end{aligned}
+$$
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+449  $\mathrm{~K}$

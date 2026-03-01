@@ -3,12 +3,20 @@ import os, shutil
 
 # Define function to be executed for each problem
 def run_test(problem):
-    print(f"Running test for problem: {problem}\n\n")
+    # print(f"Running test for problem: {problem}\n\n")
 
     # Create a directory to save the problem and proposed solution(s)
     problemname = f"{problem['source']}_{problem['problemid']}".strip().replace(' ', '_').replace('__', '_')
     problem_dir = os.path.join(os.path.dirname(__file__), "evaluation", problemname)
     os.makedirs(problem_dir, exist_ok=True)
+
+    # Save problem description and correct solution in the problem directory for reference
+    with open(os.path.join(problem_dir, "problem_description.txt"), "w", encoding="utf-8") as f:
+        f.write(f"Problem Description:\n{problem['problem_text']}\n\n")
+        f.write("--------------------------------------------------------------------------------------\n\n")
+        f.write(f"Reference Explanation:\n{problem['solution']}\n\n")
+        f.write("--------------------------------------------------------------------------------------\n\n")
+        f.write(f"Final Answer:\n{problem['answer_number']} {problem['unit']}\n")
 
     # Run problem through FlexibleAgents system (default config)
     # TODO

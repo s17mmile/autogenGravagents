@@ -1,0 +1,28 @@
+Problem Description:
+What is the mean speed, $\bar{c}$, of $\mathrm{N}_2$ molecules in air at $25^{\circ} \mathrm{C}$ ?
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+The integral required is
+$$
+\begin{aligned}
+\bar{c} & =4 \pi\left(\frac{M}{2 \pi R T}\right)^{3 / 2} \int_0^{\infty} v^3 \mathrm{e}^{-M v^2 / 2 R T} \mathrm{~d} v \\
+& =4 \pi\left(\frac{M}{2 \pi R T}\right)^{3 / 2} \times \frac{1}{2}\left(\frac{2 R T}{M}\right)^2=\left(\frac{8 R T}{\pi M}\right)^{1 / 2}
+\end{aligned}
+$$
+where we have used the standard result from tables of integrals (or software) that
+$$
+\int_0^{\infty} x^3 \mathrm{e}^{-a x^2} \mathrm{~d} x=\frac{1}{2 a^2}
+$$
+Substitution of the data then gives
+$$
+\bar{c}=\left(\frac{8 \times\left(8.3141 \mathrm{~J} \mathrm{~K}^{-1} \mathrm{~mol}^{-1}\right) \times(298 \mathrm{~K})}{\pi \times\left(28.02 \times 10^{-3} \mathrm{~kg} \mathrm{~mol}^{-1}\right)}\right)^{1 / 2}=475 \mathrm{~m} \mathrm{~s}^{-1}
+$$
+where we have used $1 \mathrm{~J}=1 \mathrm{~kg} \mathrm{~m}^2 \mathrm{~s}^{-2}$.
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+475  $\mathrm{~m} \mathrm{~s}^{-1}$

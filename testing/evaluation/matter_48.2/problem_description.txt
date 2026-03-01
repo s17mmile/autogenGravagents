@@ -1,0 +1,31 @@
+Problem Description:
+Calculate the shielding constant for the proton in a free $\mathrm{H}$ atom.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+The wavefunction for a hydrogen 1 s orbital is
+$$
+\psi=\left(\frac{1}{\pi a_0^3}\right)^{1 / 2} \mathrm{e}^{-r / a_0}
+$$
+so, because $\mathrm{d} \tau=r^2 \mathrm{~d} r \sin \theta \mathrm{d} \theta \mathrm{d} \phi$, the expectation value of $1 / r$ is written as
+$$
+\begin{aligned}
+\left\langle\frac{1}{r}\right\rangle & =\int \frac{\psi^* \psi}{r} \mathrm{~d} \tau=\frac{1}{\pi a_0^3} \int_0^{2 \pi} \mathrm{d} \phi \int_0^\pi \sin \theta \mathrm{d} \theta \int_0^{\infty} r \mathrm{e}^{-2 r / a_0} \mathrm{~d} r \\
+& =\frac{4}{a_0^3} \overbrace{\int_0^{\infty} r \mathrm{e}^{-2 r / a_0} \mathrm{~d} r}^{a_0^2 / 4 \text { (Integral E.1) }}=\frac{1}{a_0}
+\end{aligned}
+$$
+where we used the integral listed in the Resource section. Therefore,
+$$
+\begin{aligned}
+& =\frac{\left(1.602 \times 10^{-19} \mathrm{C}\right)^2 \times(4 \pi \times 10^{-7} \overbrace{\mathrm{J}}^{\mathrm{Jg} \mathrm{m}^2 \mathrm{~s}^{-2}} \mathrm{~s}^2 \mathrm{C}^{-2} \mathrm{~m}^{-1})}{12 \pi \times\left(9.109 \times 10^{-31} \mathrm{~kg}\right) \times\left(5.292 \times 10^{-11} \mathrm{~m}\right)} \\
+& =1.775 \times 10^{-5} \\
+&
+\end{aligned}
+$$
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+1.775  $10^{-5}$

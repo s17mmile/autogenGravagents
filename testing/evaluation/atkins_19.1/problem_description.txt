@@ -1,0 +1,30 @@
+Problem Description:
+Calculate the separation of the $\{123\}$ planes of an orthorhombic unit cell with $a=0.82 \mathrm{~nm}, b=0.94 \mathrm{~nm}$, and $c=0.75 \mathrm{~nm}$.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+For the first part, simply substitute the information into eqn $$
+\frac{1}{d_{h k l}^2}=\frac{h^2}{a^2}+\frac{k^2}{b^2}+\frac{l^2}{c^2}
+$$. For the second part, instead of repeating the calculation, note that, if all three Miller indices are multiplied by $n$, then their separation is reduced by that factor:
+$$
+\frac{1}{d_{n h, n k, n l}^2}=\frac{(n h)^2}{a^2}+\frac{(n k)^2}{b^2}+\frac{(n l)^2}{c^2}=n^2\left(\frac{h^2}{a^2}+\frac{k^2}{b^2}+\frac{l^2}{c^2}\right)=\frac{n^2}{d_{h k l}^2}
+$$
+which implies that
+$$
+d_{n h, n k, n l}=\frac{d_{h k l}}{n}
+$$
+Answer Substituting the indices into eqn $$
+\frac{1}{d_{h k l}^2}=\frac{h^2}{a^2}+\frac{k^2}{b^2}+\frac{l^2}{c^2}
+$$ gives
+$$
+\frac{1}{d_{123}^2}=\frac{1^2}{(0.82 \mathrm{~nm})^2}+\frac{2^2}{(0.94 \mathrm{~nm})^2}+\frac{3^2}{(0.75 \mathrm{~nm})^2}=0.22 \mathrm{~nm}^{-2}
+$$
+Hence, $d_{123}=0.21 \mathrm{~nm}$.
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+0.21  $\mathrm{~nm}$
