@@ -178,4 +178,7 @@ class flexibleAgentChat:
 
                 # Write to file and also print so manager/summary messages are visible in the terminal
                 f.write(f"{name}:\n{formatted}\n\n")
+
+        # Return all messages for potential further processing (e.g. for GUI display or analysis)
+        return groupchat.messages
                 

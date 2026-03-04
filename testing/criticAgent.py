@@ -15,7 +15,7 @@ def solutionCriticAgent(llm_config, name = "SolutionCriticAgent") -> Conversable
         Your responsibilities:
         1. Understand the problem posed, the reference explanation (if given), and the proposed solution presented to you.
         2. Compare the proposed solution to the correct solution.
-        3. in the isAnswerCorrect field, indicate whether the final answer that the system arrived at is correct or not. 1 indicates that the proposed solution is correct, while 0 indicates that it is not correct.
+        3. in the isAnswerCorrect field, indicate whether the final answer that the system arrived at (usually a numerical or boolean value) is correct or not. 1 indicates that the proposed solution is correct, while 0 indicates that it is not correct.
         4. In the explanationRating field, provide a rating on a scale of 1-10 indicating the overall quality of the proposed solution, taking into account factors such as correctness, completeness, clarity, and closeness to the given correct explanation. If no reference explanation is provided, grade to the best of your ability based on the information given.
         5. In the comments field, note any exceptional strengths or weaknesses of the proposed solution is they come up. Otherwise leave it blank.
     """
