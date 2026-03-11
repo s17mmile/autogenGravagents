@@ -40,7 +40,7 @@ def researchAgent(llm_config, name = "ResearchAgent") -> WebSurferAgent:
 
 	research_llm_config = llm_config.copy()
 	research_llm_config["response_format"] = researchAgentResponse
-	research_llm_config["temperature"] = 0
+	research_llm_config["temperature"] = 0.01
 
 	# Using a given collection name is needed to retain knowledge across runs
 	return WebSurferAgent(

@@ -75,7 +75,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 
 	documentRetrieval_llm_config = llm_config.copy()
 	documentRetrieval_llm_config["response_format"] = documentRetrievalAgentResponse
-	documentRetrieval_llm_config["temperature"] = 0.05
+	documentRetrieval_llm_config["temperature"] = 0.1
 
 	# Using a given collection name is needed to retain knowledge across runs
 	return DocAgent(
