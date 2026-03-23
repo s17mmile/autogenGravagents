@@ -157,7 +157,41 @@ class GuiWorker(QObject):
 class GuiSignals(QObject):
     new_message = Signal(dict)
 
+'''
+GUI code from AgentChat
+        # Placeholder setters for GUI
+        self.guiThread = None
+        self.guiWorker = None
+        self.guiSignals = None
 
+        # TODO move this to a separate GUI handler class that this exposes messages to.
+        # Build a GUI if needed
+        # GUI runs on a separate thread and receives messages through a thread-safe queue, so it should not interrupt the main flow of the conversation at all.
+        self.hasGUI = makeGUI
+        if makeGUI:
+            import threading
+            from PySide6.QtCore import QObject, Signal, QThread, Slot
+            from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QVBoxLayout, QWidget
+            from flexibleAgents.GUI.agentChatGUI import GuiWorker, GuiSignals
+
+            # PySide6 App must be built in main thread
+            self.app = QApplication(sys.argv)
+
+            # Instantiate Signal Type to be used to send msg to GUI from main thread
+            self.guiSignals = GuiSignals()
+
+            # Build new thread and move the GUI handling class over there to avoid thread blocking
+            self.guiThread = QThread()
+            self.guiWorker = GuiWorker(self.guiSignals)
+            self.guiWorker.moveToThread(self.guiThread)
+
+            # Connect thread startup
+            self.guiThread.started.connect(self.guiWorker.buildGUI)
+            self.guiSignals.new_message.connect(self.guiWorker.addMessage)
+            
+            # Start thread (non-blocking)
+            self.guiThread.start()
+'''
 
 
 

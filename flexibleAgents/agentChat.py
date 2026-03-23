@@ -19,44 +19,11 @@ def print_message(recipient: ConversableAgent, messages: List[Dict], sender: Con
 
 # Main class that allows flexible agent conversations based on config files
 class flexibleAgentChat:
-    def __init__(self, configPath: str, llm_config, maxRounds: int = 10, makeGUI: bool = False):
+    def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
         # Basic setters
         self.configPath = configPath
         self.llm_config = llm_config
         self.maxRounds = maxRounds
-
-        # Placeholder setters for GUI
-        self.guiThread = None
-        self.guiWorker = None
-        self.guiSignals = None
-
-        # TODO move this to a separate GUI handler class that this exposes messages to.
-        # Build a GUI if needed
-        # GUI runs on a separate thread and receives messages through a thread-safe queue, so it should not interrupt the main flow of the conversation at all.
-        self.hasGUI = makeGUI
-        if makeGUI:
-            import threading
-            from PySide6.QtCore import QObject, Signal, QThread, Slot
-            from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QVBoxLayout, QWidget
-            from flexibleAgents.GUI.agentChatGUI import GuiWorker, GuiSignals
-
-            # PySide6 App must be built in main thread
-            self.app = QApplication(sys.argv)
-
-            # Instantiate Signal Type to be used to send msg to GUI from main thread
-            self.guiSignals = GuiSignals()
-
-            # Build new thread and move the GUI handling class over there to avoid thread blocking
-            self.guiThread = QThread()
-            self.guiWorker = GuiWorker(self.guiSignals)
-            self.guiWorker.moveToThread(self.guiThread)
-
-            # Connect thread startup
-            self.guiThread.started.connect(self.guiWorker.buildGUI)
-            self.guiSignals.new_message.connect(self.guiWorker.addMessage)
-            
-            # Start thread (non-blocking)
-            self.guiThread.start()
 
         # Instantiate agents based on config in given path.
         # This does not yet initiate the GroupChat instance or start the conversation.
@@ -64,14 +31,6 @@ class flexibleAgentChat:
 
         # Verbose mode prints out extra transition messages and debug stuff
         self.verbose = False
-
-    # Proper thread shutdown for GUI
-    def __del__(self):
-        if self.hasGUI:
-            self.guiThread.quit()
-            self.guiThread.wait()
-        else:
-            pass
 
 
     # Parse agent chat config from text file.
@@ -146,9 +105,6 @@ class flexibleAgentChat:
             # Separately keep track of the human agent name for query routing
             if spec.agentType == "humanAgent":          
                 self.humanAgent = agent
-            # If a GUI is enabled, use a processMessageBeforeSend hook to pass the message to the GUI
-            if self.hasGUI:
-                agent.register_hook("process_message_before_send", self.sendMsgToGUI)
             
 
         # Build transitions dict in required format for autogen conversations (converts keys and values from names to agent instances)
@@ -232,11 +188,3 @@ class flexibleAgentChat:
 
         # Return all messages for potential further processing (e.g. for GUI display or analysis)
         return groupchat.messages
-    
-    # GUI Attachment
-    def sendMsgToGUI(self, message):
-        if not self.hasGUI:
-            print("No GUI to send a message to!")
-            return
-        else:
-            self.guiSignals.new_message.emit(message)
