@@ -4,13 +4,12 @@ from pydantic import BaseModel
 from typing import Dict, List
 from dataclasses import dataclass
 
+# PyQt imports
+from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
+
 # Autogen imports
 import autogen
 from autogen import ConversableAgent, GroupChat, GroupChatManager
-
-# Custom local imports
-from flexibleAgents.typedefs import agentSpecification, chatGraph
-
 
 
 
@@ -31,8 +30,11 @@ class chatGraph:
 
 
 # Main class that allows flexible agent conversations based on config files
-class flexibleAgentChat:
-    def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
+# Extends QObject so that it can be properly used with the GUI
+class flexibleAgentChat(QObject):
+    def __init__(self, configPath: str, llm_config, maxRounds: int = 10, parent = None):
+        super().__init__(parent)
+
         # Basic setters
         self.configPath = configPath
         self.llm_config = llm_config
@@ -126,6 +128,7 @@ class flexibleAgentChat:
         return
 
     # Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
+    @Slot(str)
     def startConversation(self, query: str):
         # If no transitions were given, we can simply switch the GroupChat to allow all transitions by switching them from allowed to disallowed
         if self.configIncludesTransitions:

@@ -1,6 +1,7 @@
 import sys
 import json
 from typing import Optional, List, Dict, Any
+import threading
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -16,12 +17,17 @@ from PySide6.QtWidgets import (
     QDialog,
     QTextEdit,
 )
-from PySide6.QtCore import QObject, Signal, Qt, Slot
+from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
+
+from flexibleAgents.agentChat import flexibleAgentChat
 
 class AgentChatGUI(QMainWindow):
-    def __init__(self, agent_chat, parent = None):
+
+    # --------------------------------------------------------------------------------------------------------------------------------------------------
+    # Definition of GUI itself (closed off from agent chat logic and message handling for cleaner code organization)
+
+    def __init__(self, parent = None):
         super().__init__(parent)
-        self.agent_chat = agent_chat
         self.setWindowTitle("AgentChat Console")
 
         self._messages: List[Dict[str, Any]] = []
@@ -82,25 +88,6 @@ class AgentChatGUI(QMainWindow):
             "Save config is not implemented yet.",
         )
 
-    # Message Reception from AgentChat
-    # Expected format: {"agent_name": "...", "message": "...", ...}
-    # TODO update format to match agent output?
-    def addMessage(self, msg: Dict[str, Any]):
-        agent_name = msg.get("agent_name", "agent")
-        message_text = msg.get("message", "")
-
-        list_text = f"[{agent_name}] {message_text}"
-        item = QListWidgetItem(list_text)
-
-        # Store full message dict on the item for later retrieval
-        item.setData(Qt.UserRole, msg)
-
-        self.message_list.addItem(item)
-        self._messages.append(msg)
-
-        # Scroll to bottom
-        self.message_list.scrollToBottom()
-
     # Function to see details of message by just JSON dumping it into a pop-up
     def on_message_double_clicked(self, item: QListWidgetItem):
         msg = item.data(Qt.UserRole)
@@ -130,32 +117,57 @@ class AgentChatGUI(QMainWindow):
         dlg.resize(500, 400)
         dlg.exec()
 
+    # --------------------------------------------------------------------------------------------------------------------------------------------------
+    # GUI Interaction with handler and chat
+
+    # Message Reception from AgentChat
+    # Expected format: {"agent_name": "...", "message": "...", ...}
+    # TODO update format to match agent output?
+    @Slot(dict)
+    def addMessage(self, msg: Dict[str, Any]):
+        agent_name = msg.get("agent_name", "agent")
+        message_text = msg.get("message", "")
+
+        list_text = f"[{agent_name}] {message_text}"
+        item = QListWidgetItem(list_text)
+
+        # Store full message dict on the item for later retrieval
+        item.setData(Qt.UserRole, msg)
+
+        self.message_list.addItem(item)
+        self._messages.append(msg)
+
+        # Scroll to bottom
+        self.message_list.scrollToBottom()
+
+
 
 # Separate GUI worker class for cleaner multithreading
-# TODO maybe this one can be the handler that manages the GUI on main thread and the AgentChat on a second thread?
 # Message exposal would remain as a signal-slot mechanism
-class GuiWorker(QObject):
-    def __init__(self, signals):
+class AgentChatGuiHandler(QObject):
+    def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
         super().__init__()
-        self.signals = signals
-        self.window = None
 
-    @Slot()
-    def buildGUI(self):
-        self.window = AgentChatGUI(self.signals, parent = None)
+        # Instantiate PyQt app on main thread
+        self.app = QApplication(sys.argv)
+
+        # Define signal types for new messages and chat starts
+        self.newMessage = Signal(dict)
+        self.chatStarted = Signal(str)
+
+        # Build Agent Chat GUI Window
+        self.window = AgentChatGUI(parent = None)
         self.window.show()
 
-    # Forwards message from AgentChat to the GUI thread as signal-slot (thread-safe)
-    @Slot(dict)
-    def addMessage(self, msg):
-        if self.window:  # In case of early signal emission
-            self.window.addMessage(msg)
+        # Build the agentic chat on a second thread (worker thread) to avoid blocking the GUI, and connect its message output to the signal that the GUI listens to
+        self.agentChatThread = QThread()
+        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds)
+        self.agentChat.moveToThread(self.agentChatThread)
 
 
 
-# Gui Signal specification
-class GuiSignals(QObject):
-    new_message = Signal(dict)
+
+
 
 '''
 GUI code from AgentChat
