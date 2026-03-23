@@ -8,7 +8,21 @@ class researchAgentResponse(BaseModel):
 	message: str								# Overview of found documents/visited web pages
 	foundDocumentNames: List[str]			    # List of names of documents (so the human can cross-check sources)
 
-# TODO Create Agent tool to save documents to local folder? Or is that already possible?
+# Custom download management to enable precise downloading of data and corpus documents
+def download_handler(download: Download, context: str = None) -> None:
+    if "corpus" in context:
+        target_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "downloadTest1"))
+    elif "data" in context:
+        target_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "downloadTest1"))
+    else:
+        download.cancel()  # Block other downloads
+        return
+    
+    os.makedirs(target_folder, exist_ok=True)
+    download_path = os.path.join(target_folder, download.suggested_filename)
+    download.save_as(download_path)
+
+
 
 # The Research Agent is responsible for conducting research on the web to find relevant information and sources to answer queries posed by other agents.
 # It is responsible for finding and downloading relevant documents from the web, which can then be ingested into the system and used by the Document Retrieval Agent to answer questions with verifiable sources.
@@ -17,11 +31,12 @@ def researchAgent(llm_config, name = "ResearchAgent") -> WebSurferAgent:
 	documentCorpusPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentCorpus"))
 
 	systemMessage = f"""
-		You are a RESEARCH AGENT specializing in finding and downloading relevant documents from the web.
-		You will receive queries from other agents in the system.
-		Based on the task and the received question/statement, you should find and download relevant documents (HTML, Text Files, PDFs, etc.) from the web that can be ingested into the system.
-		These documents are to be stored in the local document corpus directory {documentCorpusPath}.
-		After downloading, these documents should be available for ingestion by the Document Retrieval Agent to answer questions with verifiable sources.
+		You are a RESEARCH AGENT specializing in finding and downloading relevant documents or data from the web.
+          
+        You can use context "corpus" or "data" to determine where to save the downloaded files.
+        "Corpus" is to be used for documents such as web pages or publications (HTML, Text Files, PDFs, etc.). These will be ingested into the Document Corpus used for Retrieval Augmented Generation.
+        "Data" is to be used for raw data files, such as CSVs, JSONs, or other structured data that can be used for analysis within the context of a single task.
+        If the context is not clear, you should not download the file.
 		
 		Your responsibilities:
 		1. Search the web for relevant information based on the queries you receive.
@@ -47,5 +62,8 @@ def researchAgent(llm_config, name = "ResearchAgent") -> WebSurferAgent:
 		name = name,
 		system_message = systemMessage,
 		llm_config = research_llm_config,
-		web_tool="browser_use"
+		web_tool="browser_use",
+		web_tool_kwargs={
+        	"_download_handler": download_handler
+    	}
 	)

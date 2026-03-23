@@ -2,7 +2,7 @@
 import os, sys, shutil, json
 from pydantic import BaseModel
 from typing import Dict, List
-from enum import Enum
+from dataclasses import dataclass
 
 # Autogen imports
 import autogen
@@ -11,11 +11,24 @@ from autogen import ConversableAgent, GroupChat, GroupChatManager
 # Custom local imports
 from flexibleAgents.typedefs import agentSpecification, chatGraph
 
-def print_message(recipient: ConversableAgent, messages: List[Dict], sender: ConversableAgent, config):
-    last = messages[-1]
-    content = last.get("content")
-    print(f"[{sender.name} → {recipient.name}] {content}")
-    return None, None
+
+
+
+# TYPEDEFS
+# All agent specifying information for reading in the config file
+@dataclass
+class agentSpecification:
+    agentType: str
+    name: str
+
+# chatGraph holds all agents and their possible transitions in a concise format
+# The transitions dict maps source agent names to lists of destination agent names in the exact format needed to constrain speaker transitions in autogen conversations
+@dataclass
+class chatGraph:
+    agents: Dict[str, ConversableAgent]
+    transitions: Dict[ConversableAgent, List[ConversableAgent]]
+
+
 
 # Main class that allows flexible agent conversations based on config files
 class flexibleAgentChat:
@@ -28,9 +41,6 @@ class flexibleAgentChat:
         # Instantiate agents based on config in given path.
         # This does not yet initiate the GroupChat instance or start the conversation.
         self.buildChatGraph()
-
-        # Verbose mode prints out extra transition messages and debug stuff
-        self.verbose = False
 
 
     # Parse agent chat config from text file.
@@ -145,14 +155,6 @@ class flexibleAgentChat:
         # Clear conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
         os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
-
-        if self.verbose:
-            for agent in agentList:
-                agent.register_reply(
-                    [ConversableAgent, None],
-                    reply_func = print_message,
-                    position = 0
-                )
 
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
