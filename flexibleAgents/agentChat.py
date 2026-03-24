@@ -11,6 +11,8 @@ from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
 import autogen
 from autogen import ConversableAgent, GroupChat, GroupChatManager
 
+# GUI import
+from flexibleAgents.GUI import AgentChatGUI
 
 
 # TYPEDEFS
@@ -29,24 +31,37 @@ class chatGraph:
 
 
 
+class agentChatSignals(QObject):
+    outgoingMessage = Signal(dict)
+
 # Main class that allows flexible agent conversations based on config files
 # Extends QObject so that it can be properly used with the GUI
 class flexibleAgentChat(QObject):
-    def __init__(self, configPath: str, llm_config, maxRounds: int = 10, parent = None):
+    def __init__(self, configPath: str = None, llm_config, maxRounds: int = 10, GUI: AgentChatGUI = None, parent = None):
         super().__init__(parent)
 
         # Basic setters
         self.configPath = configPath
         self.llm_config = llm_config
         self.maxRounds = maxRounds
+        self.GUI = GUI
+        self.interruptRequested = False
 
-        # Instantiate agents based on config in given path.
+        # Connect GUI signals to the relevant functions in this class (if needed)
+        if self.GUI:
+            self.signals = agentChatSignals()
+
+            self.signals.outgoingMessage.connect(self.GUI.newMessage)
+
+        # Instantiate agents based on config in given path (if given - will not be given when instantiating through GUI).
         # This does not yet initiate the GroupChat instance or start the conversation.
-        self.buildChatGraph()
+        if configPath:
+            self.buildAgents()
 
 
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
+    @Slot(str)
     def parseAgentConfig(self, path: str) -> chatGraph:
         with open(path, "r") as f:
             lines = [line.strip() for line in f if line.strip()]
@@ -71,7 +86,6 @@ class flexibleAgentChat(QObject):
 
         # Parse agents (type and name)
         # Syntax: <agentType>, <agent_name>
-        # Along the way, ensure a human agent is provided. Else error out.
         humanAgentCount = 0
         for line in lines[:split_index]:
             agentType, name = map(str.strip, line.split(",", 1))
@@ -79,6 +93,8 @@ class flexibleAgentChat(QObject):
             if agentType == "humanAgent":
                 humanAgentCount += 1
 
+        # Along the way, ensure a human agent is provided. Else error out.
+        # A human agent is required to provide the initial query, but (by default) the queryAgent can also quit a conversation!
         if humanAgentCount != 1:
             raise ValueError(f"Config invalid: {humanAgentCount} human agents found (exactly 1 required).")
 
@@ -94,10 +110,12 @@ class flexibleAgentChat(QObject):
         return agentSpecs, transitionSpecs
     
     # Instantiate agents based on the parsed config
-    def buildChatGraph(self):
+    @Slot()
+    def buildAgents(self):
         # Parse agent config file to receive agent and transition specifications
         agentSpecs, transitionSpecs = self.parseAgentConfig(self.configPath)
 
+        # Reset chat graph (allows overriding of config at runtime)
         self.chatGraph = chatGraph(
             {},                 # Agents            Name: Agent
             {}                  # Transitions       Agent: [Agents]
@@ -159,6 +177,9 @@ class flexibleAgentChat(QObject):
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
         os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
 
+        # Clear interruption request state at the beginning of the conversation
+        self.interruptRequested = False
+
         # Start the conversation with the prompt coming from the human and being passed to the manager.
         # We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
         # TODO figure out how exactly to expose the messages as they are generated (probably a hook method?) and expose them to the GUI
@@ -193,3 +214,7 @@ class flexibleAgentChat(QObject):
 
         # Return all messages for potential further processing (e.g. for GUI display or analysis)
         return groupchat.messages
+    
+    @Slot()
+    def interruptChat(self):
+        self.interruptRequested = True

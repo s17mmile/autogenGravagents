@@ -21,16 +21,28 @@ from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
 
 from flexibleAgents.agentChat import flexibleAgentChat
 
+
+# Define signal types for new messages and chat starts
+class GUISignals(QObject):
+    outgoingQuery = Signal(str)
+    outgoingLoadConfigRequest = Signal(str)
+    outgoingBuildAgentsRequest = Signal()
+    outgoingInterruptRequest = Signal(bool)
+
+
+
 class AgentChatGUI(QMainWindow):
 
     # --------------------------------------------------------------------------------------------------------------------------------------------------
     # Definition of GUI itself (closed off from agent chat logic and message handling for cleaner code organization)
 
-    def __init__(self, parent = None):
+    def __init__(self, agentChat: flexibleAgentChat, parent = None):
         super().__init__(parent)
         self.setWindowTitle("AgentChat Console")
 
-        self._messages: List[Dict[str, Any]] = []
+        # GUI knowledge about the agent chat instance is required!
+        self.agentChat = agentChat
+        self.messages: List[Dict[str, Any]] = []
 
         # Main widget and layout
         central = QWidget()
@@ -41,8 +53,10 @@ class AgentChatGUI(QMainWindow):
         button_row = QHBoxLayout()
         self.btn_load = QPushButton("Load config…")
         self.btn_save = QPushButton("Save config… (placeholder)")
+        self.btn_send = QPushButton("Send query")
         button_row.addWidget(self.btn_load)
         button_row.addWidget(self.btn_save)
+        button_row.addWidget(self.btn_send)
         button_row.addStretch()
 
         main_layout.addLayout(button_row)
@@ -55,12 +69,16 @@ class AgentChatGUI(QMainWindow):
         # Connect button signals
         self.btn_load.clicked.connect(self.on_load_config_clicked)
         self.btn_save.clicked.connect(self.on_save_config_clicked)
+        self.btn_send.clicked.connect(self.on_send_query_clicked)
         self.message_list.itemDoubleClicked.connect(self.on_message_double_clicked)
 
-        # # Timer to poll for new messages (if you don't yet have callbacks)
-        # self.poll_timer = QTimer(self)
-        # self.poll_timer.timeout.connect(self.poll_agent_messages)
-        # self.poll_timer.start(poll_interval_ms)
+        # Connect signals for message passing from agent chat to GUI
+        self.signals = GUISignals()
+
+        self.signals.sendQuery.connect(self.agentChat.startConversation)
+        self.signals.loadConfigRequest.connect(self.agentChat.parseAgentConfig)
+        self.signals.buildAgentsRequest.connect(self.agentChat.buildAgents)
+        self.signals.interruptRequest.connect(self.agentChat.interruptChat)
 
     # Load a config from a given file
     def on_load_config_clicked(self):
@@ -72,7 +90,7 @@ class AgentChatGUI(QMainWindow):
             if selected_files:
                 path = selected_files[0]
                 try:
-                    self.agent_chat.load_config(path)
+                    self.agentChat.signals.incomingLoadConfigRequest.emit(path)
                 except Exception as e:
                     QMessageBox.critical(
                         self,
@@ -87,6 +105,11 @@ class AgentChatGUI(QMainWindow):
             "Save config",
             "Save config is not implemented yet.",
         )
+
+    def on_send_query_clicked(self):
+        # TODO add input field for query
+        query = "What is the meaning of life?"
+        self.agent_chat.signals.startChatWithQuery.emit(query)
 
     # Function to see details of message by just JSON dumping it into a pop-up
     def on_message_double_clicked(self, item: QListWidgetItem):
@@ -135,7 +158,7 @@ class AgentChatGUI(QMainWindow):
         item.setData(Qt.UserRole, msg)
 
         self.message_list.addItem(item)
-        self._messages.append(msg)
+        self.messages.append(msg)
 
         # Scroll to bottom
         self.message_list.scrollToBottom()
@@ -148,21 +171,22 @@ class AgentChatGuiHandler(QObject):
     def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
         super().__init__()
 
+        # Build the agentic chat on a second thread (worker thread) to avoid blocking the GUI, and connect its message output to the signal that the GUI listens to
+        self.agentChatThread = QThread()
+        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds, GUI=self)
+        self.agentChat.moveToThread(self.agentChatThread)
+
         # Instantiate PyQt app on main thread
         self.app = QApplication(sys.argv)
 
-        # Define signal types for new messages and chat starts
-        self.newMessage = Signal(dict)
-        self.chatStarted = Signal(str)
-
         # Build Agent Chat GUI Window
-        self.window = AgentChatGUI(parent = None)
+        self.window = AgentChatGUI(self.agentChat, parent = None)
         self.window.show()
+        self.window.resize(800, 600)
+        
+        # Run App (on main thread!)
+        sys.exit(self.app.exec())
 
-        # Build the agentic chat on a second thread (worker thread) to avoid blocking the GUI, and connect its message output to the signal that the GUI listens to
-        self.agentChatThread = QThread()
-        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds)
-        self.agentChat.moveToThread(self.agentChatThread)
 
 
 
@@ -203,16 +227,6 @@ GUI code from AgentChat
             
             # Start thread (non-blocking)
             self.guiThread.start()
-'''
-
-
-
-
-
-
-
-
-
 
 
 def main():
@@ -243,3 +257,4 @@ def main():
 if __name__ == "__main__":
     main()
 
+'''
