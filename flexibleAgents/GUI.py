@@ -210,7 +210,6 @@ class AgentChatGUI(QMainWindow):
 
     # Message Reception from AgentChat
     # Expected format: {"name": "...", "content": {JSON_STRING}, ...}
-    # TODO update format to match agent output?
     @Slot(dict)
     def addMessage(self, msg: Dict[str, Any]):
         print("receiving message in GUI:", msg)
@@ -231,6 +230,14 @@ class AgentChatGUI(QMainWindow):
         self.message_list.scrollToBottom()
 
         print("Message added to GUI.")
+
+    @Slot(str)
+    def showPopup(self, text: str):
+        QMessageBox.information(
+            self,
+            "Agent Chat",
+            text,
+        )
 
     # Shutdown handling overrides regular closing functionality with handler thread cleanup before close
     def closeEvent(self, event):
