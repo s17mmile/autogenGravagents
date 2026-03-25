@@ -22,7 +22,7 @@ llm_config = LLMConfig({"api_type": os.getenv("IZ_API_TYPE"),
 # Set parameters for conversation execution
 maxRounds = 5
 
-print("Flexible chat GUI instance creating")
+print("Flexible chat GUI instance creating...")
 
 # Instantiate chat instance based on agent config file WITH GUI ENABLED
 flexibleChatGUI = AgentChatGuiHandler(
@@ -31,4 +31,4 @@ flexibleChatGUI = AgentChatGuiHandler(
     maxRounds=maxRounds
 )
 
-print("Flexible chat GUI instance created")
+print("Flexible chat GUI instance created.")

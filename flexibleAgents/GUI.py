@@ -5,6 +5,7 @@ import threading
 
 from PySide6.QtWidgets import (
     QApplication,
+    QLineEdit,
     QMainWindow,
     QWidget,
     QVBoxLayout,
@@ -17,18 +18,17 @@ from PySide6.QtWidgets import (
     QDialog,
     QTextEdit,
 )
-from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
+from PySide6.QtCore import QEventLoop, QObject, QTimer, Signal, Qt, Slot, QThread
 
 from flexibleAgents.agentChat import flexibleAgentChat
 
 
 # Define signal types for new messages and chat starts
 class GUISignals(QObject):
-    outgoingQuery = Signal(str)
-    outgoingLoadConfigRequest = Signal(str)
-    outgoingBuildAgentsRequest = Signal()
-    outgoingInterruptRequest = Signal(bool)
-
+    sendQuery = Signal(str)
+    loadConfigRequest = Signal(str)
+    buildAgentsRequest = Signal()
+    interruptRequest = Signal()
 
 
 class AgentChatGUI(QMainWindow):
@@ -40,41 +40,70 @@ class AgentChatGUI(QMainWindow):
         super().__init__(parent)
         self.setWindowTitle("AgentChat Console")
 
-        # GUI knowledge about the agent chat instance is required!
+        # GUI knowledge about the agent chat and communication signals
         self.agentChat = agentChat
         self.messages: List[Dict[str, Any]] = []
+        self.signals = GUISignals()
+
+        # The GUI shutdown process needs to be able to call a handler function in the main thread, so the handler is registered.
+        self.handler = None
 
         # Main widget and layout
-        central = QWidget()
-        self.setCentralWidget(central)
-        main_layout = QVBoxLayout(central)
+        self.central = QWidget()
+        self.setCentralWidget(self.central)
+        self.main_layout = QVBoxLayout(self.central)
 
         # Top button row
-        button_row = QHBoxLayout()
+        self.button_row = QHBoxLayout()
         self.btn_load = QPushButton("Load config…")
+        self.btn_build = QPushButton("Build agents")
         self.btn_save = QPushButton("Save config… (placeholder)")
-        self.btn_send = QPushButton("Send query")
-        button_row.addWidget(self.btn_load)
-        button_row.addWidget(self.btn_save)
-        button_row.addWidget(self.btn_send)
-        button_row.addStretch()
-
-        main_layout.addLayout(button_row)
+        self.button_row.addWidget(self.btn_load)
+        self.button_row.addWidget(self.btn_build)
+        self.button_row.addWidget(self.btn_save)
+        self.button_row.addStretch()
 
         # Chat message list
         self.message_list = QListWidget()
         self.message_list.setSelectionMode(QListWidget.SingleSelection)
-        main_layout.addWidget(self.message_list)
 
-        # Connect button signals
+        # Input row at bottom
+        self.input_row = QHBoxLayout()
+        self.query_input = QLineEdit()
+        self.query_input.setPlaceholderText("Enter your query here...")
+        self.btn_send = QPushButton("Send query")
+        self.btn_interrupt = QPushButton("Interrupt chat")
+        self.input_row.addWidget(self.query_input)
+        self.input_row.addWidget(self.btn_send)
+        self.input_row.addWidget(self.btn_interrupt)
+        self.input_row.addStretch()
+
+        # Add everything to the main layout
+        self.main_layout.addLayout(self.button_row)
+        self.main_layout.addWidget(self.message_list)
+        self.main_layout.addLayout(self.input_row)
+
+        # Button and Signal/slot connections
+        self.connectChatSignals()
+        self.connectButtons()
+
+    def registerHandler(self, handler):
+        self.handler = handler
+
+    # Connect button signals
+    def connectButtons(self):
         self.btn_load.clicked.connect(self.on_load_config_clicked)
         self.btn_save.clicked.connect(self.on_save_config_clicked)
+        self.btn_build.clicked.connect(self.on_build_agents_clicked)
         self.btn_send.clicked.connect(self.on_send_query_clicked)
+        self.btn_interrupt.clicked.connect(self.on_interrupt_chat_clicked)
         self.message_list.itemDoubleClicked.connect(self.on_message_double_clicked)
 
-        # Connect signals for message passing from agent chat to GUI
-        self.signals = GUISignals()
+        # Hitting enter in the query input also sends the query
+        self.query_input.returnPressed.connect(self.on_send_query_returnPressed)
 
+    # Connect signals for agent chat control through GUI
+    def connectChatSignals(self):
         self.signals.sendQuery.connect(self.agentChat.startConversation)
         self.signals.loadConfigRequest.connect(self.agentChat.parseAgentConfig)
         self.signals.buildAgentsRequest.connect(self.agentChat.buildAgents)
@@ -90,7 +119,8 @@ class AgentChatGUI(QMainWindow):
             if selected_files:
                 path = selected_files[0]
                 try:
-                    self.agentChat.signals.incomingLoadConfigRequest.emit(path)
+                    print("Emitting load config signal with path:", path)
+                    self.signals.loadConfigRequest.emit(path)
                 except Exception as e:
                     QMessageBox.critical(
                         self,
@@ -106,10 +136,44 @@ class AgentChatGUI(QMainWindow):
             "Save config is not implemented yet.",
         )
 
+    def on_build_agents_clicked(self):
+        try:
+            self.signals.buildAgentsRequest.emit()
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Error sending building agents signal",
+                f"Could not build agents:\n{e}",
+            )
+
     def on_send_query_clicked(self):
-        # TODO add input field for query
-        query = "What is the meaning of life?"
-        self.agent_chat.signals.startChatWithQuery.emit(query)
+        # Don't send empty queries
+        if self.query_input.text().strip() == "":
+            print("Empty query, not sending.")
+            return
+        else:
+            try:
+                self.signals.sendQuery.emit(self.query_input.text())
+                self.query_input.clear()
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    "Error sending query signal",
+                    f"Could not send query:\n{e}",
+                )
+
+    def on_send_query_returnPressed(self):
+        self.on_send_query_clicked()
+
+    def on_interrupt_chat_clicked(self):
+        try:
+            self.signals.interruptRequest.emit()
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Error sending interrupt signal",
+                f"Could not send interrupt signal:\n{e}",
+            )
 
     # Function to see details of message by just JSON dumping it into a pop-up
     def on_message_double_clicked(self, item: QListWidgetItem):
@@ -148,8 +212,10 @@ class AgentChatGUI(QMainWindow):
     # TODO update format to match agent output?
     @Slot(dict)
     def addMessage(self, msg: Dict[str, Any]):
-        agent_name = msg.get("agent_name", "agent")
-        message_text = msg.get("message", "")
+        print("receiving message in GUI:", msg)
+        # TODO check output format signature once responses work
+        agent_name = msg["name"] if "name" in msg else "Unknown"
+        message_text = msg["content"]["message"] if "content" in msg and "message" in msg["content"] else "ERROR: No message content"
 
         list_text = f"[{agent_name}] {message_text}"
         item = QListWidgetItem(list_text)
@@ -163,98 +229,70 @@ class AgentChatGUI(QMainWindow):
         # Scroll to bottom
         self.message_list.scrollToBottom()
 
+        print("Message added to GUI.")
 
+    # Shutdown handling overrides regular closing functionality with handler thread cleanup before close
+    def closeEvent(self, event):
+        self.handler.threadCleanup()
+        event.accept()
 
 # Separate GUI worker class for cleaner multithreading
 # Message exposal would remain as a signal-slot mechanism
 class AgentChatGuiHandler(QObject):
-    def __init__(self, configPath: str, llm_config, maxRounds: int = 10):
+    def __init__(self, configPath: str = None, llm_config = None, maxRounds: int = 10):
         super().__init__()
-
-        # Build the agentic chat on a second thread (worker thread) to avoid blocking the GUI, and connect its message output to the signal that the GUI listens to
-        self.agentChatThread = QThread()
-        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds, GUI=self)
-        self.agentChat.moveToThread(self.agentChatThread)
-
-        # Instantiate PyQt app on main thread
         self.app = QApplication(sys.argv)
 
-        # Build Agent Chat GUI Window
+        # Build the agentic chat. Will be moved to a separate thread but needs to be built before the GUI so that it can be registered to the GUI signals.
+        self.agentChatThread = QThread()
+        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds)
+
+        # Build Agent Chat GUI
         self.window = AgentChatGUI(self.agentChat, parent = None)
+        self.window.registerHandler(self)
         self.window.show()
         self.window.resize(800, 600)
+
+        # Register GUI to agent chat for bidirectional signal-slot communication
+        self.agentChat.registerGUI(self.window)
+
+        # Guild agents if config is provided
+        if configPath:
+            self.agentChat.parseAgentConfig(configPath)
+            self.agentChat.buildAgents()
         
-        # Run App (on main thread!)
+        # Run PySide6 App on main thread while the agentChat lives on a second thread to avoid blocking. Communication happens through signals/slots.
+        self.agentChat.moveToThread(self.agentChatThread)
+        self.agentChatThread.start()
+
         sys.exit(self.app.exec())
 
 
 
+    def threadCleanup(self):
+        print("Handler: Window closing, stopping agentChat thread...")
+        
+        # Emit chat interrupt request
+        self.window.signals.interruptRequest.emit()
+        
+        # Queue quit signal
+        self.agentChatThread.quit()
+        
+        # Pop-up window to inform about force-shutdown timer (memory corruption is possible if chat is currently executing).
+        msgBox = QMessageBox(self.window)
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setWindowTitle("Shutdown")
+        msgBox.setText("Shutting down the agent chat thread, 3s until forced shutdown.")
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.show()
 
+        # Wait max 3s for clean exit (processing of the previous quit signal, will only happen if agent message finishes in this time).
+        # If quit signal is not processed in this time, it means the agent is busy (most likely just waiting for a chat completion response) and a stop is forced. Extra wait time for cleanup.
+        if not self.agentChatThread.wait(3000):
+            print("Force terminating agentChatThread...")
+            self.agentChatThread.terminate()
+            self.agentChatThread.wait(500)
 
+        msgBox.close()
 
-
-'''
-GUI code from AgentChat
-        # Placeholder setters for GUI
-        self.guiThread = None
-        self.guiWorker = None
-        self.guiSignals = None
-
-        # TODO move this to a separate GUI handler class that this exposes messages to.
-        # Build a GUI if needed
-        # GUI runs on a separate thread and receives messages through a thread-safe queue, so it should not interrupt the main flow of the conversation at all.
-        self.hasGUI = makeGUI
-        if makeGUI:
-            import threading
-            from PySide6.QtCore import QObject, Signal, QThread, Slot
-            from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit, QVBoxLayout, QWidget
-            from flexibleAgents.GUI.agentChatGUI import GuiWorker, GuiSignals
-
-            # PySide6 App must be built in main thread
-            self.app = QApplication(sys.argv)
-
-            # Instantiate Signal Type to be used to send msg to GUI from main thread
-            self.guiSignals = GuiSignals()
-
-            # Build new thread and move the GUI handling class over there to avoid thread blocking
-            self.guiThread = QThread()
-            self.guiWorker = GuiWorker(self.guiSignals)
-            self.guiWorker.moveToThread(self.guiThread)
-
-            # Connect thread startup
-            self.guiThread.started.connect(self.guiWorker.buildGUI)
-            self.guiSignals.new_message.connect(self.guiWorker.addMessage)
-            
-            # Start thread (non-blocking)
-            self.guiThread.start()
-
-
-def main():
-    # Replace DummyAgentChat with your real agentChat instance
-    agent_chat = DummyAgentChat()
-
-    # Init PySide6 app
-    app = QApplication(sys.argv)
-
-    # For demo, inject some fake data periodically
-    def demo_feed():
-        # agent_chat.push_message("planner", "Planning next steps…", thought="…")
-        # agent_chat.push_message("executor", "Code executed successfully.", status="ok")
-        window.addMessage({"agent_name": "carl", "message": "hello", "comments": "nothing", "rounds": 1})
-        window.addMessage({"agent_name": "jim", "message": "yo", "comments": "testing", "rounds": 2})
-
-    demo_timer = QTimer()
-    demo_timer.timeout.connect(demo_feed)
-    demo_timer.start(3000)
-
-    window = AgentChatGUI(agent_chat)
-    window.resize(800, 600)
-    window.show()
-
-    sys.exit(app.exec())
-
-
-if __name__ == "__main__":
-    main()
-
-'''
+        print("Thread shutdown complete.")
