@@ -167,6 +167,7 @@ class AgentChatGUI(QMainWindow):
 
     def on_interrupt_chat_clicked(self):
         try:
+            print("Interrupt button clicked, emitting interrupt signal. Will be processed once thread is free.")
             self.signals.interruptRequest.emit()
         except Exception as e:
             QMessageBox.critical(
@@ -208,12 +209,12 @@ class AgentChatGUI(QMainWindow):
     # GUI Interaction with handler and chat
 
     # Message Reception from AgentChat
-    # Expected format: {"agent_name": "...", "message": "...", ...}
+    # Expected format: {"name": "...", "content": {JSON_STRING}, ...}
     # TODO update format to match agent output?
     @Slot(dict)
     def addMessage(self, msg: Dict[str, Any]):
         print("receiving message in GUI:", msg)
-        # TODO check output format signature once responses work
+
         agent_name = msg["name"] if "name" in msg else "Unknown"
         message_text = msg["content"]["message"] if "content" in msg and "message" in msg["content"] else "ERROR: No message content"
 
