@@ -244,8 +244,10 @@ class AgentChatGuiHandler(QObject):
         self.app = QApplication(sys.argv)
 
         # Build the agentic chat. Will be moved to a separate thread but needs to be built before the GUI so that it can be registered to the GUI signals.
+        # ConfigPath is not yet passed sa GUI registration should happen before - didn't quite build this as cleanly as I may have liked.
+        # Could have made a GUI parameter passable to flexibleAgentChat but preferred separate GUI registration to keep backend clean.
         self.agentChatThread = QThread()
-        self.agentChat = flexibleAgentChat(configPath, llm_config, maxRounds)
+        self.agentChat = flexibleAgentChat(None, llm_config, maxRounds)
 
         # Build Agent Chat GUI
         self.window = AgentChatGUI(self.agentChat, parent = None)

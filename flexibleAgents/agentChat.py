@@ -1,4 +1,5 @@
 # General imports
+from ast import If
 import os, sys, shutil, json, re
 from pydantic import BaseModel
 from typing import Dict, List
@@ -81,17 +82,24 @@ class flexibleAgentChat(QObject):
             print(f"sendMessageToGUI received message of unsupported type {type(message)}. Message content: {message}. Defaulting to dict with only message content.")
             guiMessage = {"name": sender.name, "content": {"message": str(message)}}
 
-        print(f"sendMessageToGUI called with sender: {sender}, recipient: {recipient}, message: {message}, silent: {silent}")
-
         self.signals.outgoingMessage.emit(guiMessage)
 
         return message
+    
+    @Slot()
+    def interruptChat(self):
+        print("Interrupt requested.")
+        self.interruptRequested = True
 
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
     @Slot(str)
     def parseAgentConfig(self, path: str) -> chatGraph:
         print(f"Parsing agent config from {path}...")
+
+        # Clear specs
+        self.agentSpecs: List[agentSpecification] = []
+        self.transitionSpecs: Dict[str, List[str]] = {}
 
         with open(path, "r") as f:
             lines = [line for line in f if line]
@@ -188,6 +196,8 @@ class flexibleAgentChat(QObject):
         return
 
     def checkTermination(self, message) -> bool:
+        print(f"Checking for termination signal in message {message}...")
+
         # Check if the message contains a termination signal (this is a very basic implementation and can be expanded based on how exactly the termination signal is structured)
         if self.interruptRequested:
             print("Termination requested by GUI interrupt.")
@@ -195,10 +205,18 @@ class flexibleAgentChat(QObject):
         
         # Check for terrmination signal in message content (looking for a field "terminateChat" set to True within JSON content string)
         if isinstance(message, dict):
-            # Load JSON string into dict
-            content = json.loads(message["content"])
-            # Check for termination signal (False if field is nonexistent)
-            return content.get("terminateChat", False)
+            # Load JSON string into dict if content is valid JSON string.
+            try:
+                content = json.loads(message["content"])
+                # Check for termination signal (False if field is nonexistent)
+                termination = content.get("terminateChat", False)
+                if termination and self.GUI:
+                    self.signals.outgoingMessage.emit({"name": "System", "content": {"message": "Termination signal received. Ending conversation..."}})
+                return True
+            # If not, nothing happens.
+            except json.JSONDecodeError:
+                print("Not JSON content, no termination signal.")
+                return False
         else:
             return False
 
@@ -285,7 +303,3 @@ class flexibleAgentChat(QObject):
         # Return all messages for potential further processing (e.g. for GUI display or analysis)
         return groupchat.messages
     
-    @Slot()
-    def interruptChat(self):
-        print("Interrupt requested.")
-        self.interruptRequested = True
