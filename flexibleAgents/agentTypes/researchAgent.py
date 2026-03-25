@@ -1,7 +1,12 @@
 import os
-from autogen.agents.experimental import WebSurferAgent
 from pydantic import BaseModel
 from typing import Dict, List
+
+print("importing playwright and websurfer")
+from playwright.async_api import Download
+from autogen.agents.experimental import WebSurferAgent
+print("imported")
+
 
 # Define research agent response format
 class researchAgentResponse(BaseModel):
