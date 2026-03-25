@@ -1,4 +1,5 @@
-from typing import Dict, List
+import json
+from typing import Any, Dict, List, Union
 from autogen import ConversableAgent
 from pydantic import BaseModel
 
@@ -9,8 +10,10 @@ def humanAgent(llm_config, name = "Human") -> ConversableAgent:
 		It is designed to receive queries or tasks from other agents and provide human responses when necessary.
 	"""
 
-	return ConversableAgent(
+	agent = ConversableAgent(
 		name = name,
 		description=description,
 		human_input_mode="ALWAYS"
 	)
+
+	return agent

@@ -6,6 +6,8 @@ load_dotenv()
 
 from flexibleAgents import agentChat
 
+os.system("clear")
+
 # BEFORE RUNNING, MAKE SURE TO SET UP YOUR .env FILE WITH AN APPROPRIATE URL AND API KEY
 # In my case, I am using ChatGPT-4o mini through the IZ VPN at the University of Bonn.
 

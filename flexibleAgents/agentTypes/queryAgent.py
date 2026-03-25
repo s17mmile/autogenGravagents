@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class queryAgentResponse(BaseModel):
 	message: str					# Message to the user about the task breakdown and distribution
 	subtasks: List[str]				# List of sub-tasks
-	isTaskComplete: bool				# Boolean whether to terminate the chat or not.
+	terminateChat: bool				# Boolean whether to terminate the chat or not.
 
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
@@ -23,10 +23,10 @@ def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 		2. Decompose the goal into specific sub-tasks that can then be assigned to specialized agents (e.g., coding agent, interpreter agent) by the group chat manager.
 		3. Interpret whether or not the work done by other agents is sufficient for the overall task at hand. If you believe the question posed has been properly answered, quit the conversation.
 		
-		Your output includes a message field, a subtasks field, and a isTaskComplete field:
+		Your output includes a message field, a subtasks field, and a terminateChat field:
 		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
 		- The subtasks field should contain a breakdown of the overall task into simpler-to-manage tasks for other agents.
-		- The isTaskComplete field contains a boolean value. Set this to one if and only if the agentic system has sufficiently answered the original query. If not, leave it at zero.
+		- The terminateChat field contains a boolean value. Set this to one if and only if the agentic system has sufficiently answered the original query. If not, leave it at zero.
 	"""
 
 	description = """
