@@ -88,10 +88,14 @@ class flexibleAgentChat(QObject):
 
         return message
     
+
+
     @Slot()
     def interruptChat(self):
         print("Interrupt requested.")
         self.interruptRequested = True
+
+
 
     # Parse agent chat config from text file.
     # Does not yet instantiate agents
@@ -162,6 +166,8 @@ class flexibleAgentChat(QObject):
         # if self.GUI:
         #     self.signals.guiPopUp.emit("Config parsing complete.")
         print("Config parsing complete.")
+
+
 
     # Instantiate agents based on the parsed config
     @Slot()
@@ -271,9 +277,10 @@ class flexibleAgentChat(QObject):
             is_termination_msg = self.checkTermination
         )
 
-        # Clear conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
+        # Clear and re-initialize conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
-        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
+        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/data", exist_ok=True)
+        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/tempDownloads", exist_ok=True)
 
         # Clear interruption request state at the beginning of the conversation
         self.interruptRequested = False
@@ -316,6 +323,6 @@ class flexibleAgentChat(QObject):
 
         print("Conversation history saved.")
 
-        # Return all messages for potential further processing (e.g. for GUI display or analysis)
-        return groupchat.messages
+        # Return all messages for potential further processing
+        return
     

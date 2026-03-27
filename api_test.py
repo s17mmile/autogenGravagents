@@ -7,7 +7,7 @@ print("Building agent")
 agent = ConversableAgent(
     name = "TestAgent",
     system_message = "You are a test agent for testing the API.",
-    llm_config = local_llm_config,
+    llm_config = commercial_llm_config,
     human_input_mode="always"
 )
 

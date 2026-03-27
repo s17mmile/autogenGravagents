@@ -2,8 +2,11 @@ from dotenv import load_dotenv
 import os
 
 print("importing playwright, llmconfig and websurfer")
+print("playwright")
 from playwright.async_api import Download
+print("llmconfig")
 from autogen import LLMConfig
+print("websurfer")
 from autogen.agents.experimental import WebSurferAgent
 print("imported")
 
@@ -27,7 +30,7 @@ print("agent building")
 
 agent = WebSurferAgent(
     name="WebSurfer",
-    llm_config=local_llm_config,
+    llm_config=commercial_llm_config,
     system_message="""
         You are a web surfing agent that can download files to specific folders based on the context of the conversation.
         You can use context "corpus" or "data" to determine where to save the downloaded files.

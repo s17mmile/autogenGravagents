@@ -21,8 +21,9 @@ class documentRetrievalAgentResponse(BaseModel):
 # Its knowledge is based solely on the documents in the provided corpus, which can be expanded upon through several runs of this system.
 # It uses a chroma vector database (stored alongside the document corpus) to store and query the ingested documents, and will only retrieve documents from the provided corpus to ensure verifiable and accurate information retrieval.
 def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAgent:
-	# Define path for document corpus
+	# Define path for document corpus and create folder if it doesn't exist
 	originalDocPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentCorpus"))
+	os.makedirs(originalDocPath, exist_ok=True)
 
 	# Create Chroma client and point it to persistent collection in the DB
 	chromaDbPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "chromaDb"))
@@ -32,7 +33,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 	embedding_fn = embedding_functions.OpenAIEmbeddingFunction(
 		api_key=llm_config["config_list"][0]["api_key"],         	# same key as for llm_config (extracted from first config list entry)
 		api_base=llm_config["config_list"][0]["base_url"],      	# same base_url as llm_config (extracted from first config list entry)
-		model_name="text-embedding-3-small"							# TODO Check if this is the correct embedding function
+		model_name="text-embedding-3-small"							# A cheap embedding function - could also use others
 	)
 
 	collection = chroma_client.get_or_create_collection(
