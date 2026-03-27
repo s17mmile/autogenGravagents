@@ -16,9 +16,8 @@ flexibleChat = agentChat.flexibleAgentChat(
     maxRounds=maxRounds
 )
 
-# query = input("Please enter your query: ")
 query = """
-    Provide a short summary of the 'Can theoretical physics research benefit from language agents' Paper given in the document corpus.
+Summarize the paper theoretical_physics_benefit.pdf, WHICH LIES IN THE DOCUMENT CORPUS.
     """
 
 # Start the conversation

@@ -12,6 +12,8 @@ from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
 import autogen
 from autogen import ConversableAgent, GroupChat, GroupChatManager
 
+# UTF-8 Encoding is important for docling
+sys.stdout.reconfigure(encoding='utf-8')
 
 # TYPEDEFS
 # All agent specifying information for reading in the config file
@@ -218,7 +220,7 @@ class flexibleAgentChat(QObject):
         return
 
     def checkTermination(self, message) -> bool:
-        print(f"Checking for termination signal in message {message}...")
+        # print(f"Checking for termination signal in message {message}...")
 
         # Check if the message contains a termination signal (this is a very basic implementation and can be expanded based on how exactly the termination signal is structured)
         if self.interruptRequested:

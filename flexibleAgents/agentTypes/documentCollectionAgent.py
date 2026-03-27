@@ -9,12 +9,13 @@ print("importing websurfer")
 from autogen.agents.experimental import WebSurferAgent
 print("imported")
 
-# Note: the documentCollectionAgent is based on websurferagent, which is experimental and causes a few warnings internally:
+# Note: the documentCollectionAgent is based on browser-use, which causes a few warnings internally:
 # - a pydantic warning about an improper field
 # - a future warning about google genai. 
 # - a warning about the "stream" parameter
 # - a warning about pkg_resources deprecation
 # This is out of my control and does not affect execution.
+# I believe this occurs because ag2 requires on old version of the browser-use tool (0.1.37). I will try updating it to see if it fixes warnings, but no promises.
 
 # Download specification for research agent output
 class downloadSpecification(BaseModel):

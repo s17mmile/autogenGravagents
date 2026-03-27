@@ -18,8 +18,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 
 # query = input("Please enter your query: ")
 query = """
-    Find the paper \"Multi-Agent System for Cosmological Parameter Analysis\" on arxiv.
-    Open the PDF and click the download button to download the paper, using the "data" specification.
+    Find and download the paper \"Multi-Agent System for Cosmological Parameter Analysis\" as a PDF.
     """
 
 # Start the conversation

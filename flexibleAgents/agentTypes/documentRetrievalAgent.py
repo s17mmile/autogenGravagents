@@ -1,15 +1,22 @@
-import os
+import os, codecs
 from typing import Dict, List
-print("Importing DocAgent")
+from anyio import Path
+
 from autogen.agents.experimental import DocAgent
-print("Importing VectorChromaQueryEngine")
 from autogen.agents.experimental import VectorChromaQueryEngine
-print("Done with Large imports")
 from pydantic import BaseModel
 
 # Needed for vector DB management
 import chromadb
 import chromadb.utils.embedding_functions as embedding_functions
+
+# Note: the documentRetrievalAgent also has browser-use in the background, which causes a few warnings internally:
+# - a pydantic warning about an improper field
+# - a future warning about google genai. 
+# - a warning about the "stream" parameter
+# - a warning about pkg_resources deprecation
+# This is out of my control and does not affect execution.
+# I believe this occurs because ag2 requires on old version of the browser-use tool (0.1.37). I will try updating it to see if it fixes warnings, but no promises.
 
 # Define doc agent response format
 class documentRetrievalAgentResponse(BaseModel):
@@ -22,12 +29,15 @@ class documentRetrievalAgentResponse(BaseModel):
 # It uses a chroma vector database (stored alongside the document corpus) to store and query the ingested documents, and will only retrieve documents from the provided corpus to ensure verifiable and accurate information retrieval.
 def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAgent:
 	# Define path for document corpus and create folder if it doesn't exist
-	originalDocPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentCorpus"))
-	os.makedirs(originalDocPath, exist_ok=True)
+	corpusPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentCorpus"))
+	os.makedirs(corpusPath, exist_ok=True)
+
+	# Parsed Documents Path (for chromaDB ingestion)
+	parsedDocsPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "parsedDocs"))
+	os.makedirs(parsedDocsPath, exist_ok=True)
 
 	# Create Chroma client and point it to persistent collection in the DB
 	chromaDbPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "chromaDb"))
-	chroma_client = chromadb.PersistentClient(path=chromaDbPath)
 
 	# Build an embedding function which uses the local GPT-4o API
 	embedding_fn = embedding_functions.OpenAIEmbeddingFunction(
@@ -36,32 +46,22 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 		model_name="text-embedding-3-small"							# A cheap embedding function - could also use others
 	)
 
-	collection = chroma_client.get_or_create_collection(
-		name="memoryBank",
-		embedding_function=embedding_fn,
-	)
-
 	# Build AG2 Query Engine using the chroma collection and the same llm config as for the agent backbone
 	# The LLM here is used to handle the DB queries (separate from the rest of the docAgent!)
 	query_engine = VectorChromaQueryEngine(
-		collection=collection,
+		db_path=chromaDbPath,
+		embedding_function=embedding_fn,
 		llm=llm_config,
+		collection_name="memoryBank"
 	)
 
 	systemMessage = f"""
 		You are a DOCUMENT RETRIEVAL AGENT specializing in answering queries based on retrieved documents.
-		You will receive questions or statements from other agents in the system.
-		Based on the task and the received question/statement, you should retrieve relevant documents from the available corpus to provide a verifiable answer and back up claims.
-		All of the documents you retrieve should be from the provided corpus; they are locally stored in the directory {originalDocPath}.
-		These documents are to be ingested into a vector database that you can query to find relevant information.
-		Make absolutely sure to only use documents from this corpus to answer the queries - if no relevant documents are found, state that you could not find any relevant information in the corpus.
-		Never retrieve documents that are not part of the provided corpus.
+		All local documents MUST be ingested from {corpusPath}.
 		
 		Your responsibilities:
 		1. Understand the specific question or statement presented to you.
-		2. Retrieve relevant documents from the available corpus that can help answer the question or support the statement.
-		3. Provide a concise answer to the question or statement based on the retrieved documents, referencing each document by name where needed.
-		4. List the names of the documents you retrieved to support your answer. This allows for transparency and human verification of your sources if needed.
+		2. Ingest ALL documents provided in the documentCorpus and quote them to answer the question or respond to the statement.
 
 		Your output includes a message field and a retrievedDocumentNames field:
 		- The message field should contain your answer to the query based on the information from the retrieved documents.
@@ -71,7 +71,6 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 	description = """
 		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
-		Its knowledge is based solely on the documents in the provided corpus, which can be expanded upon through several runs of this system.
 	"""
 
 	documentRetrieval_llm_config = llm_config.copy()
@@ -79,9 +78,22 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 	documentRetrieval_llm_config["temperature"] = 0.1
 
 	# Using a given collection name is needed to retain knowledge across runs
-	return DocAgent(
-		name = name,
-		system_message = systemMessage,
-		llm_config = documentRetrieval_llm_config,
+	doc_agent = DocAgent(
+		name=name,
+		system_message=systemMessage,
+		llm_config=documentRetrieval_llm_config,
+		parsed_docs_path=parsedDocsPath,
 		query_engine=query_engine
 	)
+
+	response = doc_agent.run(
+		message = f"Ingest all of the following: {[os.path.abspath(os.path.join(corpusPath, doc)) for doc in os.listdir(corpusPath)]}",
+		max_turns=1,
+		silent=False
+	)
+
+	response.process()
+
+	quit()
+
+	return doc_agent
