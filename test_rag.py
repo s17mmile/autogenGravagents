@@ -17,7 +17,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 )
 
 query = """
-Summarize the paper theoretical_physics_benefit.pdf, WHICH LIES IN THE DOCUMENT CORPUS.
+        Can LLMs be used for theoretical physics research?
     """
 
 # Start the conversation
