@@ -86,8 +86,9 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 	"""
 
 	description = """
-		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus to answer queries posed by other agents.
+		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus or the web to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
+		It can be given natural language queries including data ingestion requests from given URLs or local files.
 	"""
 
 	documentRetrieval_llm_config = llm_config.copy()

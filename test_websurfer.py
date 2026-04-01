@@ -18,7 +18,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 
 # query = input("Please enter your query: ")
 query = """
-    Find and download the paper \"Multi-Agent System for Cosmological Parameter Analysis\" as a PDF.
+    Find a valid URL for the paper "AutoAgents: A Framework for Automatic Agent Generation" and summarize the main contributions of the paper in a few sentences.
     """
 
 # Start the conversation

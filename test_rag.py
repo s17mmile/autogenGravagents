@@ -17,7 +17,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 )
 
 query = """
-        Can LLMs be used for theoretical physics research?
+        Find information on the use of pycbc or similar tools for gravitational wave data analysis in academic papers or relevant documentation. Return the key takeaways for the usage of libraries for gravitational wave data analysis and the URLs of relevant papers or documentation. What alternative packages are there, and what do they do?
     """
 
 # Start the conversation
