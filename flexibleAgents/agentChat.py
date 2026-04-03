@@ -234,9 +234,14 @@ class flexibleAgentChat(QObject):
                 content = json.loads(message["content"])
                 # Check for termination signal (False if field is nonexistent)
                 termination = content.get("terminateChat", False)
-                if termination and self.GUI:
-                    self.signals.outgoingMessage.emit({"name": "System", "content": {"message": "Termination signal received. Ending conversation..."}})
-                return True
+                if termination == True:
+                    print("Termination signal received from agent message content.")
+                    if self.GUI:
+                        self.signals.outgoingMessage.emit({"name": "System", "content": {"message": "Termination signal received. Ending conversation..."}})
+                    return True
+                else:
+                    print("No termination signal in agent message content.")
+                    return False
             # If not, nothing happens.
             except json.JSONDecodeError:
                 print("Not JSON content, no termination signal.")

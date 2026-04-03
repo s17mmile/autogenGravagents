@@ -1,6 +1,3 @@
-import os, warnings
-from autogen import LLMConfig
-
 from flexibleAgents.GUI import AgentChatGuiHandler
 from llmconfig import local_llm_config, commercial_llm_config
 
@@ -12,7 +9,7 @@ print("Flexible chat GUI instance creating...")
 # Instantiate chat instance based on agent config file WITH GUI ENABLED
 flexibleChatGUI = AgentChatGuiHandler(
     configPath="flexibleAgents/agentConfigs/defaultConfig.txt",
-    llm_config=local_llm_config,
+    llm_config=commercial_llm_config,
     maxRounds=maxRounds
 )
 
