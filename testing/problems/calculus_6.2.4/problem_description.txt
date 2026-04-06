@@ -1,0 +1,24 @@
+Problem Description:
+The region $\mathscr{R}$ enclosed by the curves $y=x$ and $y=x^2$ is rotated about the $x$-axis. Find the volume of the resulting solid.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+The curves $y=x$ and $y=x^2$ intersect at the points $(0,0)$ and $(1,1)$. A cross-section in the plane $P_x$ has the shape of a washer (an annular ring) with inner radius $x^2$ and outer radius $x$, so we find the cross-sectional area by subtracting the area of the inner circle from the area of the outer circle:
+$$
+A(x)=\pi x^2-\pi\left(x^2\right)^2=\pi\left(x^2-x^4\right)
+$$
+Therefore we have
+$$
+\begin{aligned}
+V & =\int_0^1 A(x) d x=\int_0^1 \pi\left(x^2-x^4\right) d x \\
+& =\pi\left[\frac{x^3}{3}-\frac{x^5}{5}\right]_0^1=\frac{2 \pi}{15}
+\end{aligned}
+$$
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+0.41887902047  

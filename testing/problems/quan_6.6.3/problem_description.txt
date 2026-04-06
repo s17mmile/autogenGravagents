@@ -1,0 +1,20 @@
+Problem Description:
+Find the probability that the electron in the ground-state $\mathrm{H}$ atom is less than a distance $a$ from the nucleus.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+We want the probability that the radial coordinate lies between 0 and $a$. This is found by taking the infinitesimal probability of being between $r$ and $r+d r$ and summing it over the range from 0 to $a$. This sum of infinitesimal quantities is the definite integral
+$$
+\begin{aligned}
+\int_0^a R_{n l}^2 r^2 d r & =\frac{4}{a^3} \int_0^a e^{-2 r / a} r^2 d r=\left.\frac{4}{a^3} e^{-2 r / a}\left(-\frac{r^2 a}{2}-\frac{2 r a^2}{4}-\frac{2 a^3}{8}\right)\right|_0 ^a \\
+& =4\left[e^{-2}(-5 / 4)-(-1 / 4)\right]=0.323
+\end{aligned}
+$$
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+0.323  

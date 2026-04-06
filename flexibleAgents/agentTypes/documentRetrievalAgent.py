@@ -4,14 +4,20 @@ import os
 
 # Typing imports
 from typing import Dict, List
-from anyio import Path
 from pydantic import BaseModel
+from pathlib import Path
+import PyPDF2
 
 # Query engine, LLM and AG2 imports
 from llama_index.llms.openai import OpenAI
 from autogen.agents.experimental import VectorChromaQueryEngine
 from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
 from autogen.agents.experimental import DocAgent
+
+# Docling imports for fine-grained document parsing control before ingestion
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.document_converter import DocumentConverter, PdfFormatOption
 
 # Needed for vector DB management
 import chromadb
@@ -47,6 +53,83 @@ def buildQueryEngine(llm_config, chromaDbPath, collection_name):
 	)
 
 	return query_engine
+
+# Ingest all not-yet ingested PDF documents from the corpus (if any)
+def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
+	corpusPathObject = Path(corpusPath)
+	parsedDocsPathObject = Path(parsedDocsPath)
+	
+	pdf_pipeline_options = PdfPipelineOptions(
+		generate_page_images=False,
+		generate_picture_images=False,
+		do_table_structure=False,
+		do_ocr=False,
+		generate_parsed_pages=False,
+		page_batch_size=1,  # Critical for OOM
+		ocr_batch_size=1,
+		layout_batch_size=1,
+		document_timeout=180.0,
+	)
+	
+	converter = DocumentConverter(
+		format_options={
+			InputFormat.PDF: PdfFormatOption(pipeline_options=pdf_pipeline_options)
+		}
+	)
+	
+	generatedPaths = []
+	
+	for pdf_path in corpusPathObject.glob("*.pdf"):
+		md_path = parsedDocsPathObject / f"{pdf_path.stem}.md"
+		
+		if md_path.exists():
+			generatedPaths.append(str(md_path))
+			continue
+		
+		# Split large PDF into 10-page chunks
+		chunk_size = 10
+		with open(pdf_path, "rb") as f:
+			reader = PyPDF2.PdfReader(f)
+			total_pages = len(reader.pages)
+			
+			chunk_mds = []
+			for start in range(0, total_pages, chunk_size):
+				end = min(start + chunk_size, total_pages)
+				
+				# Create chunk PDF
+				chunk_pdf_path = parsedDocsPathObject / f"{pdf_path.stem}_chunk_{start+1:03d}-{end:03d}.pdf"
+				writer = PyPDF2.PdfWriter()
+				for i in range(start, end):
+					writer.add_page(reader.pages[i])
+				with open(chunk_pdf_path, "wb") as chunk_f:
+					writer.write(chunk_f)
+				
+				# Convert chunk
+				try:
+					result = converter.convert(str(chunk_pdf_path))
+					chunk_md = result.document.export_to_markdown()
+					chunk_mds.append(chunk_md)
+				finally:
+					chunk_pdf_path.unlink()  # Cleanup
+				
+			# Combine chunks into final MD
+			full_md = "\n\n---\n\n".join(chunk_mds)
+			md_path.write_text(full_md, encoding="utf-8")
+		
+			generatedPaths.append(str(md_path))
+	
+	doclist = ["A-Level-Chemistry.md", "cambridge international as and a level physics coursebook - public.md", "Pure Mathematics Textbook.md"]
+
+	# Ingest all the newly parsed documents
+	response = doc_agent.run(
+		message=f"Ingest all of the following: {[os.path.join(parsedDocsPath, doc) for doc in doclist]}. Then terminate immediately.",
+		# message=f"Ingest all of the following: {generatedPaths}, then terminate immediately.",
+		max_turns=1,
+		silent=False
+	)
+	response.process()
+	
+	return
 
 
 # Define doc agent response format
@@ -108,16 +191,6 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 		query_engine=query_engine
 	)
 
-	# Ingest all not.yet ingested documents from the corpus (if any)
-	docsToParse = [os.path.abspath(os.path.join(corpusPath, doc)) for doc in os.listdir(corpusPath) if not os.path.isfile(os.path.splitext(os.path.join(parsedDocsPath, doc))[0]+".md")]
-	if docsToParse:
-		print(f"Document Retrieval Agent: Ingesting documents from corpus for the first time: {docsToParse}")
-		response = doc_agent.run(
-			message = f"Ingest all of the following: {docsToParse}, then terminate immediately.",
-			max_turns=1,
-			silent=False
-		)
-
-		response.process()
+	ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath)
 
 	return doc_agent

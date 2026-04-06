@@ -286,8 +286,9 @@ class flexibleAgentChat(QObject):
 
         # Clear and re-initialize conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
-        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/data", exist_ok=True)
-        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/tempDownloads", exist_ok=True)
+        os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
+        # os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/data", exist_ok=True)
+        # os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/tempDownloads", exist_ok=True)
 
         # Clear interruption request state at the beginning of the conversation
         self.interruptRequested = False

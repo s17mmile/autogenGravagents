@@ -1,0 +1,21 @@
+Problem Description:
+The base radius and height of a right circular cone are measured as $10 \mathrm{~cm}$ and $25 \mathrm{~cm}$, respectively, with a possible error in measurement of as much as $0.1 \mathrm{~cm}$ in each. Use differentials to estimate the maximum error in the calculated volume of the cone.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+The volume $V$ of a cone with base radius $r$ and height $h$ is $V=\pi r^2 h / 3$. So the differential of $V$ is
+$$
+d V=\frac{\partial V}{\partial r} d r+\frac{\partial V}{\partial h} d h=\frac{2 \pi r h}{3} d r+\frac{\pi r^2}{3} d h
+$$
+Since each error is at most $0.1 \mathrm{~cm}$, we have $|\Delta r| \leqslant 0.1,|\Delta h| \leqslant 0.1$. To estimate the largest error in the volume we take the largest error in the measurement of $r$ and of $h$. Therefore we take $d r=0.1$ and $d h=0.1$ along with $r=10, h=25$. This gives
+$$
+d V=\frac{500 \pi}{3}(0.1)+\frac{100 \pi}{3}(0.1)=20 \pi
+$$
+Thus the maximum error in the calculated volume is about $20 \pi \mathrm{cm}^3 \approx 63 \mathrm{~cm}^3$.
+
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+62.8318530718  $\mathrm{~cm}^3$

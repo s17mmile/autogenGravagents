@@ -1,0 +1,32 @@
+Problem Description:
+Using the Planck distribution
+Compare the energy output of a black-body radiator (such as an incandescent lamp) at two different wavelengths by calculating the ratio of the energy output at $450 \mathrm{~nm}$ (blue light) to that at $700 \mathrm{~nm}$ (red light) at $298 \mathrm{~K}$.
+
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+At a temperature $T$, the ratio of the spectral density of states at a wavelength $\lambda_1$ to that at $\lambda_2$ is given by
+$$
+\frac{\rho\left(\lambda_1, T\right)}{\rho\left(\lambda_2, T\right)}=\left(\frac{\lambda_2}{\lambda_1}\right)^5 \times \frac{\left(\mathrm{e}^{h c / \lambda_2 k T}-1\right)}{\left(\mathrm{e}^{h c / \lambda_1 k T}-1\right)}
+$$
+Insert the data and evaluate this ratio.
+Answer With $\lambda_1=450 \mathrm{~nm}$ and $\lambda_2=700 \mathrm{~nm}$,
+$$
+\begin{aligned}
+\frac{h c}{\lambda_1 k T} & =\frac{\left(6.626 \times 10^{-34} \mathrm{Js}\right) \times\left(2.998 \times 10^8 \mathrm{~m} \mathrm{~s}^{-1}\right)}{\left(450 \times 10^{-9} \mathrm{~m}\right) \times\left(1.381 \times 10^{-23} \mathrm{~J} \mathrm{~K}^{-1}\right) \times(298 \mathrm{~K})}=107.2 \ldots \\
+\frac{h c}{\lambda_2 k T} & =\frac{\left(6.626 \times 10^{-34} \mathrm{Js}\right) \times\left(2.998 \times 10^8 \mathrm{~m} \mathrm{~s}^{-1}\right)}{\left(700 \times 10^{-9} \mathrm{~m}\right) \times\left(1.381 \times 10^{-23} \mathrm{JK}^{-1}\right) \times(298 \mathrm{~K})}=68.9 \ldots
+\end{aligned}
+$$
+and therefore
+$$
+\begin{aligned}
+& \frac{\rho(450 \mathrm{~nm}, 298 \mathrm{~K})}{\rho(700 \mathrm{~nm}, 298 \mathrm{~K})}=\left(\frac{700 \times 10^{-9} \mathrm{~m}}{450 \times 10^{-9} \mathrm{~m}}\right)^5 \times \frac{\left(\mathrm{e}^{68.9 \cdots}-1\right)}{\left(\mathrm{e}^{107.2 \cdots}-1\right)} \\
+& =9.11 \times\left(2.30 \times 10^{-17}\right)=2.10 \times 10^{-16}
+\end{aligned}
+$$
+
+--------------------------------------------------------------------------------------
+
+Final Answer:
+2.10  $10^{-16}$
