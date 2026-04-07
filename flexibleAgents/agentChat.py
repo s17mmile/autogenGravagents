@@ -46,11 +46,11 @@ class flexibleAgentChat(QObject):
         self.agentSpecs: List[agentSpecification] = []
         self.transitionSpecs: Dict[str, List[str]] = {}
         self.configIncludesTransitions = False
+        self.noHumanInput = False
 
         # Execution-related setters
         self.llm_config = llm_config
         self.maxRounds = maxRounds
-        self.noHumanInput = False
         self.interruptRequested = False
 
         # GUI-related setters
@@ -111,26 +111,30 @@ class flexibleAgentChat(QObject):
         self.transitionSpecs: Dict[str, List[str]] = {}
 
         with open(path, "r") as f:
-            lines = [line for line in f if line]
+            lines = [line for line in f if line != "\n"]  # Remove empty lines
 
         # Split on first line that looks like a transition definition
         # If none exists, the transition restrictions will be lifted.
         # None sets split index to include all lines of the file --> transition-less files will be read properly
-        split_index = None
+        end_of_spec_index = None
+        start_of_transitions_index = None
         self.configIncludesTransitions = False
         for i, line in enumerate(lines):
             # Check for transition format: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
             if re.match(r'^\w+\s*:\s*\w+(,\s*\w+)*$', line.strip()):
-                split_index = i
+                if end_of_spec_index == None:
+                    end_of_spec_index = i
+                start_of_transitions_index = i
                 self.configIncludesTransitions = True
                 break
             elif line.strip() == "noHumanInput":
+                end_of_spec_index = i
                 self.noHumanInput = True
 
         # Parse agents (type and name)
         # Syntax: <agentType>, <agent_name>
         humanAgentCount = 0
-        for line in lines[:split_index]:
+        for line in lines[:end_of_spec_index]:
             print(f"matching stripped line: '{line.strip()}' against agent specification regex...")
             if not re.match(r'^\w+,\s*\w+$', line.strip()):
                 if self.GUI:
@@ -155,12 +159,17 @@ class flexibleAgentChat(QObject):
                 self.signals.guiPopUp.emit(f"Config invalid: {humanAgentCount} human agents found (exactly 1 required).")
             raise ValueError(f"Config invalid: {humanAgentCount} human agents found (exactly 1 required).")
 
+        # Default to allowing all unspecified transitions except for self-transitions
+        fullDestinationList = [spec.name for spec in self.agentSpecs]
+        for source in self.agentSpecs:
+            self.transitionSpecs[source.name] = fullDestinationList.copy()
+            self.transitionSpecs[source.name].remove(source.name)
 
-
-        # Parse transitions if given
+        # Parse transitions if given, removing transition options
         if self.configIncludesTransitions:
             # Syntax: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
-            for line in lines[split_index:]:
+            for line in lines[start_of_transitions_index:]:
+                print(f"TRANSITION PARSING: {line}")
                 if not re.match(r'^\w+\s*:\s*\w+(,\s*\w+)*$', line.strip()):
                     if self.GUI:
                         self.signals.guiPopUp.emit(f"Invalid transition specification: {line}.\nStripped to: {line.strip()}.\nExpected format: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...")
@@ -170,23 +179,21 @@ class flexibleAgentChat(QObject):
 
                 destinationList = [dest.strip() for dest in destinations.split(",") if dest.strip()]
                 self.transitionSpecs[source] = destinationList
-        # If not, explicitly allow all transitions by building complete graph (cleaner than setting disallowed transitions empty for noHumanInput mode integration)
-        else:
-            print("No transition specifications found in config. All transitions will be allowed by default.")
-            destinationList = [spec.name for spec in self.agentSpecs]
-            for spec in self.agentSpecs:
-                self.transitionSpecs[spec.name] = destinationList
-        
+
         # Explicitly remove transitions going to to human agent if noHumanInput is set
         if self.noHumanInput:
             for source in self.transitionSpecs:
-                self.transitionSpecs[source] = [dest for dest in self.transitionSpecs[source] if dest != self.humanAgentName]
+                if self.humanAgentName in self.transitionSpecs[source]:
+                    self.transitionSpecs[source].remove(self.humanAgentName)
 
-        # if self.GUI:
-        #     self.signals.guiPopUp.emit("Config parsing complete.")
-        print("Config parsing complete.")
+        print("Config parsing complete. Configured agents:")
+        for spec in self.agentSpecs:
+            print(f"  - {spec.name} ({spec.agentType})")
+        print("Configured transitions:")
+        for source, destinations in self.transitionSpecs.items():
+            print(f"  - {source} --> {', '.join(destinations)}")
 
-
+        return
 
     # Instantiate agents based on the parsed config
     @Slot()
@@ -225,8 +232,8 @@ class flexibleAgentChat(QObject):
             if spec.agentType == "humanAgent":          
                 self.humanAgent = agent
             
-
         # Build transitions dict in required format for autogen conversations (converts keys and values from names to agent instances)
+        print(self.transitionSpecs)
         for source_name, dest_names in self.transitionSpecs.items():
             source_agent = self.chatGraph.agents[source_name]
             dest_agents = [self.chatGraph.agents[dest_name] for dest_name in dest_names]
@@ -274,15 +281,6 @@ class flexibleAgentChat(QObject):
         if self.GUI:
             self.signals.outgoingMessage.emit({"name": "System", "content": {"message": f"Starting conversation with query: {query}"}})
 
-        # If no transitions were given, we can simply switch the GroupChat to allow all transitions by switching them from allowed to disallowed
-        # NoHumanInput mode is separate
-        if self.configIncludesTransitions and not self.noHumanInput:
-            transitionType = "allowed"
-        elif self.configIncludesTransitions and self.noHumanInput:
-            raise ValueError("Config cannot include both specific transitions and noHumanInput mode. Please adjust the config file.")S
-        else:
-            transitionType = "disallowed"
-
         # Initialize a group chat with the instantiated agents and the query
         agentList = list(self.chatGraph.agents.values())
         groupchat = GroupChat(
@@ -291,7 +289,7 @@ class flexibleAgentChat(QObject):
             send_introductions=True,
             max_round=self.maxRounds,
             allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
-            speaker_transitions_type=transitionType,
+            speaker_transitions_type="allowed",
             speaker_selection_method="auto"
         )
 

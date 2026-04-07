@@ -83,7 +83,6 @@ def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
 		md_path = parsedDocsPathObject / f"{pdf_path.stem}.md"
 		
 		if md_path.exists():
-			generatedPaths.append(str(md_path))
 			continue
 		
 		# Split large PDF into 10-page chunks
@@ -120,14 +119,14 @@ def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
 	
 	doclist = ["A-Level-Chemistry.md", "cambridge international as and a level physics coursebook - public.md", "Pure Mathematics Textbook.md"]
 
-	# Ingest all the newly parsed documents
-	response = doc_agent.run(
-		message=f"Ingest all of the following: {[os.path.join(parsedDocsPath, doc) for doc in doclist]}. Then terminate immediately.",
-		# message=f"Ingest all of the following: {generatedPaths}, then terminate immediately.",
-		max_turns=1,
-		silent=False
-	)
-	response.process()
+	if len(generatedPaths) > 0:
+		# Ingest all the newly parsed documents
+		response = doc_agent.run(
+			message=f"Ingest all of the following: {generatedPaths}, then terminate immediately.",
+			max_turns=1,
+			silent=False
+		)
+		response.process()
 	
 	return
 
@@ -172,6 +171,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus or the web to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
 		It can be given natural language queries including data ingestion requests from given URLs or local files.
+		It is not to be used for general question answering or code criticism.
 	"""
 
 	documentRetrieval_llm_config = llm_config.copy()
