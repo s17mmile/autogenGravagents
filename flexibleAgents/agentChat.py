@@ -169,7 +169,6 @@ class flexibleAgentChat(QObject):
         if self.configIncludesTransitions:
             # Syntax: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...
             for line in lines[start_of_transitions_index:]:
-                print(f"TRANSITION PARSING: {line}")
                 if not re.match(r'^\w+\s*:\s*\w+(,\s*\w+)*$', line.strip()):
                     if self.GUI:
                         self.signals.guiPopUp.emit(f"Invalid transition specification: {line}.\nStripped to: {line.strip()}.\nExpected format: <source_agent_name>: <destination_agent_name>, <destination_agent_name>, ...")
@@ -186,12 +185,7 @@ class flexibleAgentChat(QObject):
                 if self.humanAgentName in self.transitionSpecs[source]:
                     self.transitionSpecs[source].remove(self.humanAgentName)
 
-        print("Config parsing complete. Configured agents:")
-        for spec in self.agentSpecs:
-            print(f"  - {spec.name} ({spec.agentType})")
-        print("Configured transitions:")
-        for source, destinations in self.transitionSpecs.items():
-            print(f"  - {source} --> {', '.join(destinations)}")
+        print("Config parsing complete.")
 
         return
 

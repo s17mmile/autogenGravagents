@@ -15,15 +15,15 @@ class executionAgentResponse(BaseModel):
 def injectSnippets(agent, messages, sender, config):
 	# Extract code snippets as single strings from incoming message
 	lastMessage = json.loads(messages[-1].get("content")) if "content" in messages[-1] else {}
-	snippets = lastMessage["codeSnippets"] if "codeSnippets" in lastMessage else []
+	snippet = lastMessage["codeSnippet"] if "codeSnippet" in lastMessage else []
 	
-	if not snippets:
+	if not snippet:
 		return False, {}
 	
 	# Inject as single "code prompt" message --> Yes, this loses the format going in, but that should be fine.
-	code_content = "\n\n".join(f"```python\n{s}\n```" for s in snippets)
+	code_content = f"```python\n{snippet}\n```"
 	messages.append({
-		"content": f"Execute these code snippets:\n{code_content}",
+		"content": f"Execute this code snippet:\n{code_content}",
 		"role": "user"
 	})
 	
