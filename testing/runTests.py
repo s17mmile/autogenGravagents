@@ -47,14 +47,16 @@ class Tester:
         self.flexibleChat = agentChat.flexibleAgentChat(
             configPath="flexibleAgents/agentConfigs/testingConfig.txt",
             llm_config=self.llmconfig,
-            maxRounds=20
+            maxRounds=20,
+            trackTokens=True
         )
 
         # Baseline "Agent" (backbone LLM only, single-agent config)
         self.basicChat = agentChat.flexibleAgentChat(
             configPath="flexibleAgents/agentConfigs/basicAgent.txt",
             llm_config=self.llmconfig,
-            maxRounds=2
+            maxRounds=2,
+            trackTokens=True
         )
 
         # Critic agent for solution evaluation
@@ -108,24 +110,28 @@ class Tester:
                 # Write to file and also print so manager/summary messages are visible in the terminal
                 f.write(f"{name}:\n{formatted}\n\n")
 
-
+    def saveTokenUsageToFile(self, tokenUsage, filepath):
+        with open(filepath, "wb") as f:
+            pickle.dump(tokenUsage, f)
 
     # Save critic responses to text normally, but also as pkl file
     # --> Done for record keeping, easy reading and potential qualitative analysis of critic comments.
     def saveCriticResponseToFile(self, critic_response, filepath):
         self.saveGroupChatResponseToFile(critic_response, filepath)
 
-        filename_pkl = os.path.join(os.path.dirname(filepath), f"evaluation_{os.path.basename(filepath).split('.')[0]}.pkl")
-        with open(filename_pkl, 'wb') as f:
+        # Infer pkl filename and save file
+        filename_pkl = os.path.join(os.path.dirname(filepath), f"evaluation_{os.path.basename(filepath).split(".")[0]}.pkl")
+        with open(filename_pkl, "wb") as f:
             pickle.dump(self.fetchLastMsgContent(critic_response), f)
 
     # Run agent system and critic evaluation, saving results as they go
-    def runAndEvaluateProblem(self, agentChatInstance, problem, solution_file, evaluation_file):
+    def runAndEvaluateProblem(self, agentChatInstance, problem, solution_file, evaluation_file, cost_file):
         # Run Agent system
-        response = agentChatInstance.startConversation(problem["problem_text"])
+        response, tokenUsage = agentChatInstance.startConversation(problem["problem_text"])
         
-        # Save Output
+        # Save Output and token usage
         self.saveGroupChatResponseToFile(response, solution_file)
+        self.saveTokenUsageToFile(tokenUsage, cost_file)
 
         # Run solution by the critic agent to evaluate against the correct solution
         criticEvaluation = self.criticAgentChat.startConversation(query=f"""
@@ -139,7 +145,6 @@ class Tester:
         # Save correctness results, critic agent ratings, and critic agent comments for each proposed solution in the problem directory
         self.saveCriticResponseToFile(criticEvaluation, evaluation_file)
 
-
     # Define function to be executed for each problem (needed for using MAP on the HF dataset)
     def run_test(self, problem):
         print(f"Running test for problem: {problem}\n\n")
@@ -151,16 +156,16 @@ class Tester:
 
         print(f"Problem directory created at: {problem_dir}")
 
-        # Filenames for problem and saving proposed solutions by each solver
+        # Filenames for problem description, saving proposed solutions, saving critic evaluations and token usage for both flexibleChat and basicChat agents
         problem_description_file = os.path.join(problem_dir, "problem_description.txt")
 
         flexibleChat_solution_file = os.path.join(problem_dir, f"solution_flexibleChat_{self.llmconfig["model"]}.txt")
-        basicChat_solution_file = os.path.join(problem_dir, f"solution_basicChat_{self.llmconfig["model"]}.txt")
-
         flexibleChat_evaluation_file = os.path.join(problem_dir, f"evaluation_flexibleChat_{self.llmconfig["model"]}.txt")
+        flexibleChat_cost_file = os.path.join(problem_dir, f"cost_flexibleChat_{self.llmconfig["model"]}.pkl")
+        
+        basicChat_solution_file = os.path.join(problem_dir, f"solution_basicChat_{self.llmconfig["model"]}.txt")
         basicChat_evaluation_file = os.path.join(problem_dir, f"evaluation_basicChat_{self.llmconfig["model"]}.txt")
-
-
+        basicChat_cost_file = os.path.join(problem_dir, f"cost_basicChat_{self.llmconfig["model"]}.pkl")
 
         # Save problem description and correct solution in the problem directory for reference
         if not os.path.exists(problem_description_file):
@@ -171,15 +176,13 @@ class Tester:
                 f.write("--------------------------------------------------------------------------------------\n\n")
                 f.write(f"Correct Final Answer:\n{problem["answer_number"]} {problem["unit"]}\n")
 
-
-
         # Run problem through fully configured FlexibleAgents system (testing config) and evaluate
         if not os.path.exists(flexibleChat_solution_file) and not os.path.exists(flexibleChat_evaluation_file):
-            self.runAndEvaluateProblem(self.flexibleChat, problem, flexibleChat_solution_file, flexibleChat_evaluation_file)
+            self.runAndEvaluateProblem(self.flexibleChat, problem, flexibleChat_solution_file, flexibleChat_evaluation_file, flexibleChat_cost_file)
 
         # Run problem through basic agent system (backbone LLM only) and evaluate
         if not os.path.exists(basicChat_solution_file) and not os.path.exists(basicChat_evaluation_file):
-            self.runAndEvaluateProblem(self.basicChat, problem, basicChat_solution_file, basicChat_evaluation_file)
+            self.runAndEvaluateProblem(self.basicChat, problem, basicChat_solution_file, basicChat_evaluation_file, basicChat_cost_file)
 
 if __name__ == "__main__":
     tester = Tester()

@@ -10,10 +10,12 @@ from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
 
 # Autogen imports
 import autogen
-from autogen import ConversableAgent, GroupChat, GroupChatManager
+from autogen import ConversableAgent, GroupChat, GroupChatManager, gather_usage_summary
+
+
 
 # UTF-8 Encoding is important for docling
-sys.stdout.reconfigure(encoding='utf-8')
+# sys.stdout.reconfigure(encoding='utf-8')
 
 # TYPEDEFS
 # All agent specifying information for reading in the config file
@@ -38,7 +40,7 @@ class agentChatSignals(QObject):
 # Main class that allows flexible agent conversations based on config files
 # Extends QObject so that it can be properly used with the GUI
 class flexibleAgentChat(QObject):
-    def __init__(self, configPath: str = None, llm_config = None, maxRounds: int = 10, parent = None):
+    def __init__(self, configPath: str = None, llm_config = None, maxRounds: int = 10, trackTokens: bool = False, parent = None):
         super().__init__(parent)
 
         # Config parsing setters
@@ -55,6 +57,9 @@ class flexibleAgentChat(QObject):
 
         # GUI-related setters
         self.GUI = None
+
+        # Output related setters
+        self.trackTokens = trackTokens
 
         # Instantiate agents based on config in given path (if given - will not necessarily be given when instantiating through GUI).
         # This does not yet initiate the GroupChat instance or start the conversation.
@@ -262,7 +267,7 @@ class flexibleAgentChat(QObject):
                     return False
             # If not, nothing happens.
             except json.JSONDecodeError:
-                print("Not JSON content, no termination signal.")
+                # print("Not JSON content, no termination signal.")
                 return False
         else:
             return False
@@ -314,10 +319,6 @@ class flexibleAgentChat(QObject):
             clear_history=False
         )
 
-        print("Conversation finished.")
-
-        print("Saving conversation history...")
-
         # Save conversation history as text file in temp directory
         # Wanted to simplify to make this a simple loadable json but kinda can't get it to work as json loads keeps failing
         path = os.path.join(os.path.dirname(__file__), "tempConversation", "conversation.txt")
@@ -341,8 +342,18 @@ class flexibleAgentChat(QObject):
                 # Write to file and also print so manager/summary messages are visible in the terminal
                 f.write(f"{name}:\n{formatted}\n\n")
 
-        print("Conversation history saved.")
+        # Return all messages for potential further processing, including agent usage summary if asked
+        # Calculate total tokens used if tracking enabled
+        if self.trackTokens:
+            tokenUsage = gather_usage_summary(groupchat.agents + [manager])
 
-        # Return all messages for potential further processing
-        return groupchat.messages
+            print(f"Cost including cached inference: {tokenUsage[usage_including_cached_inference][total_cost]}")
+            print(f"Cost excluding cached inference: {tokenUsage[usage_excluding_cached_inference][total_cost]}")
+            
+            # Reset token usage for re-use of FlexibleAgents instance
+            for agent in groupchat.agents + [manager]:
+                agent.reset()
+            return groupchat.messages, tokenUsage
+        else:
+            return groupchat.messages
     
