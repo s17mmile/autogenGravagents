@@ -275,7 +275,7 @@ class flexibleAgentChat(QObject):
     # Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
     @Slot(str)
     def startConversation(self, query: str):
-        print(f"Starting conversation with query: {query}")
+        # print(f"Starting conversation with query: {query}")
 
         if self.GUI:
             self.signals.outgoingMessage.emit({"name": "System", "content": {"message": f"Starting conversation with query: {query}"}})

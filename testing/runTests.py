@@ -63,7 +63,8 @@ class Tester:
         self.criticAgentChat = agentChat.flexibleAgentChat(
             configPath="flexibleAgents/agentConfigs/solutionCritic.txt",
             llm_config=self.llmconfig,
-            maxRounds=2
+            maxRounds=2,
+            trackTokens=True
         )
 
     # Process each problem in the dataset with map()
@@ -120,12 +121,12 @@ class Tester:
         self.saveGroupChatResponseToFile(critic_response, filepath)
 
         # Infer pkl filename and save file
-        filename_pkl = os.path.join(os.path.dirname(filepath), f"evaluation_{os.path.basename(filepath).split(".")[0]}.pkl")
+        filename_pkl = os.path.join(os.path.dirname(filepath), f"{os.path.basename(filepath).split(".")[0]}.pkl")
         with open(filename_pkl, "wb") as f:
             pickle.dump(self.fetchLastMsgContent(critic_response), f)
 
     # Run agent system and critic evaluation, saving results as they go
-    def runAndEvaluateProblem(self, agentChatInstance, problem, solution_file, evaluation_file, cost_file):
+    def runAndEvaluateProblem(self, agentChatInstance, problem, solution_file, evaluation_file, cost_file, evaluation_cost_file):
         # Run Agent system
         response, tokenUsage = agentChatInstance.startConversation(problem["problem_text"])
         
@@ -134,7 +135,7 @@ class Tester:
         self.saveTokenUsageToFile(tokenUsage, cost_file)
 
         # Run solution by the critic agent to evaluate against the correct solution
-        criticEvaluation = self.criticAgentChat.startConversation(query=f"""
+        criticEvaluation, criticTokenUsage = self.criticAgentChat.startConversation(query=f"""
             Evaluate the following proposed solution to the given problem:
             Problem Description: {problem["problem_text"]}
             Reference Explanation: {problem["solution"]}
@@ -144,6 +145,8 @@ class Tester:
 
         # Save correctness results, critic agent ratings, and critic agent comments for each proposed solution in the problem directory
         self.saveCriticResponseToFile(criticEvaluation, evaluation_file)
+        self.saveTokenUsageToFile(criticTokenUsage, evaluation_cost_file)
+        
 
     # Define function to be executed for each problem (needed for using MAP on the HF dataset)
     def run_test(self, problem):
@@ -162,10 +165,12 @@ class Tester:
         flexibleChat_solution_file = os.path.join(problem_dir, f"solution_flexibleChat_{self.llmconfig["model"]}.txt")
         flexibleChat_evaluation_file = os.path.join(problem_dir, f"evaluation_flexibleChat_{self.llmconfig["model"]}.txt")
         flexibleChat_cost_file = os.path.join(problem_dir, f"cost_flexibleChat_{self.llmconfig["model"]}.pkl")
+        flexibleChat_eval_cost_file = os.path.join(problem_dir, f"evaluation_cost_flexibleChat_{self.llmconfig["model"]}.pkl")
         
         basicChat_solution_file = os.path.join(problem_dir, f"solution_basicChat_{self.llmconfig["model"]}.txt")
         basicChat_evaluation_file = os.path.join(problem_dir, f"evaluation_basicChat_{self.llmconfig["model"]}.txt")
         basicChat_cost_file = os.path.join(problem_dir, f"cost_basicChat_{self.llmconfig["model"]}.pkl")
+        basicChat_eval_cost_file = os.path.join(problem_dir, f"evaluation_cost_basicChat_{self.llmconfig["model"]}.pkl")
 
         # Save problem description and correct solution in the problem directory for reference
         if not os.path.exists(problem_description_file):
@@ -178,11 +183,13 @@ class Tester:
 
         # Run problem through fully configured FlexibleAgents system (testing config) and evaluate
         if not os.path.exists(flexibleChat_solution_file) and not os.path.exists(flexibleChat_evaluation_file):
-            self.runAndEvaluateProblem(self.flexibleChat, problem, flexibleChat_solution_file, flexibleChat_evaluation_file, flexibleChat_cost_file)
+            self.runAndEvaluateProblem(self.flexibleChat, problem, flexibleChat_solution_file, flexibleChat_evaluation_file, flexibleChat_cost_file, flexibleChat_eval_cost_file)
 
         # Run problem through basic agent system (backbone LLM only) and evaluate
         if not os.path.exists(basicChat_solution_file) and not os.path.exists(basicChat_evaluation_file):
-            self.runAndEvaluateProblem(self.basicChat, problem, basicChat_solution_file, basicChat_evaluation_file, basicChat_cost_file)
+            self.runAndEvaluateProblem(self.basicChat, problem, basicChat_solution_file, basicChat_evaluation_file, basicChat_cost_file, basicChat_eval_cost_file)
+
+        quit()
 
 if __name__ == "__main__":
     tester = Tester()
