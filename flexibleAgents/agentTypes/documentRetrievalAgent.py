@@ -62,8 +62,8 @@ def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
 	pdf_pipeline_options = PdfPipelineOptions(
 		generate_page_images=False,
 		generate_picture_images=False,
-		do_table_structure=False,
-		do_ocr=False,
+		do_table_structure=True,
+		do_ocr=True,
 		generate_parsed_pages=False,
 		page_batch_size=1,  # Critical for OOM
 		ocr_batch_size=1,
@@ -164,6 +164,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 
 		Your output includes a message field and a retrievedDocumentNames field:
 		- The message field should contain your answer to the query based on the information from the retrieved documents.
+			--> If you do not have the answer to a query, explicitly state that you should not be req-queried for the same information.
 		- The retrievedDocumentNames field should list the names of the documents you retrieved to support your answer.
 	"""
 
@@ -172,6 +173,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
 		It can be given natural language queries including data ingestion requests from given URLs or local files.
 		It is not to be used for general question answering or code criticism.
+		If the agent does not know the answer to a query, it should not be re-queried for the same information!
 	"""
 
 	documentRetrieval_llm_config = llm_config.copy()

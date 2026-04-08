@@ -31,7 +31,7 @@ def documentCollectionAgent(llm_config, name = "DocumentCollectionAgent") -> Web
 		
 		Your responsibilities:
 		1. Search the web for relevant information based on the queries you receive.
-        2. Save URLs to documents or web pages containing high-quality, task-relevant information for Retrieval Augmented Generation.
+        2. If asked to find retrievable documents, save URLs to documents or web pages containing high-quality, task-relevant information for Retrieval Augmented Generation.
 		3. Respond to queries with short summaries of what you found in your search and the URLs of query-relevant documents or web pages.
 		4. Do not download the documents yourself, just provide the URLs. The Document Retrieval Agent will handle downloading and ingesting documents based on the URLs you provide.
 		
