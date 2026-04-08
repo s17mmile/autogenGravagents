@@ -258,7 +258,7 @@ class flexibleAgentChat(QObject):
                         self.signals.outgoingMessage.emit({"name": "System", "content": {"message": "Termination signal received. Ending conversation..."}})
                     return True
                 else:
-                    print("No termination signal in agent message content.")
+                    # print("No termination signal in agent message content.")
                     return False
             # If not, nothing happens.
             except json.JSONDecodeError:
@@ -344,5 +344,5 @@ class flexibleAgentChat(QObject):
         print("Conversation history saved.")
 
         # Return all messages for potential further processing
-        return
+        return groupchat.messages
     
