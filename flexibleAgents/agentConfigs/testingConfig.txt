@@ -3,11 +3,13 @@ queryAgent, Query_Handler
 reasoningAgent, Reasoning
 reasoningCriticAgent, Reasoning_Critic
 codingAgent, Coding_Agent
-codeCriticAgent, Code_Critic
+codeCriticAgent, Coding_Critic
 executionAgent, Executor
 documentRetrievalAgent, RAG_Agent
 
 noHumanInput
 
-Coding_Agent: Code_Critic, Executor, Reasoning
-Code_Critic: Coding_Agent
+Reasoning: Query_Handler, Reasoning_Critic, Coding_Agent, RAG_Agent
+Coding_Agent: Coding_Critic, Executor, Reasoning
+Coding_Critic: Coding_Agent
+RAG_Agent: Query_Handler, Reasoning, Coding_Agent

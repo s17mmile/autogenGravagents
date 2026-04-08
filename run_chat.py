@@ -7,7 +7,7 @@ from llmconfig import local_llm_config, commercial_llm_config
 os.system("clear")
 
 # Set parameters for conversation execution
-maxRounds = 5
+maxRounds = 20
 
 # Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
@@ -22,4 +22,16 @@ flexibleChat = agentChat.flexibleAgentChat(
 query = r"A sample of $255 \mathrm{mg}$ of neon occupies $3.00 \mathrm{dm}^3$ at $122 \mathrm{K}$. Use the perfect gas law to calculate the pressure of the gas."
 
 # Start the conversation
-flexibleChat.startConversation(query=query)
+messages, tokenUsage = flexibleChat.startConversation(query=query)
+
+print("done")
+
+print(messages)
+print(tokenUsage)
+
+if len(messages) == 0:
+    print("No messages returned from conversation.")
+else:
+    lastMsg = messages[-1]
+    content = lastMsg.get("content", "")
+    print(content)

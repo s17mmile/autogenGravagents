@@ -346,14 +346,16 @@ class flexibleAgentChat(QObject):
         # Calculate total tokens used if tracking enabled
         if self.trackTokens:
             tokenUsage = gather_usage_summary(groupchat.agents + [manager])
+            messageHistory = groupchat.messages.copy()
 
-            print(f"Cost including cached inference: {tokenUsage[usage_including_cached_inference][total_cost]}")
-            print(f"Cost excluding cached inference: {tokenUsage[usage_excluding_cached_inference][total_cost]}")
+            print(f"Cost including cached inference: {tokenUsage["usage_including_cached_inference"]["total_cost"]}")
+            print(f"Cost excluding cached inference: {tokenUsage["usage_excluding_cached_inference"]["total_cost"]}")
             
             # Reset token usage for re-use of FlexibleAgents instance
             for agent in groupchat.agents + [manager]:
                 agent.reset()
-            return groupchat.messages, tokenUsage
+
+            return messageHistory, tokenUsage
         else:
             return groupchat.messages
     
