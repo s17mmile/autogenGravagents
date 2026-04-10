@@ -1,0 +1,29 @@
+Problem Description:
+Carbon-14 is a radioactive nucleus with a half-life of 5760 years. Living matter exchanges carbon with its surroundings (for example, through $\mathrm{CO}_2$ ) so that a constant level of ${ }^{14} \mathrm{C}$ is maintained, corresponding to 15.3 decay events per minute. Once living matter has died, carbon contained in the matter is not exchanged with the surroundings, and the amount of ${ }^{14} \mathrm{C}$ that remains in the dead material decreases with time due to radioactive decay. Consider a piece of fossilized wood that demonstrates $2.4{ }^{14} \mathrm{C}$ decay events per minute. How old is the wood?
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+The ratio of decay events yields the amount of ${ }^{14} \mathrm{C}$ present currently versus the amount that was present when the tree died:
+$$
+\frac{\left[{ }^{14} \mathrm{C}\right]}{\left[{ }^{14} \mathrm{C}\right]_0}=\frac{2.40 \mathrm{~min}^{-1}}{15.3 \mathrm{~min}^{-1}}=0.157
+$$
+The rate constant for isotope decay is related to the half-life as follows:
+$$
+k=\frac{\ln 2}{t_{1 / 2}}=\frac{\ln 2}{5760 \text { years }}=\frac{\ln 2}{1.82 \times 10^{11} \mathrm{~s}}=3.81 \times 10^{-12} \mathrm{~s}^{-1}
+$$
+With the rate constant and ratio of isotope concentrations, the age of the fossilized wood is readily determined:
+$$
+\begin{aligned}
+\frac{\left[{ }^{14} \mathrm{C}\right]}{\left[{ }^{14} \mathrm{C}\right]_0} & =e^{-k t} \\
+\ln \left(\frac{\left[{ }^{14} \mathrm{C}\right]}{\left[{ }^{14} \mathrm{C}\right]_0}\right) & =-k t \\
+-\frac{1}{k} \ln \left(\frac{\left[{ }^{14} \mathrm{C}\right]}{\left[{ }^{14} \mathrm{C}\right]_0}\right) & =-\frac{1}{3.81 \times 10^{-12} \mathrm{~s}} \ln (0.157)=t \\
+4.86 \times 10^{11} \mathrm{~s} & =t
+\end{aligned}
+$$
+This time corresponds to an age of roughly 15,400 years.
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+4.86  $10^{11} \mathrm{~s}$

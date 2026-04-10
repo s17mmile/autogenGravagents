@@ -1,0 +1,33 @@
+Problem Description:
+Show that $u(\theta, \phi)=Y_1^1(\theta, \phi)$ given in Example $$
+\begin{aligned}
+&Y_1^1(\theta, \phi)=-\left(\frac{3}{8 \pi}\right)^{1 / 2} e^{i \phi} \sin \theta\\
+&Y_1^{-1}(\theta, \phi)=\left(\frac{3}{8 \pi}\right)^{1 / 2} e^{-i \phi} \sin \theta
+\end{aligned}
+$$ satisfies the equation $\nabla^2 u=\frac{c}{r^2} u$, where $c$ is a constant. What is the value of $c$ ?
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+Because $u(\theta, \phi)$ is independent of $r$, we start with
+$$
+\nabla^2 u=\frac{1}{r^2 \sin \theta} \frac{\partial}{\partial \theta}\left(\sin \theta \frac{\partial u}{\partial \theta}\right)+\frac{1}{r^2 \sin ^2 \theta} \frac{\partial^2 u}{\partial \phi^2}
+$$
+Substituting
+$$
+u(\theta, \phi)=-\left(\frac{3}{8 \pi}\right)^{1 / 2} e^{i \phi} \sin \theta
+$$
+into $\nabla^2 u$ gives
+$$
+\begin{aligned}
+\nabla^2 u & =-\left(\frac{3}{8 \pi}\right)^{1 / 2}\left[\frac{e^{i \phi}}{r^2 \sin \theta}\left(\cos ^2 \theta-\sin ^2 \theta\right)-\frac{\sin \theta}{r^2 \sin ^2 \theta} e^{i \phi}\right] \\
+& =-\left(\frac{3}{8 \pi}\right)^{1 / 2} \frac{e^{i \phi}}{r^2}\left(\frac{1-2 \sin ^2 \theta}{\sin \theta}-\frac{1}{\sin \theta}\right) \\
+& =2\left(\frac{3}{8 \pi}\right)^{1 / 2} \frac{e^{i \phi} \sin \theta}{r^2}
+\end{aligned}
+$$
+or $c=-2$.
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+-2  

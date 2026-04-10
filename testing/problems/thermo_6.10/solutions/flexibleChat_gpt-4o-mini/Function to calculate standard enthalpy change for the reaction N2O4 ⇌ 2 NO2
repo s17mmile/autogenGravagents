@@ -1,0 +1,14 @@
+# Function to calculate standard enthalpy change for the reaction N2O4 ⇌ 2 NO2
+def calculate_enthalpy_change(enthalpy_NO2, enthalpy_N2O4):
+    """Calculate ΔH_R° using Hess's Law."""
+    return 2 * enthalpy_NO2 - enthalpy_N2O4
+
+# Standard enthalpies of formation in kJ/mol
+enthalpy_NO2 = -33.1  # for NO2(g)
+enthalpy_N2O4 = 9.16   # for N2O4(l)
+
+# Calculate ΔH_R°
+Delta_H_R = calculate_enthalpy_change(enthalpy_NO2, enthalpy_N2O4)
+
+# Print the result
+print(f'ΔH_R° = {Delta_H_R} kJ/mol')

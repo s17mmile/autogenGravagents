@@ -1,0 +1,17 @@
+# Constants
+P = 327.6  # Pressure in atm
+rho = 133.2  # Density in kg/m^3
+M = 18.02 / 1000  # Molar mass in kg/mol
+R = 0.0821  # Ideal gas constant in dm^3·atm/(K·mol)
+T = 776.4  # Temperature in K
+
+# Step 1: Calculate molar volume V_m
+# Molar volume is calculated using the formula V_m = M / rho
+V_m = M / rho  # Molar volume in dm^3/mol
+
+# Step 2: Calculate compression factor Z
+# Using the formula Z = (P * V_m) / (R * T)
+Z = (P * V_m) / (R * T)
+
+# Output the result with formatting for clarity
+print(f'Compression Factor Z: {Z:.3f}')

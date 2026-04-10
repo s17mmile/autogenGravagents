@@ -1,0 +1,20 @@
+# Constants
+h = 6.626e-34  # Planck's constant in J.s
+c = 3.00e10    # Speed of light in cm/s
+omega_e = 2886  # in cm^-1
+D_kJ_per_mol = 440.2  # in kJ/mol
+
+# Convert D from kJ/mol to J/mol
+D = D_kJ_per_mol * 1000  # Convert to J/mol
+
+# Calculate tilde{x}_e
+numerator = h * c * omega_e  # in J
+# Convert D to J/molecule using Avogadro's number
+N_A = 6.022e23  # molecules/mol
+D_molecule = D / N_A  # in J/molecule
+
+# Calculate tilde{x}_e
+x_e_tilde = numerator / D_molecule  # in cm^-1
+
+# Print the result with clear output
+print(f'The value of \tilde{{x}}_{{e}} is approximately {x_e_tilde:.4e} cm^-1')

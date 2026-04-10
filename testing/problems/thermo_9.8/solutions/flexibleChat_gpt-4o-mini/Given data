@@ -1,0 +1,14 @@
+# Given data
+P0_benzene = 120  # Vapor pressure of pure benzene in Torr
+P0_hexane = 189   # Vapor pressure of pure hexane in Torr
+x_benzene = 0.28  # Mole fraction of benzene
+
+# Step 1: Calculate the mole fraction of hexane
+x_hexane = 1 - x_benzene
+
+# Step 2: Apply Raoult's Law
+P_solution = (P0_benzene * x_benzene) + (P0_hexane * x_hexane)
+
+# Output the result, rounding to the nearest whole number
+P_solution_rounded = round(P_solution, 0)  # Rounding to the nearest whole number
+print(f'The vapor pressure of the solution is approximately {P_solution_rounded} Torr.')

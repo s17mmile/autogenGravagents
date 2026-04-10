@@ -1,0 +1,24 @@
+# Constants
+import numpy as np
+
+k = 8.99e9  # Coulomb's constant in N m^2/C^2
+q = 1.602e-19  # Charge of Li+ in C
+r = 100e-12  # Distance in meters (100 pm)
+p_debye = 1.85  # Dipole moment in Debye
+conversion_factor = 3.336e-29  # Conversion factor from D to C m
+N_A = 6.022e23  # Avogadro's number in mol^-1
+
+# Step 1: Calculate the electric field (E)
+E = (k * q) / (r ** 2)
+
+# Step 2: Convert dipole moment to C m
+p = p_debye * conversion_factor
+
+# Step 3: Calculate the energy change (Delta U)
+Delta_U = 2 * p * E
+
+# Step 4: Convert to molar energy
+Delta_U_molar = Delta_U * N_A
+
+# Output the result
+print(f'Molar energy required: {Delta_U_molar:.2e} J/mol')

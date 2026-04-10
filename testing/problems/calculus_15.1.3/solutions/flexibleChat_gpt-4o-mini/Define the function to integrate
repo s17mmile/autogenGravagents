@@ -1,0 +1,38 @@
+# Define the function to integrate
+
+def f(x, y):
+    """Calculate the value of the function x - 3y^2."""
+    return x - 3 * y**2
+
+# Define the limits of the region R
+x_min, x_max = 0, 2
+y_min, y_max = 1, 2
+
+# Number of subintervals
+m = 2
+n = 2
+
+# Calculate the width and height of each subrectangle
+delta_x = (x_max - x_min) / m
+delta_y = (y_max - y_min) / n
+
+# Initialize the integral estimate
+integral_estimate = 0
+
+# Loop through each subrectangle
+for x_index in range(m):
+    for y_index in range(n):
+        # Calculate the midpoints
+        mid_x = x_min + (x_index + 0.5) * delta_x
+        mid_y = y_min + (y_index + 0.5) * delta_y
+        # Evaluate the function at the midpoint
+        integral_estimate += f(mid_x, mid_y)
+
+# Calculate the area of each subrectangle
+delta_A = delta_x * delta_y
+
+# Final estimate of the integral
+integral_estimate *= delta_A
+
+# Print the result
+print(f'Estimated value of the integral: {integral_estimate}')

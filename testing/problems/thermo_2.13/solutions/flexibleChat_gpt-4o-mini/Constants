@@ -1,0 +1,22 @@
+# Constants
+mass_water = 82.5 / 1000  # mass of water in kg
+initial_temperature = 300  # initial temperature in K
+current = 1.75  # current in A
+resistance = 25.0  # resistance in ohms
+heating_time = 100  # time in seconds
+specific_heat_capacity = 4184  # specific heat capacity of water in J/(kg*K)
+
+# Step 1: Calculate power supplied by the immersion heater
+power = current ** 2 * resistance  # in watts
+
+# Step 2: Calculate total energy supplied over time
+energy_supplied = power * heating_time  # in joules
+
+# Step 3: Calculate temperature change
+temperature_change = energy_supplied / (mass_water * specific_heat_capacity)  # in K
+
+# Step 4: Calculate final temperature
+final_temperature = initial_temperature + temperature_change  # in K
+
+# Output the final temperature
+print('Final Temperature of the water:', final_temperature, 'K')

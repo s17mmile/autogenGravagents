@@ -1,0 +1,32 @@
+# Constants
+mass_xenon = 131  # grams
+molar_mass_xenon = 131.29  # g/mol
+volume_dm3 = 1.0  # dm^3
+R = 0.0821  # L·atm/(K·mol)
+T_C = 25  # Celsius
+
+a = 4.19  # L^2·atm/mol^2 (van der Waals constant for xenon)
+b = 0.0571  # L/mol (van der Waals constant for xenon)
+
+# Convert mass to moles
+n = mass_xenon / molar_mass_xenon
+
+# Convert temperature to Kelvin
+T = T_C + 273.15
+
+# Calculate the volume term more precisely
+volume_term = volume_dm3 - n * b
+
+# Check for valid volume term
+if volume_term <= 0:
+    raise ValueError('Volume term must be greater than zero to calculate pressure.')
+
+# Calculate pressure term
+pressure_term = n * R * T
+pressure_adjustment = a * (n ** 2) / (volume_dm3 ** 2)
+
+# Calculate pressure using the van der Waals equation
+P = (pressure_term / volume_term) - pressure_adjustment
+
+# Output the result
+print(f'The pressure exerted by {mass_xenon} g of xenon gas is approximately {P:.2f} atm.')

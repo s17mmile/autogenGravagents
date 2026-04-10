@@ -1,0 +1,24 @@
+# Constants for CO2
+R = 0.0821  # L·atm/(K·mol)
+T = 500    # Temperature in K
+P = 100    # Pressure in atm
+a = 3.59   # L^2·atm/mol^2 (van der Waals constant)
+b = 0.0427 # L/mol (van der Waals constant)
+
+# Initial estimation using ideal gas law
+Vm = (R * T) / P
+
+# Iterative refinement of Vm using the van der Waals equation
+convergence_threshold = 0.0001  # Convergence criterion
+change = float('inf')  # Initialize change for the loop
+iteration = 0
+
+while change > convergence_threshold and iteration < 100:  # Limit to 100 iterations
+    a_over_Vm2 = a / (Vm ** 2)
+    new_Vm = (R * T) / (P + a_over_Vm2) + b
+    change = abs(new_Vm - Vm)  # Calculate change
+    Vm = new_Vm  # Update Vm
+    iteration += 1  # Increment iteration count
+
+# Final estimated molar volume
+print(f'Estimated molar volume of CO2 at {T} K and {P} atm: {Vm:.4f} L/mol')

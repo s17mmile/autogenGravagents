@@ -1,0 +1,35 @@
+# This script calculates the maximum wavelength capable of ejecting an electron from a metal
+# based on the wavelength of a photon that ejects the electron and the kinetic energy of the ejected electron.
+
+# Constants
+h = 6.626e-34  # Planck's constant in Js
+c = 3.00e8     # Speed of light in m/s
+KE_eV = 1.77   # Kinetic energy in eV
+wavelength_photon_nm = 305  # Wavelength of the photon in nm
+
+# Error handling for negative values
+if KE_eV < 0:
+    raise ValueError('Kinetic energy must be a non-negative value.')
+if wavelength_photon_nm <= 0:
+    raise ValueError('Wavelength must be a positive value.')
+
+# Convert kinetic energy from eV to Joules
+KE_J = KE_eV * 1.602e-19  # 1 eV = 1.602 x 10^-19 J
+
+# Convert wavelength from nm to m
+wavelength_m = wavelength_photon_nm * 1e-9  # 1 nm = 1e-9 m
+
+# Calculate the energy of the photon using the wavelength
+E_photon = (h * c) / wavelength_m
+
+# Calculate the work function
+phi = E_photon - KE_J
+
+# Calculate the maximum wavelength
+lambda_max = (h * c) / phi
+
+# Convert maximum wavelength from m to nm
+lambda_max_nm = lambda_max * 1e9  # 1 m = 1e9 nm
+
+# Print the result
+print(f'Maximum wavelength capable of ejecting an electron: {lambda_max_nm:.2f} nm')

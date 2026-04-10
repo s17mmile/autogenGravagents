@@ -1,0 +1,23 @@
+# Constants
+probability_target = 151 / 300
+
+# Function to calculate the probability of drawing two balls of the same color
+def calculate_probability(r):
+    # Probability of both balls being red
+    prob_red = (8 / 15) * (r / (r + 9))
+    # Probability of both balls being blue
+    prob_blue = (7 / 15) * (9 / (r + 9))
+    # Total probability of same color
+    return prob_red + prob_blue
+
+# Evaluate integer values for r from 0 to 20
+# This range is chosen based on the problem context and reasonable assumptions about the number of red balls.
+matching_r_values = []
+for r in range(21):
+    total_probability = calculate_probability(r)
+    # Round both probabilities to avoid floating-point inaccuracies
+    if round(total_probability, 6) == round(probability_target, 6):  
+        matching_r_values.append(r)
+
+# Print valid values of r with enhanced output message
+print('Matching values of r (red balls in the second urn) that yield the specified probability:', matching_r_values)

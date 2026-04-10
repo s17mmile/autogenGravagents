@@ -1,0 +1,22 @@
+# Constants
+T1 = 13.56  # Initial temperature in degrees Celsius
+T2 = 82.0   # Final temperature in degrees Celsius
+P1 = 1.00   # Initial pressure in bar
+beta_water = 2.04e-4  # Coefficient of volumetric thermal expansion for water (K^-1)
+beta_vessel = 1.42e-4  # Coefficient of volumetric thermal expansion for vessel (K^-1)
+kappa_water = 4.59e-5   # Isothermal compressibility of water (bar^-1)
+
+# Step 1: Calculate the change in temperature
+Delta_T = T2 - T1  # Change in temperature (°C)
+
+# Step 2: Calculate the net change in volume
+net_volume_change = (beta_water - beta_vessel) * Delta_T  # Change in volume (dimensionless)
+
+# Step 3: Calculate the change in pressure
+pressure_change = -kappa_water * net_volume_change  # Change in pressure (bar)
+
+# Step 4: Calculate the final pressure
+P2 = P1 + pressure_change  # Final pressure (bar)
+
+# Output the final pressure
+print(f'The final pressure in the vessel is: {P2:.2f} bar')

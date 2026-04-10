@@ -1,0 +1,10 @@
+Conversation Log for query: If $y_1$ and $y_2$ are a fundamental set of solutions of $t y^{\prime \prime}+2 y^{\prime}+t e^t y=0$ and if $W\left(y_1, y_2\right)(1)=2$, find the value of $W\left(y_1, y_2\right)(5)$.
+
+Proxy:
+If $y_1$ and $y_2$ are a fundamental set of solutions of $t y^{\prime \prime}+2 y^{\prime}+t e^t y=0$ and if $W\left(y_1, y_2\right)(1)=2$, find the value of $W\left(y_1, y_2\right)(5)$.
+
+Backbone:
+{
+    "message": "To find the value of the Wronskian \\( W(y_1, y_2)(5) \\) given that \\( W(y_1, y_2)(1) = 2 \\), we can use Abel's formula, which states that for a second-order linear differential equation of the form \\( y'' + p(t) y' + q(t) y = 0 \\), the Wronskian \\( W(y_1, y_2)(t) \\) can be expressed as:\n\n\\[ W(y_1, y_2)(t) = W(y_1, y_2)(t_0) e^{-\\int_{t_0}^{t} p(s) \\, ds} \\]\n\nwhere \\( t_0 \\) is a point in the interval of interest, and \\( p(t) \\) is the coefficient of \\( y' \\) in the standard form of the differential equation.\n\nIn our case, the given differential equation is:\n\n\\[ t y'' + 2 y' + t e^t y = 0 \\]\n\nWe can rewrite it in standard form:\n\n\\[ y'' + \\frac{2}{t} y' + e^t y = 0 \\]\n\nHere, we identify \\( p(t) = \\frac{2}{t} \\). Now we can compute the integral of \\( p(t) \\):\n\n\\[ -\\int p(t) \\, dt = -\\int \\frac{2}{t} \\, dt = -2 \\ln |t| = \\ln |t|^{-2} \\]\n\nNow we can apply Abel's formula from \\( t_0 = 1 \\) to \\( t = 5 \\):\n\n\\[ W(y_1, y_2)(5) = W(y_1, y_2)(1) e^{-\\int_{1}^{5} \\frac{2}{s} \\, ds} \\]\n\nCalculating the integral:\n\n\\[ -\\int_{1}^{5} \\frac{2}{s} \\, ds = -2 [\\ln |s|]_{1}^{5} = -2 (\\ln 5 - \\ln 1) = -2 \\ln 5 \\]\n\nThus, we have:\n\n\\[ W(y_1, y_2)(5) = W(y_1, y_2)(1) e^{-(-2 \\ln 5)} = W(y_1, y_2)(1) e^{2 \\ln 5} = W(y_1, y_2)(1) \\cdot 5^2 = W(y_1, y_2)(1) \\cdot 25 \\]\n\nSubstituting \\( W(y_1, y_2)(1) = 2 \\):\n\n\\[ W(y_1, y_2)(5) = 2 \\cdot 25 = 50 \\]\n\nTherefore, the value of \\( W(y_1, y_2)(5) \\) is:\n\n\\[ \\boxed{50} \\]"
+}
+

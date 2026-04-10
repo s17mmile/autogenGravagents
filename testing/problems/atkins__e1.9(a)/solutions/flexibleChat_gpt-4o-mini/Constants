@@ -1,0 +1,25 @@
+# Constants
+volume_m3 = 400  # Volume of the room in cubic meters
+
+temperature_C = 27  # Temperature in degrees Celsius
+relative_humidity = 60  # Relative humidity in percent
+R = 461.5  # Ideal gas constant for water vapor in J/(kg·K)
+
+# Step 1: Saturation vapor pressure at 27°C (in Pa)
+saturation_vapor_pressure = 3560  # Saturation vapor pressure in Pa
+
+# Step 2: Calculate actual vapor pressure
+actual_vapor_pressure = saturation_vapor_pressure * (relative_humidity / 100)  # Actual vapor pressure in Pa
+
+# Step 3: Convert temperature to Kelvin
+temperature_K = temperature_C + 273.15
+
+# Step 4: Calculate number of moles of water vapor using the ideal gas law
+n = (actual_vapor_pressure * volume_m3) / (R * temperature_K)  # Number of moles
+
+# Step 5: Calculate mass of water vapor (molar mass of water = 0.018015 kg/mol)
+molar_mass_water = 0.018015  # kg/mol
+mass_water_vapor = n * molar_mass_water  # Mass in kg
+
+# Output the result
+print(f'Mass of water vapor: {mass_water_vapor:.2f} kg')

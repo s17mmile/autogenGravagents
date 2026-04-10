@@ -1,0 +1,25 @@
+# Constants
+import math
+
+g = 2.002319  # g-factor for electron
+e = 1.602e-19  # elementary charge in coulombs
+m_e = 9.109e-31  # mass of electron in kg
+h_bar = 1.055e-34  # reduced Planck's constant in J·s
+
+# Function to calculate spin magnetic moment
+
+def calculate_spin_magnetic_moment():
+    # Calculate spin angular momentum S
+    S = h_bar / 2  # J·s
+    
+    # Calculate the factor e / (2 * m_e)
+    factor = e / (2 * m_e)
+    
+    # Calculate the spin magnetic moment mu_s
+    mu_s = g * factor * S  # J/T
+    
+    # Output the result
+    print(f'The spin magnetic moment of the electron is: {mu_s} J/T')
+
+# Call the function to perform the calculation
+calculate_spin_magnetic_moment()

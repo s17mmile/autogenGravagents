@@ -1,0 +1,22 @@
+# Constants
+enthalpy_of_fusion = 2292  # J/mol
+normal_freezing_point = 234.3  # K
+change_in_volume = 0.517e-6  # m^3/mol
+density_mercury = 13600  # kg/m^3
+height_column = 10.0  # m
+g = 9.81  # m/s^2 (acceleration due to gravity)
+
+# Step 1: Calculate pressure at the bottom of the mercury column
+pressure_bottom = density_mercury * g * height_column  # Pa
+
+# Step 2: Calculate dT using the Clausius-Clapeyron equation
+# dT = (T * ΔV / ΔH_fus) * dP
+# Correcting the calculation of dT
+# dT = (normal_freezing_point * change_in_volume * pressure_bottom) / enthalpy_of_fusion
+dT = (normal_freezing_point * change_in_volume * pressure_bottom) / enthalpy_of_fusion
+
+# Step 3: Calculate the freezing temperature at the bottom of the column
+freezing_temperature = normal_freezing_point - dT
+
+# Output the results
+pressure_bottom, dT, freezing_temperature

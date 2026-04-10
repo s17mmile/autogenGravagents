@@ -1,0 +1,21 @@
+# Constants
+mass_nitrogen = 1.25  # in grams
+molar_mass_nitrogen = 28.02  # in g/mol
+volume_cm3 = 250  # in cm³
+volume_liters = volume_cm3 / 1000  # convert to liters
+temperature_celsius = 20  # in degrees Celsius
+temperature_kelvin = temperature_celsius + 273.15  # convert to Kelvin
+R = 8.314  # in kPa·L/(mol·K)
+
+# Input validation
+if mass_nitrogen <= 0 or volume_cm3 <= 0:
+    raise ValueError('Mass and volume must be positive values.')
+
+# Step 1: Calculate moles of nitrogen gas
+moles_nitrogen = mass_nitrogen / molar_mass_nitrogen
+
+# Step 4: Calculate pressure using the ideal gas law (P = nRT/V)
+pressure_kPa = (moles_nitrogen * R * temperature_kelvin) / volume_liters
+
+# Output the pressure
+print(f'The pressure exerted by nitrogen gas is approximately {pressure_kPa:.2f} kPa')

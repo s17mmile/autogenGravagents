@@ -1,0 +1,35 @@
+# Constants
+initial_deposit = 1000  # Initial deposit amount
+monthly_deposit = 25     # Monthly deposit amount
+annual_interest_rate = 0.08  # Annual interest rate
+compounding_frequency = 12  # Compounding frequency (monthly)
+years = 3  # Number of years
+
+# Input validation
+if initial_deposit < 0 or monthly_deposit < 0 or annual_interest_rate < 0:
+    raise ValueError('Initial deposit, monthly deposit, and interest rate must be non-negative.')
+
+# Calculate interest rate per compounding period
+interest_rate_per_period = annual_interest_rate / compounding_frequency
+# Calculate total number of compounding periods
+total_periods = compounding_frequency * years
+
+# Debugging outputs
+print(f'Interest Rate per Period: {interest_rate_per_period:.6f}')
+print(f'Total Compounding Periods: {total_periods}')
+
+# Calculate future value of the initial deposit
+# FV = P * (1 + r/n)^(nt)
+FV_initial = initial_deposit * (1 + interest_rate_per_period) ** total_periods
+print(f'Future Value of Initial Deposit: ${FV_initial:.2f}')  # Debugging output
+
+# Calculate future value of the monthly deposits
+# FV = PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+FV_monthly = monthly_deposit * (((1 + interest_rate_per_period) ** total_periods) - 1) / interest_rate_per_period
+print(f'Future Value of Monthly Deposits: ${FV_monthly:.2f}')  # Debugging output
+
+# Total balance
+total_balance = FV_initial + FV_monthly
+
+# Print the total balance
+print(f'Total balance after {years} years: ${total_balance:.2f}')

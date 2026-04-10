@@ -1,0 +1,37 @@
+# Constants
+import numpy as np
+
+# Charge of a proton and electron in Coulombs
+charge_proton = 1.602e-19  # C
+charge_electron = 1.602e-19  # C
+
+# Percentage difference as a decimal
+percentage_difference_decimal = 0.0001 / 100
+
+# Modified charges calculation
+modified_charge_proton = charge_proton * (1 + percentage_difference_decimal)
+modified_charge_electron = charge_electron * (1 - percentage_difference_decimal)
+
+# Number of copper atoms in each coin
+num_atoms = 3e22
+
+# Function to calculate effective charge of each coin
+def calculate_effective_charge():
+    return 29 * (modified_charge_proton - modified_charge_electron) * num_atoms
+
+# Function to calculate electrostatic force using Coulomb's Law
+def calculate_force(Q, r):
+    k = 8.99e9  # N m^2/C^2
+    return k * (Q**2) / (r**2)
+
+# Calculate effective charge
+Q = calculate_effective_charge()
+
+# Distance between the coins
+r = 1.0  # m
+
+# Calculate the electrostatic force
+F = calculate_force(Q, r)
+
+# Output the force
+print(f'The electrostatic force is: {F} N')

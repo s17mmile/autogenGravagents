@@ -1,0 +1,37 @@
+Problem Description:
+You are given the following reduction reactions and $E^{\circ}$ values:
+$$
+\begin{array}{ll}
+\mathrm{Fe}^{3+}(a q)+\mathrm{e}^{-} \rightarrow \mathrm{Fe}^{2+}(a q) & E^{\circ}=+0.771 \mathrm{~V} \\
+\mathrm{Fe}^{2+}(a q)+2 \mathrm{e}^{-} \rightarrow \mathrm{Fe}(s) & E^{\circ}=-0.447 \mathrm{~V}
+\end{array}
+$$
+Calculate $E^{\circ}$ for the half-cell reaction $\mathrm{Fe}^{3+}(a q)+3 \mathrm{e}^{-} \rightarrow \mathrm{Fe}(s)$.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+We calculate the desired value of $E^{\circ}$ by converting the given $E^{\circ}$ values to $\Delta G^{\circ}$ values, and combining these reduction reactions to obtain the desired equation.
+$$
+\begin{gathered}
+\mathrm{Fe}^{3+}(a q)+\mathrm{e}^{-} \rightarrow \mathrm{Fe}^{2+}(a q) \\
+\Delta G^{\circ}=-n F E^{\circ}=-1 \times 96485 \mathrm{C} \mathrm{mol}^{-1} \times 0.771 \mathrm{~V}=-74.39 \mathrm{~kJ} \mathrm{~mol}^{-1} \\
+\mathrm{Fe}^{2+}(a q)+2 \mathrm{e}^{-} \rightarrow \mathrm{Fe}(s) \\
+\Delta G^{\circ}=-n F E^{\circ}=-2 \times 96485 \mathrm{C} \mathrm{mol}^{-1} \times(-0.447 \mathrm{~V})=86.26 \mathrm{~kJ} \mathrm{~mol}^{-1}
+\end{gathered}
+$$
+We next add the two equations as well as their $\Delta G^{\circ}$ to obtain
+$$
+\begin{gathered}
+\mathrm{Fe}^{3+}(a q)+3 \mathrm{e}^{-} \rightarrow \mathrm{Fe}(s) \\
+\Delta G^{\circ}=-74.39 \mathrm{~kJ} \mathrm{~mol}^{-1}+86.26 \mathrm{~kJ} \mathrm{~mol}^{-1}=11.87 \mathrm{~kJ} \mathrm{~mol}^{-1} \\
+E_{F e^{3+} / F e}^{\circ}=-\frac{\Delta G^{\circ}}{n F}=\frac{-11.87 \times 10^3 \mathrm{~J} \mathrm{~mol}^{-1}}{3 \times 96485 \mathrm{C} \mathrm{mol}^{-1}}=-0.041 \mathrm{~V}
+\end{gathered}
+$$
+The $E^{\circ}$ values cannot be combined directly, because they are intensive rather than extensive quantities.
+The preceding calculation can be generalized as follows. Assume that $n_1$ electrons are transferred in the reaction with the potential $E_{A / B}^{\circ}$, and $n_2$ electrons are transferred in the reaction with the potential $E_{B / C}^{\circ}$. If $n_3$ electrons are transferred in the reaction with the potential $E_{A / C}^{\circ}$, then $n_3 E_{A / C}^{\circ}=n_1 E_{A / B}^{\circ}+n_2 E_{B / C}^{\circ}$.
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+-0.041  $\mathrm{~V}$

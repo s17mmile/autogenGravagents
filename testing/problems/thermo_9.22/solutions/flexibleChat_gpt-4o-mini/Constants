@@ -1,0 +1,20 @@
+# Constants
+x_ethanol = 0.35
+x_water = 1 - x_ethanol
+V_solution = 2.50  # in L
+rho_ethanol = 789  # kg/m^3
+rho_water = 997  # kg/m^3
+V_ethanol_molar = 55.2 * 1e-3  # L/mol
+V_water_molar = 17.8 * 1e-3  # L/mol
+
+# Calculate molar volume of the solution
+V_molar = (x_ethanol * V_ethanol_molar) + (x_water * V_water_molar)
+
+# Calculate total number of moles in the solution
+n_total = V_solution / V_molar
+
+# Calculate change in volume
+change_in_volume = V_solution - (V_molar * n_total)
+
+# Output the change in volume
+print(f'Change in volume: {change_in_volume:.4f} L')

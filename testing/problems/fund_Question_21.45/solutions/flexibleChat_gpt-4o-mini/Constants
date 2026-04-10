@@ -1,0 +1,19 @@
+# Constants
+avogadro_number = 6.022e23  # molecules/mol
+charge_of_proton = 1.602e-19  # coulombs
+
+# Step 1: Calculate the number of molecules in 1.00 mol of H2
+number_of_molecules = 1.00 * avogadro_number
+
+# Step 2: Calculate the total number of protons in 1.00 mol of H2
+# Each H2 molecule has 2 protons
+total_protons = number_of_molecules * 2
+
+# Step 3: Calculate the total positive charge in coulombs
+total_positive_charge_coulombs = total_protons * charge_of_proton
+
+# Step 4: Convert the total charge from coulombs to megacoulombs
+total_positive_charge_megacoulombs = total_positive_charge_coulombs / 1e6
+
+# Output the result with units
+print(f'Total positive charge in 1.00 mol of H2: {total_positive_charge_megacoulombs:.4f} megacoulombs')

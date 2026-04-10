@@ -1,0 +1,25 @@
+# Function to calculate the standard enthalpy of solution of AgCl in water
+def calculate_enthalpy_of_solution(Delta_H_f_Ag_plus, Delta_H_f_Cl_minus, Delta_H_f_AgCl):
+    """
+    Calculate the standard enthalpy of solution of AgCl in water.
+    
+    Parameters:
+    Delta_H_f_Ag_plus (float): Enthalpy of formation for Ag+(aq) in kJ/mol.
+    Delta_H_f_Cl_minus (float): Enthalpy of formation for Cl-(aq) in kJ/mol.
+    Delta_H_f_AgCl (float): Enthalpy of formation for AgCl(s) in kJ/mol.
+    
+    Returns:
+    float: Standard enthalpy of solution in kJ/mol.
+    """
+    return Delta_H_f_Ag_plus + Delta_H_f_Cl_minus - Delta_H_f_AgCl
+
+# Constants for enthalpy of formation (in kJ/mol)
+Delta_H_f_Ag_plus = 105.0  # Example value
+Delta_H_f_Cl_minus = -167.0  # Example value
+Delta_H_f_AgCl = -127.0  # Example value
+
+# Calculate the standard enthalpy of solution
+Delta_H_sol = calculate_enthalpy_of_solution(Delta_H_f_Ag_plus, Delta_H_f_Cl_minus, Delta_H_f_AgCl)
+
+# Output the result
+print(f'Standard enthalpy of solution of AgCl in water: {Delta_H_sol:.2f} kJ/mol.')

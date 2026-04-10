@@ -14,8 +14,8 @@ from autogen import ConversableAgent, GroupChat, GroupChatManager, gather_usage_
 
 
 
-# UTF-8 Encoding is important for docling
-# sys.stdout.reconfigure(encoding='utf-8')
+# UTF-8 Encoding
+sys.stdout.reconfigure(encoding='utf-8')
 
 # TYPEDEFS
 # All agent specifying information for reading in the config file
@@ -241,6 +241,10 @@ class flexibleAgentChat(QObject):
         print("Agent building complete.")
 
         return
+    
+    # Return path to conversation history
+    def getConversationPath(self):
+        return os.path.join(os.path.dirname(__file__), "tempConversation")
 
     def checkTermination(self, message) -> bool:
         # print(f"Checking for termination signal in message {message}...")
@@ -304,8 +308,6 @@ class flexibleAgentChat(QObject):
         # Clear and re-initialize conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
         shutil.rmtree(f"{os.path.dirname(__file__)}/tempConversation", ignore_errors=True)
         os.makedirs(f"{os.path.dirname(__file__)}/tempConversation", exist_ok=True)
-        # os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/data", exist_ok=True)
-        # os.makedirs(f"{os.path.dirname(__file__)}/tempConversation/tempDownloads", exist_ok=True)
 
         # Clear interruption request state at the beginning of the conversation
         self.interruptRequested = False

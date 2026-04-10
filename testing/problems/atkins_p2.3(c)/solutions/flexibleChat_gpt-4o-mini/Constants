@@ -1,0 +1,40 @@
+# Constants
+R = 8.314  # J/(mol K)
+T_initial = 300  # K
+T_final = 341  # K
+n = 2.0  # mol
+# van der Waals constants for CO2
+a = 3.59  # L^2 bar/mol^2
+b = 0.0427  # L/mol
+
+# Convert a and b to appropriate units (J)
+a = a * 1.01325e5  # Convert bar to Pa (1 bar = 1.01325e5 Pa)
+b = b * 1e-3  # Convert L to m^3 (1 L = 1e-3 m^3)
+
+# Step 1: Calculate change in temperature
+Delta_T = T_final - T_initial
+
+# Step 2: Calculate ideal C_V for CO2 (linear molecule)
+C_V_ideal = (5/2) * R  # J/(mol K)
+
+# Step 3: Adjust C_V for van der Waals behavior (assumed small correction)
+# Placeholder for any correction needed due to non-ideal behavior
+Delta_C_V = 0  # This should be calculated based on empirical data if available
+C_V = C_V_ideal + Delta_C_V
+
+# Step 4: Calculate change in internal energy (Delta U)
+Delta_U = n * C_V * Delta_T
+
+# Step 5: Calculate change in enthalpy (Delta H)
+Delta_n = 0  # No change in moles
+Delta_H = Delta_U + Delta_n * R * T_final  # Since Delta_n = 0, this simplifies to Delta_H = Delta_U
+
+# Output results
+Delta_U_kJ = Delta_U / 1000  # Convert J to kJ
+Delta_H_kJ = Delta_H / 1000  # Convert J to kJ
+
+# Print results
+print(f'Change in Internal Energy (Delta U): {Delta_U_kJ:.3f} kJ')
+print(f'Change in Enthalpy (Delta H): {Delta_H_kJ:.3f} kJ')
+
+# Note: The adjustment for C_V due to non-ideal behavior is not calculated and should be addressed with empirical data.

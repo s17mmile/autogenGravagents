@@ -1,0 +1,18 @@
+# Constants
+mass_benzoic_acid = 1.35  # in grams
+heat_of_combustion = -3220  # in kJ/mol
+molar_mass_benzoic_acid = 122.12  # in g/mol
+mass_water = 1.55e3  # in grams
+temperature_change = 2.76  # in K
+
+# Step 1: Convert mass of benzoic acid to moles
+moles_benzoic_acid = mass_benzoic_acid / molar_mass_benzoic_acid
+
+# Step 2: Calculate heat released (q) in Joules
+q = moles_benzoic_acid * heat_of_combustion * 1000  # converting kJ to J
+
+# Step 3: Calculate the calorimeter constant (C_cal)
+calorimeter_constant = q / temperature_change
+
+# Output the calorimeter constant
+print(f"Calorimeter Constant: {calorimeter_constant} J/K")

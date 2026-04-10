@@ -1,0 +1,18 @@
+# Constants
+G = 6.674e-11  # gravitational constant in m^3 kg^-1 s^-2
+M = 5.972e24   # mass of the Earth in kg
+h = 1.70       # height of the astronaut in meters
+r = 6.77e6    # distance from the center of the Earth to the astronaut's feet in meters
+
+# Calculate gravitational acceleration at the feet
+g_feet = G * M / r**2
+
+# Calculate gravitational acceleration at the head
+r_head = r + h
+g_head = G * M / r_head**2
+
+# Calculate the difference in gravitational acceleration
+delta_g = g_head - g_feet
+
+# Print the results with higher precision
+print(f'Difference in gravitational acceleration (g_head - g_feet): {delta_g:.5e} m/s^2')

@@ -1,0 +1,56 @@
+Problem Description:
+We treat projectile motion in two dimensions, first without considering air resistance. Let the muzzle velocity of the projectile be $v_0$ and the angle of elevation be $\theta$. The Germans used a long-range gun named Big Bertha in World War I to bombard Paris. Its muzzle velocity was $1,450 \mathrm{~m} / \mathrm{s}$. Find its predicted range of flight if $\theta=55^{\circ}$. 
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+Using $\mathbf{F}=m \mathrm{~g}$, the force components become
+$x$-direction
+$$
+0=m \ddot{x}
+$$
+y-direction
+$-m g=m \ddot{y}$ Neglect the height of the gun, and assume $x=y=0$ at $t=0$. Then
+$$
+\begin{aligned}
+& \ddot{x}=0 \\
+& \dot{x}=v_0 \cos \theta \\
+& x=v_0 t \cos \theta \\
+& y=-\frac{-g t^2}{2}+v_0 t \sin \theta \\
+&
+\end{aligned}
+$$
+and
+$$
+\begin{aligned}
+& \ddot{y}=-g \\
+& \dot{y}=-g t+v_0 \sin \theta \\
+& y=\frac{-g t^2}{2}+v_0 t \sin \theta
+\end{aligned}
+$$
+
+We can find the range by determining the value of $x$ when the projectile falls back to ground, that is, when $y=0$.
+$$
+y=t\left(\frac{-g t}{2}+v_0 \sin \theta\right)=0
+$$
+One value of $y=0$ occurs for $t=0$ and the other one for $t=T$.
+$$
+\begin{aligned}
+\frac{-g T}{2}+v_0 \sin \theta & =0 \\
+T & =\frac{2 v_0 \sin \theta}{g}
+\end{aligned}
+$$The range $R$ is found from
+$$
+\begin{aligned}
+x(t=T) & =\text { range }=\frac{2 v_0^2}{g} \sin \theta \cos \theta \\
+R & =\text { range }=\frac{v_0^2}{g} \sin 2 \theta
+\end{aligned}$$We have $v_0=1450 \mathrm{~m} / \mathrm{s}$ and $\theta=55^{\circ}$, so the range becomes
+$$
+R=\frac{(1450 \mathrm{~m} / \mathrm{s})^2}{9.8 \mathrm{~m} / \mathrm{s}^2}\left[\sin \left(110^{\circ}\right)\right]=202 \mathrm{~km}$$. 
+
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+202  $\mathrm{km}$

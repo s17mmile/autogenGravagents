@@ -1,0 +1,19 @@
+# Constants
+h = 6.626e-34  # Planck's constant in J*s
+c = 3.00e8     # Speed of light in m/s
+
+
+def calculate_photon_energy(wavelength_pm):
+    """Calculate the energy of a photon given its wavelength in picometers."""
+    # Convert wavelength to meters
+    wavelength_m = wavelength_pm * 1e-12  # Convert pm to m
+    # Calculate energy of the photon
+    energy = (h * c) / wavelength_m
+    return energy
+
+# Wavelength in picometers
+wavelength_pm = 100  # 100 picometers
+
+# Calculate and print the energy
+energy = calculate_photon_energy(wavelength_pm)
+print(f'Energy of the photon: {energy:.2e} J')

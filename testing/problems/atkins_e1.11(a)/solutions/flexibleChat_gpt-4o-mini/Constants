@@ -1,0 +1,14 @@
+# Constants
+density = 1.23  # kg/m^3
+temperature = 330  # K
+pressure = 20000  # Pa (20 kPa converted to Pa)
+R = 8.314  # J/(mol*K)
+
+# Calculate molar mass using the formula M = (density * R * T) / P
+molar_mass = (density * R * temperature) / pressure
+
+# Convert molar mass from kg/mol to g/mol
+molar_mass_g_per_mol = molar_mass * 1000
+
+# Output the result
+print(f'Molar mass of the compound: {molar_mass_g_per_mol:.2f} g/mol')

@@ -1,0 +1,35 @@
+# Constants
+R = 0.0821  # Ideal gas constant in L·atm/(K·mol)
+T = 298     # Temperature in Kelvin
+rho = 980   # Density of the solution in g/L
+g = 9.81    # Acceleration due to gravity in m/s²
+M_PVC = 62000  # Molar mass of PVC in g/mol
+
+# Concentrations in g/dm³
+concentrations = [1.00, 2.00, 4.00, 7.00, 9.00]
+# Heights in cm
+heights = [0.28, 0.71, 2.01, 5.10, 8.00]
+
+# Check if lists are not empty
+if not concentrations or not heights:
+    raise ValueError('Concentrations and heights lists must not be empty.')
+
+# Calculate osmotic pressures and molar masses
+osmotic_pressures = []
+for h in heights:
+    h_m = h / 100  # Convert cm to m
+    Pi = rho * g * h_m  # Osmotic pressure in atm
+    osmotic_pressures.append(Pi)
+
+molar_masses = []
+for concentration, Pi in zip(concentrations, osmotic_pressures):
+    M = (concentration / M_PVC) * R * T / Pi  # Molar mass calculation
+    molar_masses.append(M)
+    # Debugging output for individual calculations
+    print(f'Concentration: {concentration} g/dm³, Osmotic Pressure: {Pi:.2f} atm, Molar Mass: {M:.2f} g/mol')
+
+# Calculate average molar mass
+average_molar_mass = sum(molar_masses) / len(molar_masses)
+
+# Output results
+print(f'Average Molar Mass of PVC: {average_molar_mass:.2f} g/mol')

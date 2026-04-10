@@ -1,0 +1,25 @@
+# Constants for temperatures in Fahrenheit
+REFRIGERATOR_TEMP_F = 36.0
+FREEZER_TEMP_F = 0.0
+ROOM_TEMP_F = 65.0
+
+# Function to convert Fahrenheit to Kelvin
+def fahrenheit_to_kelvin(f):
+    if not isinstance(f, (int, float)):
+        raise ValueError('Temperature must be a numeric value.')
+    return (f - 32) / 1.8 + 273.15
+
+# Convert temperatures to Kelvin
+T_c_refrigerator = fahrenheit_to_kelvin(REFRIGERATOR_TEMP_F)
+T_h = fahrenheit_to_kelvin(ROOM_TEMP_F)
+T_c_freezer = fahrenheit_to_kelvin(FREEZER_TEMP_F)
+
+# Calculate COP for refrigerator and freezer
+COP_refrigerator = T_c_refrigerator / (T_h - T_c_refrigerator)
+COP_freezer = T_c_freezer / (T_h - T_c_freezer)
+
+# Calculate the factor of expense
+factor = COP_refrigerator / COP_freezer
+
+# Output the factor
+print(f'Factor of expense: {factor:.2f}')

@@ -1,0 +1,30 @@
+# Constants
+mass_ice = 34.05  # g
+mass_water = 185.0  # g
+T_ice_initial = 273.0  # K
+T_water_initial = 310.0  # K
+C_P_m = 75.3  # J/(mol K)
+Delta_H_fus = 6010  # J/mol (enthalpy of fusion for water)
+M_H2O = 18.015  # g/mol (molar mass of water)
+
+# Calculating moles of ice and water
+n_ice = mass_ice / M_H2O  # moles of ice
+n_water = mass_water / M_H2O  # moles of liquid water
+
+# Heat required to melt the ice
+Q_melt = n_ice * Delta_H_fus  # heat needed to melt the ice
+
+# Setting up the energy balance equation
+from sympy import symbols, Eq, solve
+T_f = symbols('T_f')  # final temperature
+Q_warming_ice = n_ice * C_P_m * (T_f - T_ice_initial)  # heat gained by melted ice
+Q_lost = n_water * C_P_m * (T_water_initial - T_f)  # heat lost by warm water
+
+# Energy balance equation
+energy_balance = Eq(Q_melt + Q_warming_ice, Q_lost)
+
+# Solve for T_f
+final_temperature = solve(energy_balance, T_f)[0]
+
+# Output the final temperature
+print(f'The final equilibrium temperature of the system is: {final_temperature:.2f} K')

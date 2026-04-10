@@ -1,0 +1,39 @@
+Problem Description:
+Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below $$
+\begin{array}{ll}
+H_0(\xi)=1 & H_1(\xi)=2 \xi \\
+H_2(\xi)=4 \xi^2-2 & H_3(\xi)=8 \xi^3-12 \xi \\
+H_4(\xi)=16 \xi^4-48 \xi^2+12 & H_5(\xi)=32 \xi^5-160 \xi^3+120 \xi
+\end{array}
+$$, show that a $0 \rightarrow 1$ vibrational transition is allowed and that a $0 \rightarrow 2$ transition is forbidden.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+Letting $\xi=\alpha^{1 / 2} x$ in Table 5.3 , we have
+$$
+\begin{aligned}
+& \psi_0(\xi)=\left(\frac{\alpha}{\pi}\right)^{1 / 4} e^{-\xi^2 / 2} \\
+& \psi_1(\xi)=\sqrt{2}\left(\frac{\alpha}{\pi}\right)^{1 / 4} \xi e^{-\xi^2 / 2} \\
+& \psi_2(\xi)=\frac{1}{\sqrt{2}}\left(\frac{\alpha}{\pi}\right)^{1 / 4}\left(2 \xi^2-1\right) e^{-\xi^2 / 2}
+\end{aligned}
+$$
+The dipole transition moment is given by the integral
+$$
+I_{0 \rightarrow v} \propto \int_{-\infty}^{\infty} \psi_v(\xi) \xi \psi_0(\xi) d \xi
+$$
+The transition is allowed if $I_{0 \rightarrow v} \neq 0$ and is forbidden if $I_{0 \rightarrow v}=0$. For $v=1$, we have
+$$
+I_{0 \rightarrow 1} \propto\left(\frac{2 \alpha}{\pi}\right)^{1 / 2} \int_{-\infty}^{\infty} \xi^2 e^{-\xi^2} d \xi \neq 0
+$$
+because the integrand is everywhere positive. For $v=2$,
+$$
+I_{0 \rightarrow 2} \propto\left(\frac{\alpha}{2 \pi}\right)^{1 / 2} \int_{-\infty}^{\infty}\left(2 \xi^3-\xi\right) e^{-\xi^2} d \xi=0
+$$
+because the integrand is an odd function and the limits go from $-\infty$ to $+\infty$.
+
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+0  

@@ -1,0 +1,19 @@
+# Constants for CO2
+P = 100  # Pressure in atm
+T = 500  # Temperature in K
+R = 0.0821  # Ideal gas constant in L·atm/(K·mol)
+
+# Van der Waals constants for CO2
+a = 3.59  # L^2 atm / mol^2
+b = 0.0427  # L / mol
+
+# Calculate the terms
+RT_over_P = (R * T) / P  # RT/P
+b_term = b  # b
+a_over_P = a / P  # a/P
+
+# Calculate molar volume using the corrected equation
+V_m = RT_over_P - b_term + a_over_P
+
+# Output the result
+print(f'The estimated molar volume of CO2 at {T} K and {P} atm is approximately {V_m:.4f} L/mol.')

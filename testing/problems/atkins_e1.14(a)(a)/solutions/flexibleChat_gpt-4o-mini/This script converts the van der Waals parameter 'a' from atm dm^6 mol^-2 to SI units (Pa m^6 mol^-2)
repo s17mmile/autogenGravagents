@@ -1,0 +1,16 @@
+# This script converts the van der Waals parameter 'a' from atm dm^6 mol^-2 to SI units (Pa m^6 mol^-2).
+
+# Constants for conversion
+atm_to_Pa = 101325  # 1 atm in Pascals
+
+dm_to_m = 0.1  # 1 dm in meters
+
+# Given value of a in atm dm^6 mol^-2
+a_atm_dm6_mol2 = 0.751  # atm dm^6 mol^-2
+
+# Convert a to SI units
+# 1 dm^6 = (0.1 m)^6 = 0.000001 m^6 = 10^-6 m^6
+a_SI = a_atm_dm6_mol2 * atm_to_Pa * (dm_to_m ** 6)
+
+# Print the result
+print(f"The van der Waals parameter a in SI units is: {a_SI:.6f} Pa m^6 mol^-2")

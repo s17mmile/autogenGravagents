@@ -1,0 +1,18 @@
+# Constants
+P = 327.6  # Pressure in atm
+T = 776.4  # Temperature in K
+R = 0.0821  # Ideal gas constant in dm³·atm/(K·mol)
+M = 18.02  # Molar mass of water in g/mol
+rho = 133.2  # Density in g/dm³
+
+# Step 1: Calculate the number of moles per dm³
+n = rho / M  # in mol/dm³
+
+# Step 2: Calculate the molar volume (V_m)
+V_m = 1 / n  # in dm³/mol
+
+# Step 3: Calculate the compression factor (Z)
+Z = (P * V_m) / (R * T)
+
+# Output the result
+print('Compression Factor (Z):', Z)

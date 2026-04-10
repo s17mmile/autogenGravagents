@@ -1,0 +1,28 @@
+# Given data
+vapor_pressure_A = 151  # Vapor pressure of pure A in Torr
+vapor_pressure_B = 84.3  # Vapor pressure of pure B in Torr
+y_A = 0.610  # Mole fraction of A in the vapor
+
+# Step 1: Calculate total vapor pressure
+# Using the relationship P_total = P_A / y_A
+# P_A = x_A * vapor_pressure_A
+# Therefore, P_total = (x_A * vapor_pressure_A) / y_A
+
+# Step 2: Express P_total using partial pressures
+# P_total = P_A + P_B = x_A * vapor_pressure_A + (1 - x_A) * vapor_pressure_B
+
+from sympy import symbols, Eq, solve
+
+# Define the variable
+x_A = symbols('x_A')
+
+# Equation for total pressure
+equation = Eq((x_A * vapor_pressure_A) / y_A, x_A * vapor_pressure_A + (1 - x_A) * vapor_pressure_B)
+
+# Solve for x_A with error handling
+try:
+    solution = solve(equation, x_A)
+    mole_fraction_A = solution[0]
+    print(f'Mole fraction of A in the solution (dimensionless): {mole_fraction_A:.3f}')
+except Exception as e:
+    print(f'An error occurred while solving for the mole fraction: {e}')

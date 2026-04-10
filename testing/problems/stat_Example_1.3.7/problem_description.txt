@@ -1,0 +1,29 @@
+Problem Description:
+From an ordinary deck of playing cards, cards are to be drawn successively at random and without replacement. What is the probability that the third spade appears on the sixth draw?
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+Let $A$ be the event of two spades in the first five cards drawn, and let $B$ be the event of a spade on the sixth draw. Thus, the probability that we wish to compute is $P(A \cap B)$. It is reasonable to take
+$$
+P(A)=\frac{\left(\begin{array}{c}
+13 \\
+2
+\end{array}\right)\left(\begin{array}{c}
+39 \\
+3
+\end{array}\right)}{\left(\begin{array}{c}
+52 \\
+5
+\end{array}\right)}=0.274 \quad \text { and } \quad P(B \mid A)=\frac{11}{47}=0.234
+$$
+The desired probability, $P(A \cap B)$, is the product of those numbers:
+$$
+P(A \cap B)=(0.274)(0.234)=0.064
+$$
+
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+0.064  

@@ -1,0 +1,33 @@
+Problem Description:
+Suppose the concentration of a solute decays exponentially along the length of a container. Calculate the thermodynamic force on the solute at $25^{\circ} \mathrm{C}$ given that the concentration falls to half its value in $10 \mathrm{~cm}$.
+
+--------------------------------------------------------------------------------------
+
+Reference Explanation:
+
+The concentration varies with position as
+$$
+c=c_0 \mathrm{e}^{-x / \lambda}
+$$
+where $\lambda$ is the decay constant. Therefore,
+$$
+\frac{\mathrm{d} c}{\mathrm{~d} x}=-\frac{c}{\lambda}
+$$
+From Equation $$
+
+\mathcal{F}=-\frac{R T}{c}\left(\frac{\partial c}{\partial x}\right)_{p, T}
+
+$$ then implies that
+$$
+\mathcal{F}=\frac{R T}{\lambda}
+$$
+We know that the concentration falls to $\frac{1}{2} c_0$ at $x=10 \mathrm{~cm}$, so we can find $\lambda$ from $\frac{1}{2}=\mathrm{e}^{-(10 \mathrm{~cm}) / \lambda}$. That is $\lambda=(10 \mathrm{~cm} / \ln 2)$. It follows that
+$$
+\mathcal{F}=\left(8.3145 \mathrm{~J} \mathrm{~K}^{-1} \mathrm{~mol}^{-1}\right) \times(298 \mathrm{~K}) \times \ln 2 /\left(1.0 \times 10^{-1} \mathrm{~m}\right)=17 \mathrm{kN} \mathrm{mol}^{-1}
+$$
+where we have used $1 \mathrm{~J}=1 \mathrm{~N} \mathrm{~m}$.
+
+--------------------------------------------------------------------------------------
+
+Correct Final Answer:
+17  $\mathrm{kN} \mathrm{mol}^{-1}$

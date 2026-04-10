@@ -1,0 +1,10 @@
+Conversation Log for query: A radioactive material, such as the isotope thorium-234, disintegrates at a rate proportional to the amount currently present. If $Q(t)$ is the amount present at time $t$, then $d Q / d t=-r Q$, where $r>0$ is the decay rate. If $100 \mathrm{mg}$ of thorium-234 decays to $82.04 \mathrm{mg}$ in 1 week, determine the decay rate $r$.
+
+Proxy:
+A radioactive material, such as the isotope thorium-234, disintegrates at a rate proportional to the amount currently present. If $Q(t)$ is the amount present at time $t$, then $d Q / d t=-r Q$, where $r>0$ is the decay rate. If $100 \mathrm{mg}$ of thorium-234 decays to $82.04 \mathrm{mg}$ in 1 week, determine the decay rate $r$.
+
+Backbone:
+{
+    "message": "To solve for the decay rate \\( r \\), we start with the differential equation given by the decay of the radioactive material:\n\n\\[ \\frac{dQ}{dt} = -rQ \\]\n\nThis can be solved using the method of separation of variables. Rearranging gives:\n\n\\[ \\frac{dQ}{Q} = -r \\, dt \\]\n\nIntegrating both sides:\n\n\\[ \\int \\frac{dQ}{Q} = -r \\int dt \\]\n\nThis results in:\n\n\\[ \\ln |Q| = -rt + C \\]\n\nExponentiating both sides leads to:\n\n\\[ Q(t) = e^{-rt + C} = e^C e^{-rt} \\]\n\nLetting \\( K = e^C \\), we can rewrite this as:\n\n\\[ Q(t) = K e^{-rt} \\]\n\nTo find the constant \\( K \\), we use the initial condition. At time \\( t = 0 \\), we have:\n\n\\[ Q(0) = K e^{0} = K \\]\n\nThus, \\( K = Q(0) = 100 \\) mg. Therefore, the equation becomes:\n\n\\[ Q(t) = 100 e^{-rt} \\]\n\nNext, we use the information that after 1 week (which we will take as \\( t = 1 \\) week), the amount of thorium-234 is 82.04 mg:\n\n\\[ Q(1) = 100 e^{-r \\cdot 1} = 82.04 \\]\n\nNow we can solve for \\( r \\):\n\n\\[ 100 e^{-r} = 82.04 \\]\n\nDividing both sides by 100 gives:\n\n\\[ e^{-r} = \\frac{82.04}{100} = 0.8204 \\]\n\nTaking the natural logarithm of both sides:\n\n\\[ -r = \\ln(0.8204) \\]\n\nThus:\n\n\\[ r = -\\ln(0.8204) \\]\n\nCalculating this value:\n\n\\[ r \\approx -(-0.1987) \\approx 0.1987 \\text{ week}^{-1} \\]\n\nTherefore, the decay rate \\( r \\) is approximately:\n\n\\[ \\boxed{0.1987} \\text{ week}^{-1} \\]"
+}
+

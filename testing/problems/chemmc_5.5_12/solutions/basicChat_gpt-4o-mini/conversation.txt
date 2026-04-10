@@ -1,0 +1,22 @@
+Conversation Log for query: Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below $$
+\begin{array}{ll}
+H_0(\xi)=1 & H_1(\xi)=2 \xi \\
+H_2(\xi)=4 \xi^2-2 & H_3(\xi)=8 \xi^3-12 \xi \\
+H_4(\xi)=16 \xi^4-48 \xi^2+12 & H_5(\xi)=32 \xi^5-160 \xi^3+120 \xi
+\end{array}
+$$, show that a $0 \rightarrow 1$ vibrational transition is allowed and that a $0 \rightarrow 2$ transition is forbidden.
+
+Proxy:
+Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below $$
+\begin{array}{ll}
+H_0(\xi)=1 & H_1(\xi)=2 \xi \\
+H_2(\xi)=4 \xi^2-2 & H_3(\xi)=8 \xi^3-12 \xi \\
+H_4(\xi)=16 \xi^4-48 \xi^2+12 & H_5(\xi)=32 \xi^5-160 \xi^3+120 \xi
+\end{array}
+$$, show that a $0 \rightarrow 1$ vibrational transition is allowed and that a $0 \rightarrow 2$ transition is forbidden.
+
+Backbone:
+{
+    "message": "To determine whether the vibrational transitions are allowed or forbidden, we can use the selection rules for quantum mechanical transitions involving Hermite polynomials. The key selection rule for vibrational transitions in quantum harmonic oscillators is that transitions are allowed if the change in quantum number is \n\\[ \\Delta n = n' - n = \\pm 1 \\] \nfor allowed transitions, and forbidden for \n\\[ \\Delta n = n' - n = \\pm 2 \\] \n\n### 0 \u2192 1 Transition\nFor the transition from the ground state (n=0) to the first excited state (n=1), we have:\n- Initial state: \\( H_0(\\xi) = 1 \\)\n- Final state: \\( H_1(\\xi) = 2\\xi \\)\n\nThe transition dipole moment \\( \\mu \\) is given by:\n\\[ \\mu = \\int_{-\\infty}^{\\infty} \\psi_0^*(x) \\hat{\\mu} \\psi_1(x) \\, dx \\]\nwhere \\( \\psi_0(x) \\) and \\( \\psi_1(x) \\) are the wave functions corresponding to the states \\( H_0 \\) and \\( H_1 \\), and \\( \\hat{\\mu} \\) is the dipole moment operator.\n\nIn the case of the harmonic oscillator, the wave functions can be expressed in terms of Hermite polynomials:\n\\[ \\psi_n(x) = N_n H_n(\\xi) e^{-\\xi^2/2} \\]\nwhere \\( \\xi = \\sqrt{\\frac{m\\omega}{\\hbar}} x \\) and \\( N_n \\) is a normalization constant.\n\nFor the transition dipole moment:\n\\[ \\mu = \\int_{-\\infty}^{\\infty} H_0(\\xi) \\hat{\\mu} H_1(\\xi) e^{-\\xi^2} \\, d\\xi \\]\nSince \\( H_0(\\xi) = 1 \\) is an even function and \\( H_1(\\xi) = 2\\xi \\) is an odd function, the product \\( H_0(\\xi) H_1(\\xi) = 2\\xi \\) is odd. The integral of an odd function over symmetric limits (from \\(-\\infty\\) to \\(+\\infty\\)) is zero, thus:\n\\[ \\mu = 0 \\] \nThis means that the transition is allowed, as it satisfies the selection rule \\( \\Delta n = 1 \\).\n\n### 0 \u2192 2 Transition\nFor the transition from the ground state (n=0) to the second excited state (n=2), we have:\n- Initial state: \\( H_0(\\xi) = 1 \\)\n- Final state: \\( H_2(\\xi) = 4\\xi^2 - 2 \\)\n\nThe transition dipole moment is:\n\\[ \\mu = \\int_{-\\infty}^{\\infty} H_0(\\xi) \\hat{\\mu} H_2(\\xi) e^{-\\xi^2} \\, d\\xi \\]\nHere, \\( H_0(\\xi) = 1 \\) is even and \\( H_2(\\xi) = 4\\xi^2 - 2 \\) is also even. The product \\( H_0(\\xi) H_2(\\xi) = 4\\xi^2 - 2 \\) is even. The integral of an even function over symmetric limits is non-zero, but the transition dipole moment is still zero because the dipole moment operator \\( \\hat{\\mu} \\) is odd. Thus:\n\\[ \\mu = 0 \\] \nThis means that the transition is forbidden, as it does not satisfy the selection rule \\( \\Delta n = 2 \\).\n\n### Conclusion\n- The transition from the ground state (n=0) to the first excited state (n=1) is allowed.\n- The transition from the ground state (n=0) to the second excited state (n=2) is forbidden."
+}
+

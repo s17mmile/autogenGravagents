@@ -1,0 +1,43 @@
+# Constants
+I = 8.5  # Total impulse in N-s
+m0 = 0.054  # Initial mass of the rocket in kg
+me = 0.020  # Mass of the rocket engine in kg
+tb = 1.5  # Burn time in seconds
+mp = 0.011  # Mass of propellant in kg
+ve = 800  # Exhaust speed in m/s
+cw = 0.75  # Drag coefficient
+rho = 1.225  # Air density in kg/m^3 (approximate at sea level)
+
+# Calculate thrust
+F = I / tb  # Thrust in N
+
+# Calculate mass flow rate
+m_dot = mp / tb  # Mass flow rate in kg/s
+
+# Initialize variables for simulation
+mass = m0
+velocity = 0.0  # Initial velocity
+distance = 0.0  # Initial distance
+
+# Time step for simulation
+dt = 0.01  # seconds
+
+# Simulation loop
+for t in range(int(tb / dt) + 1):  # Time in increments of dt
+    time = t * dt  # Convert to seconds
+    # Update mass
+    mass = m0 - m_dot * time  # Mass at time t
+    # Calculate drag force
+    D = 0.5 * cw * rho * (velocity ** 2) * (24e-3)  # Drag force
+    # Calculate net force
+    F_net = F - D  # Net force
+    # Calculate acceleration
+    a = F_net / mass  # Acceleration
+    # Update velocity
+    velocity += a * dt  # Update velocity
+    # Update distance
+    distance += velocity * dt  # Update distance
+
+# Print final results
+print(f'Final velocity at burnout: {velocity:.2f} m/s')
+print(f'Total distance traveled during burn: {distance:.2f} m')

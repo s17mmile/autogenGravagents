@@ -1,0 +1,34 @@
+# Constants
+volume_cm3 = 250  # volume of water in cm^3
+water_density = 1  # density of water in g/cm^3
+molar_mass_water = 18  # molar mass of water in g/mol
+avogadro_number = 6.022e23  # Avogadro's number in molecules/mol
+charge_proton = 1.602e-19  # charge of a single proton in coulombs
+
+try:
+    # Step 1: Calculate the mass of water in grams
+    mass_of_water_g = volume_cm3 * water_density
+    print(f'Mass of water: {mass_of_water_g} g')
+
+    # Step 2: Calculate the number of moles of water
+    moles_of_water = mass_of_water_g / molar_mass_water
+    print(f'Moles of water: {moles_of_water}')
+
+    # Step 3: Calculate the number of water molecules
+    number_of_molecules = moles_of_water * avogadro_number
+    print(f'Number of water molecules: {number_of_molecules}')
+
+    # Step 4: Calculate the total number of protons
+    number_of_protons = number_of_molecules * 10  # 10 protons per water molecule
+    print(f'Total number of protons: {number_of_protons}')
+
+    # Step 5: Calculate the total positive charge in coulombs
+    total_positive_charge = number_of_protons * charge_proton
+    print(f'Total positive charge in coulombs: {total_positive_charge}')
+
+    # Output the result
+    print(f'Total positive charge in 250 cm^3 of water: {total_positive_charge:.2f} C')
+except ZeroDivisionError:
+    print('Error: Division by zero occurred. Check the molar mass of water.')
+except Exception as e:
+    print(f'An error occurred: {e}')

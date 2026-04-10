@@ -1,0 +1,24 @@
+# Constants
+mass_kg = 60  # mass of the hiker in kg
+height_m = 828  # height of the Burj Khalifa in meters
+gravity_m_s2 = 9.81  # acceleration due to gravity in m/s^2
+efficiency = 0.25  # efficiency of energy conversion
+energy_per_bar_kJ = 1.08e3  # energy provided by one energy bar in kJ
+
+# Input validation
+if mass_kg <= 0 or height_m <= 0:
+    raise ValueError('Mass and height must be positive values.')
+
+# Calculate work done against gravity
+work_done_J = mass_kg * gravity_m_s2 * height_m  # in Joules
+work_done_kJ = work_done_J / 1000  # convert to kJ
+
+# Calculate total energy required from energy bars
+energy_required_kJ = work_done_kJ / efficiency  # in kJ
+
+# Calculate number of energy bars needed
+number_of_bars = energy_required_kJ / energy_per_bar_kJ
+number_of_bars_rounded = int(number_of_bars) + (number_of_bars % 1 > 0)  # round up if not whole
+
+# Output the result
+print(f'The hiker needs to consume {number_of_bars_rounded} energy bars to climb the Burj Khalifa.')

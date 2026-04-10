@@ -1,0 +1,30 @@
+# Ensure sympy is installed
+try:
+    import sympy as sp
+except ImportError:
+    print("Please install the sympy library to run this code.")
+    exit()
+
+# Constants
+weight_coal = 800  # weight of coal in lb
+length_cable = 500  # length of cable in ft
+weight_per_ft_cable = 2  # weight of cable per ft in lb
+
+# Function to calculate work done lifting the coal
+def calculate_work_coal(weight, length):
+    return weight * length
+
+# Function to calculate work done lifting the cable using integral
+def calculate_work_cable(weight_per_ft, length):
+    x = sp.symbols('x')
+    return sp.integrate(weight_per_ft * (length - x), (x, 0, length))
+
+# Calculate work done
+work_coal = calculate_work_coal(weight_coal, length_cable)
+work_cable_integral = calculate_work_cable(weight_per_ft_cable, length_cable)
+
+# Total work done
+total_work_done = work_coal + work_cable_integral
+
+# Output results
+print(f'Total work done in lifting the coal and cable: {total_work_done:.2f} ft-lb')

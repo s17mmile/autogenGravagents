@@ -1,0 +1,17 @@
+# Constants
+planck_constant = 6.626e-34  # Planck constant in Js
+electron_mass = 9.109e-31      # Mass of electron in kg
+speed_of_light = 3.00e8         # Speed of light in m/s
+
+# Given speed as a percentage of the speed of light
+percentage_speed = 0.01  # 1.00%
+v = percentage_speed * speed_of_light  # Velocity of the electron in m/s
+
+# Calculate momentum
+momentum = electron_mass * v  # Momentum in kg*m/s
+
+# Calculate de Broglie wavelength
+wavelength = planck_constant / momentum  # Wavelength in meters
+
+# Output the result with units
+print(f'De Broglie wavelength of the electron: {wavelength} meters')

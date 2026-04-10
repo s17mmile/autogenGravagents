@@ -1,0 +1,34 @@
+# Constants
+mass_CO2 = 2.45  # grams
+molar_mass_CO2 = 44.01  # g/mol
+V1 = 0.500  # dm^3 (initial volume)
+V2 = 3.00  # dm^3 (final volume)
+T1 = 27.0 + 273.15  # K (initial temperature)
+R = 0.0821  # L·atm/(K·mol)
+
+def calculate_work():
+    # Step 1: Calculate the number of moles of CO2
+    n = mass_CO2 / molar_mass_CO2  # in moles
+
+    # Step 2: Validate volumes
+    if V1 <= 0 or V2 <= 0:
+        raise ValueError('Volumes must be positive.')
+
+    # Step 3: Calculate the initial pressure using the ideal gas law
+    P1 = (n * R * T1) / V1
+
+    # Step 4: Calculate the final temperature T2 using the adiabatic relation
+    gamma = 1.3  # specific heat ratio for CO2
+    T2 = T1 * (V1 / V2) ** (gamma - 1)
+
+    # Step 5: Calculate the work done during adiabatic expansion
+    W = -(n * R * (T2 - T1)) / (gamma - 1)
+
+    # Step 6: Convert work to Joules
+    W_Joules = W * 101.325  # L·atm to J
+
+    # Output the result
+    print(f'Work done: {W_Joules:.2f} J')
+
+# Call the function to execute the calculations
+calculate_work()

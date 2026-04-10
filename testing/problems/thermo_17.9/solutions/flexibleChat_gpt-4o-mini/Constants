@@ -1,0 +1,20 @@
+# Constants
+sedimentation_coefficient = 1.91e-13  # s
+specific_volume = 0.703  # cm^3 g^-1
+density_water = 0.998  # g cm^-3
+viscosity_water = 1.002e-3  # Pa s
+
+# Calculate rho * V
+rho_V = density_water * specific_volume
+
+# Calculate diameter d using the adjusted formula
+diameter = sedimentation_coefficient * (viscosity_water * (1 - rho_V) / specific_volume)
+
+# Calculate radius r
+radius = diameter / 2
+
+# Convert radius from cm to nm (1 cm = 10^7 nm)
+radius_nm = radius * 1e7
+
+# Output the radius
+print(f'The radius of lysozyme is {radius_nm:.2f} nm')

@@ -1,0 +1,22 @@
+# Constants
+mass_stumblebum_initial = 100  # kg
+mass_tank_initial = 10  # kg
+mass_gas = 2  # kg
+velocity_orbiter = 3  # m/s
+velocity_gas = 100  # m/s
+
+# Calculated values
+mass_stumblebum_after = mass_stumblebum_initial - (mass_tank_initial - mass_gas)  # kg
+mass_empty_tank = mass_tank_initial - mass_gas  # kg
+
+# Applying conservation of momentum
+# Initial momentum = 0 (Stumblebum at rest)
+# Final momentum = mass_stumblebum_after * v_stumblebum + mass_empty_tank * v_tank = 0
+# v_stumblebum must equal velocity_orbiter to reach it
+v_stumblebum = velocity_orbiter
+
+# Solving for v_tank
+v_tank = -(mass_stumblebum_after * v_stumblebum) / mass_empty_tank
+
+# Output the result
+print('Velocity at which Stumblebum must throw the empty tank:', v_tank, 'm/s')

@@ -1,0 +1,18 @@
+# Constants
+mass_xenon = 131  # grams
+molar_mass_xenon = 131.29  # g/mol
+R = 0.0821  # L·atm/(K·mol)
+T_celsius = 25  # degrees Celsius
+V = 1.0  # dm^3 (equivalent to L)
+
+# Step 1: Convert mass to moles
+n = mass_xenon / molar_mass_xenon
+
+# Step 2: Convert temperature to Kelvin
+T_kelvin = T_celsius + 273.15
+
+# Step 3: Calculate pressure using Ideal Gas Law
+P = (n * R * T_kelvin) / V
+
+# Output the pressure with formatting
+print(f'The pressure exerted by xenon gas is {P:.2f} atm.')

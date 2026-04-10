@@ -1,0 +1,20 @@
+# Constants
+R = 0.0821  # L·atm/(K·mol)
+
+# User input for moles, volume, and temperature
+moles_of_ethane = 10.0  # hardcoded for automatic execution
+volume = 4.860  # hardcoded for automatic execution
+temperature_C = 27.0  # hardcoded for automatic execution
+
+# Convert temperature to Kelvin
+T = temperature_C + 273.15
+
+# Check for valid volume
+if volume <= 0:
+    raise ValueError('Volume must be greater than zero.')
+
+# Calculate pressure using the ideal gas law: P = nRT / V
+P = (moles_of_ethane * R * T) / volume
+
+# Output the pressure
+print(f'The predicted pressure exerted by the ethane gas is approximately {P:.2f} atm.')

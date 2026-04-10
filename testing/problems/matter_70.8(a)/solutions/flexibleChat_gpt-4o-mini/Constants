@@ -1,0 +1,24 @@
+# Constants
+P_solution = 51.5  # kPa
+P_pure_benzene = 53.3  # kPa
+mass_solute = 19.0  # g
+mass_benzene = 500.0  # g
+molar_mass_benzene = 78.11  # g/mol
+
+# Step 1: Calculate mole fraction of benzene
+X_solvent = P_solution / P_pure_benzene
+
+# Step 2: Calculate mole fraction of the solute
+X_solute = 1 - X_solvent
+
+# Step 3: Calculate moles of benzene
+n_benzene = mass_benzene / molar_mass_benzene
+
+# Step 4: Calculate the number of moles of solute
+n_solute = (X_solute * n_benzene) / (1 - X_solute)
+
+# Step 5: Calculate the molar mass of the solute
+molar_mass_solute = mass_solute / n_solute
+
+# Output the result
+print('The molar mass of the non-volatile organic compound is approximately {:.2f} g/mol'.format(molar_mass_solute))

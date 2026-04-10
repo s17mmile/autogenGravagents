@@ -1,0 +1,24 @@
+# Constants
+principal = 100000  # Initial loan amount
+annual_interest_rate = 0.09  # Annual interest rate
+monthly_interest_rate = annual_interest_rate / 12  # Monthly interest rate
+
+# Initialize variables
+balance = principal  # Remaining balance
+month_counter = 0  # Month counter
+
+# Calculate the number of months until the loan is paid off
+while balance > 0:
+    # Monthly payment increases with time
+    monthly_payment = 800 * (1 + month_counter / 120)  # Payment formula
+    # Check if payment exceeds balance
+    if monthly_payment > balance:
+        print("Payment exceeds remaining balance. Loan cannot be paid off.")
+        break
+    # Update balance
+    balance = balance * (1 + monthly_interest_rate) - monthly_payment
+    # Increment month counter
+    month_counter += 1
+
+# Output the result
+print(month_counter)

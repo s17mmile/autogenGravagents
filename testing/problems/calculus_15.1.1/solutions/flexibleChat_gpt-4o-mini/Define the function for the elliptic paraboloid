@@ -1,0 +1,15 @@
+# Define the function for the elliptic paraboloid
+def f(x, y):
+    return 16 - x**2 - 2*y**2
+
+# Define the sample points (upper right corners of each square)
+points = [(1, 1), (2, 1), (1, 2), (2, 2)]
+
+# Calculate the volume estimate using Riemann sum
+volume_estimate = sum(f(x, y) for x, y in points)
+
+# Each square has an area of 1
+# The volume estimate is already correct without multiplying by 1
+
+# Print the estimated volume
+print('Estimated Volume:', volume_estimate)
