@@ -11,7 +11,7 @@ class codingAgentResponse(BaseModel):
 
 
 
-def codingAgent(llm_config, name = "CodingAgent") -> ConversableAgent:
+def codingAgent(chat, name = "CodingAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are a Coding Agent whose purpose is to write python code based on given instructions.
 		You have the ability to generate a code snippet that can be used by other agents or executed in a local environment.
@@ -31,7 +31,7 @@ def codingAgent(llm_config, name = "CodingAgent") -> ConversableAgent:
 		The CODING AGENT is responsible for writing single python code snippets (one at a time!) based on given instructions.
 	"""
 
-	coding_llm_config = llm_config.copy()
+	coding_llm_config = chat.llm_config.copy()
 	coding_llm_config["response_format"] = codingAgentResponse
 	coding_llm_config["temperature"] = 0.01
 

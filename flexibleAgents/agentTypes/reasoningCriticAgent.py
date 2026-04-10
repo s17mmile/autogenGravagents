@@ -10,7 +10,7 @@ class reasoningCriticAgentResponse(BaseModel):
 
 
 
-def reasoningCriticAgent(llm_config, name = "ReasoningCriticAgent") -> ConversableAgent:
+def reasoningCriticAgent(chat, name = "ReasoningCriticAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are a REASONING CRITIC AGENT specializing in evaluating the logical consistency and soundness of arguments.
 		You will analyze the reasoning behind claims and analyses provided by other agents in the system.
@@ -31,7 +31,7 @@ def reasoningCriticAgent(llm_config, name = "ReasoningCriticAgent") -> Conversab
 		If RAG is enabled, it should be able to use document search to back up argumentation with facts.
 	"""
 
-	reasoningCritic_llm_config = llm_config.copy()
+	reasoningCritic_llm_config = chat.llm_config.copy()
 	reasoningCritic_llm_config["response_format"] = reasoningCriticAgentResponse
 	reasoningCritic_llm_config["temperature"] = 0.01
 

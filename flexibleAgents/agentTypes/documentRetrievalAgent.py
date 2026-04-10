@@ -140,7 +140,7 @@ class documentRetrievalAgentResponse(BaseModel):
 # It should utilize document search to back up argumentations or answer questions with facts from given sources.
 # Its knowledge is based solely on the documents in the provided corpus, which can be expanded upon through several runs of this system.
 # It uses a chroma vector database (stored alongside the document corpus) to store and query the ingested documents, and will only retrieve documents from the provided corpus to ensure verifiable and accurate information retrieval.
-def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAgent:
+def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 	# Define path for document corpus and create folder if it doesn't exist
 	corpusPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "documentCorpus"))
 	os.makedirs(corpusPath, exist_ok=True)
@@ -176,7 +176,7 @@ def documentRetrievalAgent(llm_config, name = "DocumentRetrievalAgent") -> DocAg
 		If the agent does not know the answer to a query, it should not be re-queried for the same information!
 	"""
 
-	documentRetrieval_llm_config = llm_config.copy()
+	documentRetrieval_llm_config = chat.llm_config.copy()
 	documentRetrieval_llm_config["response_format"] = documentRetrievalAgentResponse
 	documentRetrieval_llm_config["temperature"] = 0.0
 

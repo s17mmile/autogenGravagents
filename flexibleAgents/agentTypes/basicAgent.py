@@ -9,14 +9,14 @@ class basicAgentResponse(BaseModel):
 	message: str						# Detailed scientific explanation of the topic
 
 
-def basicAgent(llm_config, name = "BasicAgent") -> ConversableAgent:
+def basicAgent(chat, name = "BasicAgent") -> ConversableAgent:
 	systemMessage = ""
 
 	description = """
         The BASIC AGENT is a simple wrapper around a backbone LLM without any additional system message instructions or agentic capabilities.
 	"""
 
-	basic_llm_config = llm_config.copy()
+	basic_llm_config = chat.llm_config.copy()
 	basic_llm_config["response_format"] = basicAgentResponse
 	basic_llm_config["temperature"] = 0.01
 

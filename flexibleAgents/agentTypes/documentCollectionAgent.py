@@ -23,7 +23,7 @@ class documentCollectionAgentResponse(BaseModel):
 
 
 # The Document Collection Agent is responsible for collecting relevant documents from the web.
-def documentCollectionAgent(llm_config, name = "DocumentCollectionAgent") -> WebSurferAgent:
+def documentCollectionAgent(chat, name = "DocumentCollectionAgent") -> WebSurferAgent:
 	systemMessage = f"""
 		You are a DOCUMENT COLLECTION AGENT specializing in finding URLs containing useful information from the web.
 		You will find information on the internet and save  URLs to documents or web pages that can be used for Retrieval Augmented Generation.
@@ -45,7 +45,7 @@ def documentCollectionAgent(llm_config, name = "DocumentCollectionAgent") -> Web
 		An RAG system should attempt to download and ingest information from these URLs.
 	"""
 
-	documentCollection_llm_config = llm_config.copy()
+	documentCollection_llm_config = chat.llm_config.copy()
 	documentCollection_llm_config["response_format"] = documentCollectionAgentResponse
 	documentCollection_llm_config["temperature"] = 0.01
 

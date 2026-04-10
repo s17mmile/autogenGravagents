@@ -11,7 +11,7 @@ class queryAgentResponse(BaseModel):
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
 # Each Conversation Config must include a Query Agent as the starting point
-def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
+def queryAgent(chat, name = "QueryAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are a QUERY AGENT specializing in breaking down user requests into manageable sub-tasks for a team of specialized agents.
 		You will receive the user's query as well as a short description of the agent conversation configuration.
@@ -34,7 +34,7 @@ def queryAgent(llm_config, name = "QueryAgent") -> ConversableAgent:
 		It ensures that the task flow is supported by the allowed agent transitions and leverages a Human Agent if needed for clarification.
 	"""
 
-	query_llm_config = llm_config.copy()
+	query_llm_config = chat.llm_config.copy()
 	query_llm_config["response_format"] = queryAgentResponse
 	query_llm_config["temperature"] = 0.1
 

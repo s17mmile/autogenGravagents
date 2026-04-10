@@ -1,8 +1,9 @@
 import os, json
-from typing import Dict, List
+from typing import Any, Dict, List
 from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor
 from pydantic import BaseModel
+from pathlib import Path
 
 
 # Define execution agent response format
@@ -29,9 +30,23 @@ def injectSnippets(agent, messages, sender, config):
 	
 	return False, {}
 
+# Update code executor's working directory to the current conversation path before each execution, to ensure that any files created are stored in the proper directory.
+# Hooked to run before reply
+def update_working_directory(
+	agent: ConversableAgent,
+	messages: list[dict[str, Any]]
+) -> None:
+    executor = agent.code_executor
+    if executor is not None:
+        new_dir = Path(agent.chat.getConversationPath())
+        os.makedirs(new_dir, exist_ok=True)
+		# This is meant to be read-only, so we need to directly access internals. Little unclean, but eh.
+        executor._work_dir = new_dir
+    return messages
 
+	
 
-def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
+def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 	systemMessage = f"""
 		You are an Execution Agent whose purpose is to execute code in a local command line environment.
 		You have access to a local command line code executor that can run code and return the results.
@@ -48,29 +63,27 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		The EXECUTION AGENT is responsible for executing code snippets from other agents' responses in a local command line environment.
 	"""
 
-	execution_llm_config = llm_config.copy()
+	execution_llm_config = chat.llm_config.copy()
 	execution_llm_config["response_format"] = executionAgentResponse
 	execution_llm_config["temperature"] = 0
 
-	# flexibleAgents/tempConversation directory (absolute)
-	# path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'tempConversation'))
-	path = os.path.abspath("flexibleAgents/tempConversation")
-	print(path)
-	os.makedirs(path, exist_ok=True)
-
 	executor = LocalCommandLineCodeExecutor(
 		timeout=60,							   	# Timeout for each code execution in seconds.
-		work_dir="flexibleAgents/tempConversation",						   	# Use the temporary conversation directory as the working directory.
+		work_dir=chat.getConversationPath(),	# Use the temporary conversation directory as the working directory.
 	)
 
 	agent = ConversableAgent(
 		name = name,
 		system_message = systemMessage,
 		description = description,
-		llm_config = llm_config,
+		llm_config = execution_llm_config,
 		code_execution_config={"executor": executor},
 		human_input_mode="NEVER"
 	)
+
+	# Registering a new attribut to this agent to keep track of the chat instance.
+	# THis is necessary for the code executor to have access to the conversation path for code execution, as it can be changed and needs to be re-fetched.
+	agent.chat = chat
 
 	# To enable code execution from pydantic response formats, we need to pull code snippets from their field and inject them into message history. 
 	agent.register_reply(
@@ -78,5 +91,8 @@ def executionAgent(llm_config, name = "ExecutionAgent") -> ConversableAgent:
 		reply_func = injectSnippets,
 		position = 1
 	)
+
+	# Hook to update working directory before reply generation
+	agent.register_hook("update_agent_state", update_working_directory)
 
 	return agent
