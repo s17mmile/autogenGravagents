@@ -47,7 +47,6 @@ def documentCollectionAgent(chat, name = "DocumentCollectionAgent") -> WebSurfer
 
 	documentCollection_llm_config = chat.llm_config.copy()
 	documentCollection_llm_config["response_format"] = documentCollectionAgentResponse
-	documentCollection_llm_config["temperature"] = 0.01
 
 	# Using a given collection name is needed to retain knowledge across runs
 	agent = WebSurferAgent(

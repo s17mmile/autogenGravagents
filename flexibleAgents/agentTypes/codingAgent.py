@@ -33,7 +33,6 @@ def codingAgent(chat, name = "CodingAgent") -> ConversableAgent:
 
 	coding_llm_config = chat.llm_config.copy()
 	coding_llm_config["response_format"] = codingAgentResponse
-	coding_llm_config["temperature"] = 0.01
 
 	return ConversableAgent(
 		name = name,

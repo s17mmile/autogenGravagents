@@ -1,0 +1,10 @@
+Conversation Log for query: In an industrial process, nitrogen is heated to $500 \mathrm{~K}$ at a constant volume of $1.000 \mathrm{~m}^3$. The gas enters the container at $300 \mathrm{~K}$ and $100 \mathrm{~atm}$. The mass of the gas is $92.4 \mathrm{~kg}$. Use the van der Waals equation to determine the approximate pressure of the gas at its working temperature of $500 \mathrm{~K}$. For nitrogen, $a=1.39 \mathrm{dm}^6 \mathrm{~atm} \mathrm{~mol}^{-2}, b=0.0391 \mathrm{dm}^3 \mathrm{~mol}^{-1}$.
+
+Proxy:
+In an industrial process, nitrogen is heated to $500 \mathrm{~K}$ at a constant volume of $1.000 \mathrm{~m}^3$. The gas enters the container at $300 \mathrm{~K}$ and $100 \mathrm{~atm}$. The mass of the gas is $92.4 \mathrm{~kg}$. Use the van der Waals equation to determine the approximate pressure of the gas at its working temperature of $500 \mathrm{~K}$. For nitrogen, $a=1.39 \mathrm{dm}^6 \mathrm{~atm} \mathrm{~mol}^{-2}, b=0.0391 \mathrm{dm}^3 \mathrm{~mol}^{-1}$.
+
+Backbone:
+{
+    "message": "Using van der Waals: (P + a n^2 / V^2)(V - n b) = n R T\nConstants: a = 1.39 dm^6 atm/mol^2, b = 0.0391 dm^3/mol, R = 0.082057 dm^3 atm/mol K\nMoles: n = m / M(N2) \u2248 92.4 kg / 0.028014 kg/mol \u2248 3.298 \u00d7 10^3 mol\nV = 1.000 m^3 = 1000 dm^3, T = 500 K\nCompute nb \u2248 n b \u2248 3.298 \u00d7 10^3 \u00d7 0.0391 \u2248 128.97 dm^3\nV \u2212 nb \u2248 871.03 dm^3\nCompute a n^2 / V^2 \u2248 1.39 \u00d7 (3.298 \u00d7 10^3)^2 / (1000)^2 \u2248 15.12 atm\nCompute n R T / (V \u2212 nb) \u2248 (3.298 \u00d7 10^3 \u00d7 0.082057 \u00d7 500) / 871.03 \u2248 155.37 atm\nThus P \u2248 155.37 \u2212 15.12 \u2248 140.25 atm\nResult: P \u2248 1.40 \u00d7 10^2 atm (about 140 atm)."
+}
+

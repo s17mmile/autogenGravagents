@@ -16,11 +16,18 @@ local_llm_config = {
 commercial_llm_config_4o_mini = {
                         "api_type": os.getenv("OPENAI_API_TYPE"), 
                         "model": "gpt-4o-mini",
-                        "api_key":os.getenv("OPENAI_API_KEY")
+                        "api_key":os.getenv("OPENAI_API_KEY"),
+                        "temperature": 0.01
                         }
 
 commercial_llm_config_5_nano = {
                         "api_type": os.getenv("OPENAI_API_TYPE"), 
                         "model": "gpt-5-nano",
+                        "api_key":os.getenv("OPENAI_API_KEY")
+                        }
+
+commercial_llm_config_5_4_nano = {
+                        "api_type": os.getenv("OPENAI_API_TYPE"), 
+                        "model": "gpt-5.4-nano",
                         "api_key":os.getenv("OPENAI_API_KEY")
                         }

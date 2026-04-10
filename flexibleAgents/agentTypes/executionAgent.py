@@ -65,7 +65,6 @@ def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 
 	execution_llm_config = chat.llm_config.copy()
 	execution_llm_config["response_format"] = executionAgentResponse
-	execution_llm_config["temperature"] = 0
 
 	executor = LocalCommandLineCodeExecutor(
 		timeout=60,							   	# Timeout for each code execution in seconds.

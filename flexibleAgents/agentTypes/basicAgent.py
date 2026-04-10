@@ -18,7 +18,6 @@ def basicAgent(chat, name = "BasicAgent") -> ConversableAgent:
 
 	basic_llm_config = chat.llm_config.copy()
 	basic_llm_config["response_format"] = basicAgentResponse
-	basic_llm_config["temperature"] = 0.01
 
 	return ConversableAgent(
 		name = name,

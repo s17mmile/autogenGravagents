@@ -1,0 +1,10 @@
+Conversation Log for query: In a study concerning a new treatment of a certain disease, two groups of 25 participants in each were followed for five years. Those in one group took the old treatment and those in the other took the new treatment. The theoretical dropout rate for an individual was $50 \%$ in both groups over that 5 -year period. Let $X$ be the number that dropped out in the first group and $Y$ the number in the second group. Assuming independence where needed, give the sum that equals the probability that $Y \geq X+2$. HINT: What is the distribution of $Y-X+25$ ?
+
+Proxy:
+In a study concerning a new treatment of a certain disease, two groups of 25 participants in each were followed for five years. Those in one group took the old treatment and those in the other took the new treatment. The theoretical dropout rate for an individual was $50 \%$ in both groups over that 5 -year period. Let $X$ be the number that dropped out in the first group and $Y$ the number in the second group. Assuming independence where needed, give the sum that equals the probability that $Y \geq X+2$. HINT: What is the distribution of $Y-X+25$ ?
+
+Backbone:
+{
+    "message": "Let X ~ Binomial(25, 0.5) and Y ~ Binomial(25, 0.5), independent. Consider Z = Y - X + 25 = Y + (25 - X). Since 25 - X ~ Binomial(25, 0.5) and is independent of Y, Z ~ Binomial(50, 0.5). The event {Y \u2265 X + 2} is equivalent to {Z \u2265 27}. Thus\nP(Y \u2265 X + 2) = sum_{k=27}^{50} C(50, k) (1/2)^{50}."
+}
+

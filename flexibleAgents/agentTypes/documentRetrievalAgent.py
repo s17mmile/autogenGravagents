@@ -34,7 +34,7 @@ import chromadb.utils.embedding_functions as embedding_functions
 def buildQueryEngine(llm_config, chromaDbPath, collection_name):
 	# Define LLM instance for query engine --> hardcoded to be OpenAI here because it's a proof of concept and proper LLMConfig usage is annoying.
 	queryEngineLLM = OpenAI(
-						temperature=llm_config["temperature"],
+						temperature=llm_config["temperature"] if "temperature" in llm_config else None,
 						model=llm_config["model"],
 						api_key=llm_config["api_key"],
 						base_url=llm_config.get("base_url", None)
@@ -166,19 +166,24 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 		- The message field should contain your answer to the query based on the information from the retrieved documents.
 			--> If you do not have the answer to a query, explicitly state that you should not be req-queried for the same information.
 		- The retrievedDocumentNames field should list the names of the documents you retrieved to support your answer.
+	
+		You already have access to all the following documents - do not try to re-ingest them:
+		{os.listdir(corpusPath)}
 	"""
 
-	description = """
+	description = 
+	f"""
 		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus or the web to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
 		It can be given natural language queries including data ingestion requests from given URLs or local files.
 		It is not to be used for general question answering or code criticism.
 		If the agent does not know the answer to a query, it should not be re-queried for the same information!
+		It has knowledge of the following documents:
+		{os.listdir(corpusPath)}
 	"""
 
 	documentRetrieval_llm_config = chat.llm_config.copy()
 	documentRetrieval_llm_config["response_format"] = documentRetrievalAgentResponse
-	documentRetrieval_llm_config["temperature"] = 0.0
 
 	# Build query engine for the DocAgent to use
 	query_engine = buildQueryEngine(llm_config=documentRetrieval_llm_config, chromaDbPath=chromaDbPath, collection_name=collection_name)

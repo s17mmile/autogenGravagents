@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flexibleAgents import agentChat
 from autogen import LLMConfig, ConversableAgent
-from llmconfig import local_llm_config, commercial_llm_config_4o_mini, commercial_llm_config_5_nano
+from llmconfig import local_llm_config, commercial_llm_config_4o_mini, commercial_llm_config_5_nano, commercial_llm_config_5_4_nano
 from datasets import load_dataset, load_from_disk
 
 from dotenv import load_dotenv
@@ -30,6 +30,7 @@ class PathConfig:
 class Tester:
 	def __init__(self):
 		self.llmconfig = commercial_llm_config_5_nano
+		self.model = self.llmconfig["model"]
 
 	def prepareForTest(self):
 		print("Initializing Tester instance...")
@@ -166,11 +167,11 @@ class Tester:
 
 		# Define output paths for flexible agent system
 		flexibleChatPaths = PathConfig(
-			solution_dir = os.path.join(solutions_dir, f"flexibleChat_{self.llmconfig["model"]}"),
-			evaluation_dir = os.path.join(evaluations_dir, f"flexibleChat_{self.llmconfig["model"]}"),
-			evaluation_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.llmconfig["model"]}.pkl"),
-			solution_cost_pkl = os.path.join(results_dir, f"flexibleChat_{self.llmconfig["model"]}_cost.pkl"),
-			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.llmconfig["model"]}_cost.pkl")
+			solution_dir = os.path.join(solutions_dir, f"flexibleChat_{self.model}"),
+			evaluation_dir = os.path.join(evaluations_dir, f"flexibleChat_{self.model}"),
+			evaluation_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.model}.pkl"),
+			solution_cost_pkl = os.path.join(results_dir, f"flexibleChat_{self.model}_cost.pkl"),
+			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.model}_cost.pkl")
 		)
 		
 		# Run problem through fully configured FlexibleAgents system (testing config) and evaluate
@@ -182,11 +183,11 @@ class Tester:
 
 		# Define output paths for basic agent (backbone LLM only, single-agent config) for comparison with flexible agent system
 		basicChatPaths = PathConfig(
-			solution_dir = os.path.join(solutions_dir, f"basicChat_{self.llmconfig["model"]}"),
-			evaluation_dir = os.path.join(evaluations_dir, f"basicChat_{self.llmconfig["model"]}"),
-			evaluation_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.llmconfig["model"]}.pkl"),
-			solution_cost_pkl = os.path.join(results_dir, f"basicChat_{self.llmconfig["model"]}_cost.pkl"),
-			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.llmconfig["model"]}_cost.pkl")
+			solution_dir = os.path.join(solutions_dir, f"basicChat_{self.model}"),
+			evaluation_dir = os.path.join(evaluations_dir, f"basicChat_{self.model}"),
+			evaluation_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.model}.pkl"),
+			solution_cost_pkl = os.path.join(results_dir, f"basicChat_{self.model}_cost.pkl"),
+			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.model}_cost.pkl")
 		)
 			
 		# Run problem through basic agent system (backbone LLM only) and evaluate
@@ -217,9 +218,10 @@ if __name__ == "__main__":
 		problems = load_from_disk(os.path.join(os.path.dirname(__file__), "dataset"))
 
 	# Process each problem in the dataset with map(). Uses multiple processes at the same time for speedup - this will clutter the output.
-	print(f"Running tests on SciBench dataset with {mp.cpu_count() // 2} parallel processes...")
+	num_processes = 12
+	print(f"Running tests on SciBench dataset with {num_processes} parallel processes...")
 	problems.map(
 		testPassthrough,
-		num_proc=mp.cpu_count() // 2,
+		num_proc=num_processes,
 		desc = "Running tests on SciBench..."
 	)

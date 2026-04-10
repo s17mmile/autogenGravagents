@@ -28,7 +28,6 @@ def solutionCriticAgent(chat, name = "SolutionCriticAgent") -> ConversableAgent:
 
     solutionCritic_llm_config = chat.llm_config.copy()
     solutionCritic_llm_config["response_format"] = solutionCriticAgentOutput
-    solutionCritic_llm_config["temperature"] = 0
 
     return ConversableAgent(
         name = name,

@@ -32,7 +32,6 @@ def reasoningAgent(chat, name = "ReasoningAgent") -> ConversableAgent:
 
 	reasoning_llm_config = chat.llm_config.copy()
 	reasoning_llm_config["response_format"] = reasoningAgentResponse
-	reasoning_llm_config["temperature"] = 0.01
 
 	return ConversableAgent(
 		name = name,

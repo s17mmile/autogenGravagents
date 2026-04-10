@@ -36,7 +36,6 @@ def queryAgent(chat, name = "QueryAgent") -> ConversableAgent:
 
 	query_llm_config = chat.llm_config.copy()
 	query_llm_config["response_format"] = queryAgentResponse
-	query_llm_config["temperature"] = 0.1
 
 	return ConversableAgent(
 		name = name,
