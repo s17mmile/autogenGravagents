@@ -1,0 +1,10 @@
+Conversation Log for query: A gun fires a projectile of mass $10 \mathrm{~kg}$ of the type to which the curves of Figure 2-3 apply. The muzzle velocity is $140 \mathrm{~m} / \mathrm{s}$. Through what angle must the barrel be elevated to hit a target on the same horizontal plane as the gun and $1000 \mathrm{~m}$ away? Compare the results with those for the case of no retardation.
+
+Proxy:
+A gun fires a projectile of mass $10 \mathrm{~kg}$ of the type to which the curves of Figure 2-3 apply. The muzzle velocity is $140 \mathrm{~m} / \mathrm{s}$. Through what angle must the barrel be elevated to hit a target on the same horizontal plane as the gun and $1000 \mathrm{~m}$ away? Compare the results with those for the case of no retardation.
+
+Backbone:
+{
+    "message": "Vacuum case (no air retardation): range R = (v0^2 sin 2\u03b8)/g. With R = 1000 m, v0 = 140 m/s, g \u2248 9.81 m/s^2, we get sin(2\u03b8) = gR/v0^2 \u2248 0.5, so 2\u03b8 \u2248 30\u00b0 or 150\u00b0. Thus \u03b8 \u2248 15\u00b0 (low trajectory) or 75\u00b0 (high trajectory). For the retardation case, I need the drag curve from Figure 2-3 (or the numerical drag model you want me to use: e.g., a quadratic drag with Cd, A, \u03c1, or the explicit a(v) curve). Once you provide the drag data, I can solve the equations of motion (including gravity and the drag force) numerically, shoot for x = 1000 m, and report the required launch angle(s). I can also give a rough estimate if you\u2019d like me to assume a common quadratic-drag model (e.g., D = (1/2)\u03c1CdA) with typical projectile dimensions; in that case I\u2019ll supply an approximate angle and compare it to the vacuum result. Outline of the method I\u2019ll use (regardless of the exact drag model): initialize x=0, y=0, vx = v0 cos\u03b8, vy = v0 sin\u03b8; integrate with acceleration a = -a_drag(v) in the direction of -v and a_y = -g; adjust \u03b8 until the trajectory lands at y crossing 0 at x \u2248 1000 m; report the angle and a comparison to the vacuum angles."
+}
+

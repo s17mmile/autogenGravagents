@@ -1,0 +1,21 @@
+Conversation Log for query: Two narrow slits separated by $0.10 \mathrm{~mm}$ are illuminated by light of wavelength $600 \mathrm{~nm}$. If a detector is located $2.00 \mathrm{~m}$ beyond the slits, what is the distance between the central maximum and the first maximum?
+
+Proxy:
+Two narrow slits separated by $0.10 \mathrm{~mm}$ are illuminated by light of wavelength $600 \mathrm{~nm}$. If a detector is located $2.00 \mathrm{~m}$ beyond the slits, what is the distance between the central maximum and the first maximum?
+
+Reasoning:
+{
+    "message": "Double-slit interference: bright fringes occur when d sin\u03b8 = m\u03bb (m = 0 for central maximum). The distance along the screen from the central maximum to the m-th bright fringe is y \u2248 L tan\u03b8, and for small angles tan\u03b8 \u2248 sin\u03b8 \u2248 m\u03bb/d. For the first bright fringe (m = 1): y1 \u2248 L \u03bb / d.\n\nGiven: d = 0.10 mm = 1.0\u00d710^-4 m, \u03bb = 600 nm = 6.0\u00d710^-7 m, L = 2.00 m.\n\ny1 = (6.0\u00d710^-7 m \u00d7 2.00 m) / (1.0\u00d710^-4 m) = 1.2\u00d710^-2 m = 0.012 m = 1.2 cm.\n\nConclusion: The distance from the central maximum to the first maximum is about 1.2 cm. The small-angle approximation is valid here (\u03b8 \u2248 y1/L \u2248 0.006 rad).\n\nIf desired, a more exact calculation uses y1 = L tan(arcsin(\u03bb/d)) which yields essentially the same result within rounding error."
+}
+
+Query_Handler:
+{
+    "message": "Answer: The distance from the central maximum to the first bright fringe is about 1.2 cm. Using the small-angle approximation y1 \u2248 L \u03bb / d with d = 0.10 mm, \u03bb = 600 nm, L = 2.00 m: y1 \u2248 (2.00 m)(6.00\u00d710^-7 m)/(1.00\u00d710^-4 m) = 1.20\u00d710^-2 m = 1.2 cm. For a more exact value, y1 = L tan(arcsin(\u03bb/d)) which yields essentially the same result (~1.2 cm).",
+    "subtasks": [
+        "Validate and convert input units (d = 0.10 mm, \u03bb = 600 nm, L = 2.00 m).",
+        "Compute first bright fringe distance using y1 \u2248 L \u03bb / d.",
+        "Optionally compute exact value using y1 = L tan(arcsin(\u03bb/d)) and compare."
+    ],
+    "terminateChat": true
+}
+

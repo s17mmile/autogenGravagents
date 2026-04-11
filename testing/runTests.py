@@ -32,6 +32,9 @@ class Tester:
 		self.llmconfig = commercial_llm_config_5_nano
 		self.model = self.llmconfig["model"]
 
+		self.numTested = 0
+		self.numProblems = 0
+
 	def prepareForTest(self):
 		print("Initializing Tester instance...")
 		self.folderSetup()
@@ -134,67 +137,83 @@ class Tester:
 		# Save correctness results, critic agent ratings, and critic agent comments for each proposed solution in the problem directory
 		self.saveCriticResponseToFile(criticEvaluation, paths.evaluation_pkl)
 		self.saveTokenUsageToFile(criticTokenUsage, paths.evaluation_cost_pkl)
+
+	def setupPathsForProblem(self, problem):
+		self.problemname = f"{problem["source"]}_{problem["problemid"]}".strip().replace(" ", "_").replace("__", "_")
+		self.problem_dir = os.path.join(os.path.dirname(__file__), "problems", self.problemname)
+		self.solutions_dir = os.path.join(self.problem_dir, "solutions")
+		self.evaluations_dir = os.path.join(self.problem_dir, "evaluations")
+		self.results_dir = os.path.join(self.problem_dir, "results")
 		
+		os.makedirs(self.problem_dir, exist_ok=True)
+		os.makedirs(self.solutions_dir, exist_ok=True)
+		os.makedirs(self.evaluations_dir, exist_ok=True)
+		os.makedirs(self.results_dir, exist_ok=True)
+
+	def makePathConfigForProblem(self, solverName):
+		return PathConfig(
+			solution_dir = os.path.join(self.solutions_dir, f"{solverName}_{self.model}"),
+			evaluation_dir = os.path.join(self.evaluations_dir, f"{solverName}_{self.model}"),
+			evaluation_pkl = os.path.join(self.results_dir, f"evaluation_{solverName}_{self.model}.pkl"),
+			solution_cost_pkl = os.path.join(self.results_dir, f"{solverName}_{self.model}_cost.pkl"),
+			evaluation_cost_pkl = os.path.join(self.results_dir, f"evaluation_{solverName}_{self.model}_cost.pkl")
+		)
+
+	def printProgress(self):
+		print(f"Progress: {self.numTested}/{self.numProblems} problems fully tested with model {self.model}.")
+
 	# Define function to be executed for each problem (needed for using MAP on the HF dataset)
 	def run_test(self, problem):
-		print(f"Running test for problem: {problem}\n\n")
-
 		# Create a directory (if not existent yet) to save the problem and proposed solution(s)
-		problemname = f"{problem["source"]}_{problem["problemid"]}".strip().replace(" ", "_").replace("__", "_")
-		problem_dir = os.path.join(os.path.dirname(__file__), "problems", problemname)
-		solutions_dir = os.path.join(problem_dir, "solutions")
-		evaluations_dir = os.path.join(problem_dir, "evaluations")
-		results_dir = os.path.join(problem_dir, "results")
-		
-		os.makedirs(problem_dir, exist_ok=True)
-		os.makedirs(solutions_dir, exist_ok=True)
-		os.makedirs(evaluations_dir, exist_ok=True)
-		os.makedirs(results_dir, exist_ok=True)
+		self.setupPathsForProblem(problem)
+
+		print(f"Running test for problem {os.path.basename(os.path.normpath(self.problem_dir))} with model {self.model}...")
 
 		# Filenames for problem description, saving proposed solutions, saving critic evaluations and token usage for both flexibleChat and basicChat agents
-		problem_description_filepath = os.path.join(problem_dir, "problem_description.txt")
+		self.problem_description_filepath = os.path.join(self.problem_dir, "problem_description.txt")
 
 		# Save problem description and correct solution in the problem directory for reference
-		if not os.path.exists(problem_description_filepath):
-			with open(problem_description_filepath, "w", encoding="utf-8") as f:
+		if not os.path.exists(self.problem_description_filepath):
+			with open(self.problem_description_filepath, "w", encoding="utf-8") as f:
 				f.write(f"Problem Description:\n{problem["problem_text"]}\n\n")
 				f.write("--------------------------------------------------------------------------------------\n\n")
 				f.write(f"Reference Explanation:\n{problem["solution"]}\n\n")
 				f.write("--------------------------------------------------------------------------------------\n\n")
 				f.write(f"Correct Final Answer:\n{problem["answer_number"]} {problem["unit"]}\n")
 
-
-
 		# Define output paths for flexible agent system
-		flexibleChatPaths = PathConfig(
-			solution_dir = os.path.join(solutions_dir, f"flexibleChat_{self.model}"),
-			evaluation_dir = os.path.join(evaluations_dir, f"flexibleChat_{self.model}"),
-			evaluation_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.model}.pkl"),
-			solution_cost_pkl = os.path.join(results_dir, f"flexibleChat_{self.model}_cost.pkl"),
-			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_flexibleChat_{self.model}_cost.pkl")
-		)
+		flexibleChatPaths = self.makePathConfigForProblem("flexibleChat")
 		
 		# Run problem through fully configured FlexibleAgents system (testing config) and evaluate
 		if not self.isTested(paths=flexibleChatPaths):
 			self.clearPathConfig(flexibleChatPaths)
 			self.runAndEvaluateProblem(self.flexibleChat, problem, flexibleChatPaths)
-
-
+		else:
+			print("Skipping test for flexibleChat as results already exist.")
 
 		# Define output paths for basic agent (backbone LLM only, single-agent config) for comparison with flexible agent system
-		basicChatPaths = PathConfig(
-			solution_dir = os.path.join(solutions_dir, f"basicChat_{self.model}"),
-			evaluation_dir = os.path.join(evaluations_dir, f"basicChat_{self.model}"),
-			evaluation_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.model}.pkl"),
-			solution_cost_pkl = os.path.join(results_dir, f"basicChat_{self.model}_cost.pkl"),
-			evaluation_cost_pkl = os.path.join(results_dir, f"evaluation_basicChat_{self.model}_cost.pkl")
-		)
+		basicChatPaths = self.makePathConfigForProblem("basicChat")
 			
 		# Run problem through basic agent system (backbone LLM only) and evaluate
 		if not self.isTested(paths=basicChatPaths):
 			self.clearPathConfig(basicChatPaths)
 			self.runAndEvaluateProblem(self.basicChat, problem, basicChatPaths)
+		else:
+			print("Skipping test for basicChat as results already exist.")
 
+		print("\n\n")
+
+	# Purely count which tests have already been completed
+	# This might even work with just map() but there were some issues with hashing the function.
+	def checkTestProgress(self, problem):
+		self.setupPathsForProblem(problem)
+
+		flexibleChatPaths = self.makePathConfigForProblem("flexibleChat")
+		basicChatPaths = self.makePathConfigForProblem("basicChat")
+
+		self.numProblems += 1
+		if self.isTested(flexibleChatPaths) and self.isTested(basicChatPaths):
+			self.numTested += 1
 
 
 # Global definition necessary for variable access in subprocesses
@@ -209,6 +228,12 @@ def testPassthrough(example):
 		tester.prepareForTest()
 	tester.run_test(example)
 
+def checkTestProgress(example):
+	global tester
+	if tester is None:
+		tester = Tester()
+	return tester.checkTestProgress(example)
+
 if __name__ == "__main__":
 	# Load scibench (local or from web)
 	if not os.path.exists(os.path.join(os.path.dirname(__file__), "dataset")):
@@ -217,11 +242,19 @@ if __name__ == "__main__":
 	else:
 		problems = load_from_disk(os.path.join(os.path.dirname(__file__), "dataset"))
 
+	# Check completion and reset tester afterwards
+	problems.map(
+		checkTestProgress,
+		desc = "Checking test progress..."
+	)
+	print(f"Progress: {tester.numTested}/{tester.numProblems} problems fully tested with model {tester.model}.")
+	tester = None
+
 	# Process each problem in the dataset with map(). Uses multiple processes at the same time for speedup - this will clutter the output.
-	num_processes = 12
-	print(f"Running tests on SciBench dataset with {num_processes} parallel processes...")
 	problems.map(
 		testPassthrough,
-		num_proc=num_processes,
+		num_proc=6,
 		desc = "Running tests on SciBench..."
 	)
+
+	# FUCK RIGHT OFF WHY DO THESE TESTS JUST KEEP STALLING FUCK OFFGFGFFFFF

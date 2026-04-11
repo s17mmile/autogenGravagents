@@ -1,0 +1,16 @@
+Conversation Log for query: Evaluate
+$$
+\int_0^{0.4} \frac{\Gamma(7)}{\Gamma(4) \Gamma(3)} y^3(1-y)^2 d y
+$$ Using integration.
+
+Proxy:
+Evaluate
+$$
+\int_0^{0.4} \frac{\Gamma(7)}{\Gamma(4) \Gamma(3)} y^3(1-y)^2 d y
+$$ Using integration.
+
+Backbone:
+{
+    "message": "Compute: \u0393(7)=720, \u0393(4)=6, \u0393(3)=2, so the prefactor is 60. Since (1\u2212y)^2 = 1 \u2212 2y + y^2, the integrand becomes 60(y^3 \u2212 2y^4 + y^5). Integrate termwise: \u222b y^3 dy = y^4/4, \u222b y^4 dy = y^5/5, \u222b y^5 dy = y^6/6. Thus I = 60 [ y^4/4 \u2212 2 y^5/5 + y^6/6 ] from 0 to 0.4. With y = 0.4 = 2/5, this evaluates exactly to 112/625 \u2248 0.1792."
+}
+

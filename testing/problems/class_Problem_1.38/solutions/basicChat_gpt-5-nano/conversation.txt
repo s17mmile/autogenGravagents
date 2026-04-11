@@ -1,0 +1,10 @@
+Conversation Log for query: Find the value of the integral $\int_S(\nabla \times \mathbf{A}) \cdot d \mathbf{a}$ if the vector $\mathbf{A}=y \mathbf{i}+z \mathbf{j}+x \mathbf{k}$ and $S$ is the surface defined by the paraboloid $z=1-x^2-y^2$, where $z \geq 0$.
+
+Proxy:
+Find the value of the integral $\int_S(\nabla \times \mathbf{A}) \cdot d \mathbf{a}$ if the vector $\mathbf{A}=y \mathbf{i}+z \mathbf{j}+x \mathbf{k}$ and $S$ is the surface defined by the paraboloid $z=1-x^2-y^2$, where $z \geq 0$.
+
+Backbone:
+{
+    "message": "Using Stokes\u2019 theorem: \u222b_S (\u2207 \u00d7 A) \u00b7 dA = \u222e_C A \u00b7 dr, where C is the boundary of S. S is the portion of z = 1 \u2212 x^2 \u2212 y^2 with z \u2265 0, so x^2 + y^2 \u2264 1 and C is the circle x^2 + y^2 = 1 in the plane z = 0. Take the boundary orientation corresponding to an upward normal (positive z).\n\nParameterize C: r(t) = (cos t, sin t, 0), t \u2208 [0, 2\u03c0], so dr = (-sin t, cos t, 0) dt. On C, A = (y, z, x) = (sin t, 0, cos t).\nThen A \u00b7 dr = (sin t)(-sin t) + 0\u00b7(cos t) + (cos t)(0) = - sin^2 t.\nHence \u222e_C A \u00b7 dr = \u222b_0^{2\u03c0} - sin^2 t dt = -\u03c0.\nTherefore \u222b_S (\u2207 \u00d7 A) \u00b7 dA = -\u03c0 for the upward-oriented surface. If the orientation were reversed, the value would be +\u03c0."
+}
+

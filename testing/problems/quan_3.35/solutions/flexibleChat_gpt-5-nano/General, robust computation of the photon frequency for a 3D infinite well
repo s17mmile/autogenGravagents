@@ -1,0 +1,59 @@
+# General, robust computation of the photon frequency for a 3D infinite well
+# Problem setup uses box dimensions a, b, Lz in meters
+
+def compute_transition(a, b, Lz, max_n=3, h=6.62607015e-34, m_e=9.10938356e-31, c_light=299792458.0):
+    # Basic validation
+    if a <= 0 or b <= 0 or Lz <= 0:
+        raise ValueError("Box dimensions must be positive numbers.")
+
+    def energy(nx, ny, nz):
+        # E(nx,ny,nz) = (h^2 / (8m)) [ nx^2/a^2 + ny^2/b^2 + nz^2/Lz^2 ]
+        return (h**2 / (8.0 * m_e)) * (nx**2 / a**2 + ny**2 / b**2 + nz**2 / Lz**2)
+
+    # Ground state
+    E111 = energy(1, 1, 1)
+
+    # Enumerate nearby states to find the lowest positive delta E
+    best_state = None        # (nx, ny, nz)
+    best_deltaE = None
+    for nx in range(1, max_n + 1):
+        for ny in range(1, max_n + 1):
+            for nz in range(1, max_n + 1):
+                if nx == 1 and ny == 1 and nz == 1:
+                    continue
+                E = energy(nx, ny, nz)
+                deltaE = E - E111
+                if deltaE > 0 and (best_deltaE is None or deltaE < best_deltaE):
+                    best_deltaE = deltaE
+                    best_state = (nx, ny, nz)
+
+    if best_deltaE is None:
+        raise RuntimeError("Could not find a valid excited state within the given max_n.")
+
+    # Photon properties from the energy difference
+    deltaE = best_deltaE
+    nu = deltaE / h
+    lam = c_light / nu
+
+    return {
+        "excited_state": best_state,
+        "deltaE_J": deltaE,
+        "nu_Hz": nu,
+        "lambda_m": lam,
+        "wavelength_nm": lam * 1e9
+    }
+
+
+if __name__ == "__main__":
+    # Problem constants (meters): a = 5.00 A, b = 3.00 A, Lz = 6.00 A
+    a = 5.00e-10
+    b = 3.00e-10
+    Lz = 6.00e-10
+
+    result = compute_transition(a, b, Lz, max_n=4)
+
+    print("Excited state (nx, ny, nz):", result["excited_state"])
+    print("Delta E (J):", result["deltaE_J"])
+    print("Photon frequency nu (Hz):", result["nu_Hz"])
+    print("Photon wavelength (m):", result["lambda_m"])
+    print("Photon wavelength (nm):", result["wavelength_nm"])

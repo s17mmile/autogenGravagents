@@ -1,0 +1,10 @@
+Conversation Log for query: Suppose that the junction between two semiconductors can be represented by a barrier of height $2.0 \mathrm{eV}$ and length $100 \mathrm{pm}$. Calculate the transmission probability of an electron with energy $1.5 \mathrm{eV}$.
+
+Proxy:
+Suppose that the junction between two semiconductors can be represented by a barrier of height $2.0 \mathrm{eV}$ and length $100 \mathrm{pm}$. Calculate the transmission probability of an electron with energy $1.5 \mathrm{eV}$.
+
+Backbone:
+{
+    "message": "For a rectangular barrier of height V0 = 2.0 eV and width L = 100 pm, with electron energy E = 1.5 eV (< V0):\n- \u0394 = V0 \u2212 E = 0.5 eV. \u03ba = sqrt(2 m_e \u0394)/\u0127 \u2248 3.63 \u00d7 10^9 m^-1, so \u03baL \u2248 0.363.\n- The exact transmission for E < V0 is T = 1 / [1 + (V0^2 sinh^2(\u03baL)) / (4 E (V0 \u2212 E))]. Using V0, E in the same units (eV here): V0^2/(4 E (V0 \u2212 E)) = 4/(4\u00d71.5\u00d70.5) = 4/3 \u2248 1.333, and sinh(0.363) \u2248 0.370, so sinh^2(\u03baL) \u2248 0.137.\n- Therefore T \u2248 1 / [1 + 1.333 \u00d7 0.137] \u2248 1 / 1.183 \u2248 0.85.\nTransmission probability \u2248 0.85 (about 85%).\n(If using the simpler WKB estimate T \u2248 exp(\u22122\u03baL), you\u2019d get \u2248 0.48, but the exact expression is more accurate here.)"
+}
+

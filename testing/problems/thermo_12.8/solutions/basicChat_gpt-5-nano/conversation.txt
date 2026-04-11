@@ -1,0 +1,10 @@
+Conversation Log for query: Imagine tossing a coin 50 times. What are the probabilities of observing heads 25 times (i.e., 25 successful experiments)?
+
+Proxy:
+Imagine tossing a coin 50 times. What are the probabilities of observing heads 25 times (i.e., 25 successful experiments)?
+
+Backbone:
+{
+    "message": "For 50 fair coin tosses (each head with p = 0.5), the count X of heads follows X ~ Binomial(n=50, p=0.5).\n\nExact 25 heads: P(X=25) = C(50,25) (0.5)^{50} = 126410606437752 / 1125899906842624 \u2248 0.112275.\n\nIf you want the probability of at least 25 heads: P(X\u226525) = sum_{k=25}^{50} C(50,k) (0.5)^{50} \u2248 0.55614.\n\nIf the coin is biased with head probability p, then P(X=25) = C(50,25) p^{25} (1\u2212p)^{25}."
+}
+

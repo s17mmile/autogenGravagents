@@ -1,0 +1,18 @@
+Conversation Log for query: Consider the initial value problem
+$$
+y^{\prime \prime}+2 a y^{\prime}+\left(a^2+1\right) y=0, \quad y(0)=1, \quad y^{\prime}(0)=0 .
+$$
+For $a=1$ find the smallest $T$ such that $|y(t)|<0.1$ for $t>T$.
+
+Proxy:
+Consider the initial value problem
+$$
+y^{\prime \prime}+2 a y^{\prime}+\left(a^2+1\right) y=0, \quad y(0)=1, \quad y^{\prime}(0)=0 .
+$$
+For $a=1$ find the smallest $T$ such that $|y(t)|<0.1$ for $t>T$.
+
+Backbone:
+{
+    "message": "With a = 1 the ODE becomes y'' + 2 y' + 2 y = 0, y(0) = 1, y'(0) = 0. Solve: characteristic equation r^2 + 2 r + 2 = 0 has roots r = -1 \u00b1 i, so y(t) = e^{-t}(C1 cos t + C2 sin t). From y(0) = 1 we get C1 = 1; from y'(0) = 0 we get C2 = 1. Hence y(t) = e^{-t}(cos t + sin t). Therefore |y(t)| \u2264 \u221a2 e^{-t}, with equality in the envelope when cos(t \u2212 \u03c0/4) = \u00b11. To ensure |y(t)| < 0.1 for all t > T, it suffices that \u221a2 e^{-T} < 0.1, i.e. T > -ln(0.1/\u221a2) = ln(\u221a2/0.1) = (1/2) ln 2 + ln 10 \u2248 2.649. The smallest such T is T = ln(\u221a2/0.1) \u2248 2.649."
+}
+

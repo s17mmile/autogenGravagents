@@ -6,13 +6,19 @@ from typing import Dict, List
 from dataclasses import dataclass
 
 # PyQt imports
+print("Importing PyQt6...")
 from PySide6.QtCore import QObject, Signal, Qt, Slot, QThread
 
 # Autogen imports
-import autogen
-from autogen import ConversableAgent, GroupChat, GroupChatManager, gather_usage_summary
-
-
+print("Importing ConversableAgent...")
+from autogen import ConversableAgent
+print("Importing GroupChat...")
+from autogen import GroupChat
+print("Importing GroupChatManager...")
+from autogen import GroupChatManager
+print("Importing gather_usage_summary...")
+from autogen import gather_usage_summary
+print("Done")
 
 # UTF-8 Encoding
 sys.stdout.reconfigure(encoding='utf-8')
@@ -118,8 +124,6 @@ class flexibleAgentChat(QObject):
 	def interruptChat(self):
 		print("Interrupt requested.")
 		self.interruptRequested = True
-
-
 
 	# Parse agent chat config from text file.
 	# Does not yet instantiate agents

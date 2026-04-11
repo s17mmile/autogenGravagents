@@ -1,0 +1,10 @@
+Conversation Log for query: A quality engineer wanted to be $98 \%$ confident that the maximum error of the estimate of the mean strength, $\mu$, of the left hinge on a vanity cover molded by a machine is 0.25 . A preliminary sample of size $n=32$ parts yielded a sample mean of $\bar{x}=35.68$ and a standard deviation of $s=1.723$. How large a sample is required?
+
+Proxy:
+A quality engineer wanted to be $98 \%$ confident that the maximum error of the estimate of the mean strength, $\mu$, of the left hinge on a vanity cover molded by a machine is 0.25 . A preliminary sample of size $n=32$ parts yielded a sample mean of $\bar{x}=35.68$ and a standard deviation of $s=1.723$. How large a sample is required?
+
+Backbone:
+{
+    "message": "Use a confidence interval for the mean with unknown sigma: E = t_{\u03b1/2, n-1} \u00b7 s / \u221an, with \u03b1 = 0.02 (98% CI). Here E = 0.25, s = 1.723. Solve n from n = [t_{0.99, n-1} \u00b7 s / E]^2, iterating as needed since t depends on n. Start with the pilot data (n \u2248 32): t_{0.99,31} \u2248 2.457 \u2192 n \u2248 [(2.457\u00b71.723/0.25)]^2 \u2248 287. Next, with n \u2248 287, t_{0.99,287} \u2248 2.326 \u2192 n \u2248 [(2.326\u00b71.723/0.25)]^2 \u2248 257.0. This stabilizes around n \u2248 257\u2013258. Rounding up to ensure the margin of error meets the requirement gives n* = 258. So, you\u2019d need about 258 parts."
+}
+

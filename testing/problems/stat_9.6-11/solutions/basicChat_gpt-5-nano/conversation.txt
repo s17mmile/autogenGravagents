@@ -1,0 +1,10 @@
+Conversation Log for query: Let $X$ and $Y$ have a bivariate normal distribution with correlation coefficient $\rho$. To test $H_0: \rho=0$ against $H_1: \rho \neq 0$, a random sample of $n$ pairs of observations is selected. Suppose that the sample correlation coefficient is $r=0.68$. Using a significance level of $\alpha=0.05$, find the smallest value of the sample size $n$ so that $H_0$ is rejected.
+
+Proxy:
+Let $X$ and $Y$ have a bivariate normal distribution with correlation coefficient $\rho$. To test $H_0: \rho=0$ against $H_1: \rho \neq 0$, a random sample of $n$ pairs of observations is selected. Suppose that the sample correlation coefficient is $r=0.68$. Using a significance level of $\alpha=0.05$, find the smallest value of the sample size $n$ so that $H_0$ is rejected.
+
+Backbone:
+{
+    "message": "Use the t-test for correlation: t = r * sqrt((n-2)/(1 - r^2)) with df = n-2. For \u03b1 = 0.05 two-sided, reject H0 if |t| > t_{0.975, n-2}.\n\nCompute constants: 1 - r^2 = 1 - 0.68^2 = 0.5376, so t \u2248 (0.68/\u221a0.5376) * \u221a(n-2) \u2248 0.927 * \u221a(n-2).\n\nCheck n = 8 (df = 6): t \u2248 0.927 * \u221a6 \u2248 2.269, while t_{0.975,6} \u2248 2.447 \u2192 do not reject.\nCheck n = 9 (df = 7): t \u2248 0.927 * \u221a7 \u2248 2.453, while t_{0.975,7} \u2248 2.365 \u2192 reject.\n\nSmallest n is 9. Therefore, with r = 0.68, a sample size of at least n = 9 is required to reject H0 at \u03b1 = 0.05 (two-sided)."
+}
+

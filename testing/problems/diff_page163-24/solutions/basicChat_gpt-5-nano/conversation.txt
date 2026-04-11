@@ -1,0 +1,18 @@
+Conversation Log for query: Consider the initial value problem
+$$
+5 u^{\prime \prime}+2 u^{\prime}+7 u=0, \quad u(0)=2, \quad u^{\prime}(0)=1
+$$
+Find the smallest $T$ such that $|u(t)| \leq 0.1$ for all $t>T$.
+
+Proxy:
+Consider the initial value problem
+$$
+5 u^{\prime \prime}+2 u^{\prime}+7 u=0, \quad u(0)=2, \quad u^{\prime}(0)=1
+$$
+Find the smallest $T$ such that $|u(t)| \leq 0.1$ for all $t>T$.
+
+Backbone:
+{
+    "message": "Solve 5u''+2u'+7u=0. Characteristic: 5r^2+2r+7=0 \u21d2 r= -1/5 \u00b1 i(\u221a34)/5. Hence u(t)=e^{-t/5}[2 cos((\u221a34/5)t) + (7/\u221a34) sin((\u221a34/5)t)]. The amplitude envelope is |u(t)| \u2264 e^{-t/5} sqrt(2^2 + (7/\u221a34)^2) = e^{-t/5} sqrt(185/34) \u2261 e^{-t/5} R with R=\u221a(185/34) \u2248 2.333. To guarantee |u(t)| \u2264 0.1 for all t> T, require e^{-T/5} R \u2264 0.1, i.e. T \u2265 5 ln(R/0.1) \u2248 5 ln(23.33) \u2248 15.75. Therefore the smallest such T is about T \u2248 15.75 (time units)."
+}
+

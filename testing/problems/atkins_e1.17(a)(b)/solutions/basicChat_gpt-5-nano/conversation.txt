@@ -1,0 +1,10 @@
+Conversation Log for query: Suppose that $10.0 \mathrm{~mol} \mathrm{C}_2 \mathrm{H}_6(\mathrm{~g})$ is confined to $4.860 \mathrm{dm}^3$ at $27^{\circ} \mathrm{C}$. Predict the pressure exerted by the ethane from the van der Waals equations of state.
+
+Proxy:
+Suppose that $10.0 \mathrm{~mol} \mathrm{C}_2 \mathrm{H}_6(\mathrm{~g})$ is confined to $4.860 \mathrm{dm}^3$ at $27^{\circ} \mathrm{C}$. Predict the pressure exerted by the ethane from the van der Waals equations of state.
+
+Backbone:
+{
+    "message": "Using the van der Waals equation for n moles: (P + a(n/V)^2)(V \u2212 nb) = nRT, which rearranges to P = nRT/(V \u2212 nb) \u2212 a(n^2/V^2).\n\nAssume ethane constants from common tables: a = 5.56 L^2\u00b7bar\u00b7mol^\u22122, b = 0.0630 L\u00b7mol^\u22121. Given n = 10.0 mol, V = 4.860 L, T = 27\u00b0C = 300.15 K, R = 0.08314 L\u00b7bar\u00b7mol^\u22121\u00b7K^\u22121:\n\nV \u2212 nb = 4.860 \u2212 10 \u00d7 0.0630 = 4.230 L\nnRT = 10 \u00d7 0.08314 \u00d7 300.15 \u2248 249.54 bar\u00b7L\nFirst term: nRT/(V \u2212 nb) \u2248 249.54 / 4.230 \u2248 58.99 bar\nSecond term: a(n^2/V^2) = 5.56 \u00d7 (100 / 4.860^2) \u2248 5.56 \u00d7 4.2356 \u2248 23.56 bar\n\nP \u2248 58.99 \u2212 23.56 \u2248 35.43 bar\n\nThus, the predicted pressure is about 3.54 \u00d7 10^1 bar (roughly 35 atm). Note that using different published a and b values for ethane will shift P slightly, but the result will be in the 30\u201340 bar range."
+}
+

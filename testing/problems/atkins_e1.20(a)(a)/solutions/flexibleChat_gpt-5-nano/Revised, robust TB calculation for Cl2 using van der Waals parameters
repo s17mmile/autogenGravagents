@@ -1,0 +1,49 @@
+# Revised, robust TB calculation for Cl2 using van der Waals parameters
+# Units: a in L^2 * bar / mol^2, b in L / mol, R in L * bar / (mol * K)
+R = 0.08314
+Tc = 417.0  # K
+# van der Waals parameter ranges for Cl2 (plausible values)
+a_min, a_max = 6.0, 6.4      # L^2 * bar / mol^2
+b_min, b_max = 0.055, 0.060    # L / mol
+
+def TB_from_ab(a, b, R=R):
+    """Compute Boyle temperature TB from van der Waals parameters a,b.
+    TB = a / (R * b). Valid for positive a,b. Units of TB are K."""
+    if a <= 0 or b <= 0:
+        raise ValueError("Both a and b must be positive numbers.")
+    return a / (R * b)
+
+def TB_from_Tc(Tc):
+    """Compute TB from Tc for the van der Waals model: TB = (27/8) * Tc"""
+    return (27.0 / 8.0) * Tc
+
+# Corner estimates using (a_min,b_max) and (a_max,b_min)
+TB_Tc = TB_from_Tc(Tc)
+TB_min = TB_from_ab(a_min, b_max, R)
+TB_max = TB_from_ab(a_max, b_min, R)
+TB_mid = TB_from_ab((a_min + a_max) / 2.0, (b_min + b_max) / 2.0, R)
+
+# Simple grid evaluation for robustness (no external libs)
+def linspace(start, stop, num):
+    if num <= 1:
+        return [start]
+    step = (stop - start) / (num - 1)
+    return [start + i * step for i in range(num)]
+
+N = 5
+a_vals = linspace(a_min, a_max, N)
+b_vals = linspace(b_min, b_max, N)
+TB_grid_min = float('inf')
+TB_grid_max = float('-inf')
+for a in a_vals:
+    for b in b_vals:
+        TB = TB_from_ab(a, b, R)
+        if TB < TB_grid_min:
+            TB_grid_min = TB
+        if TB > TB_grid_max:
+            TB_grid_max = TB
+
+print(f"TB from Tc (Tc={Tc}) = {TB_Tc:.1f} K")
+print(f"TB range from corner a,b: {TB_min:.1f} K to {TB_max:.1f} K")
+print(f"TB for mid-point a,b: {TB_mid:.1f} K")
+print(f"TB grid bounds across a,b range: min={TB_grid_min:.1f} K, max={TB_grid_max:.1f} K")

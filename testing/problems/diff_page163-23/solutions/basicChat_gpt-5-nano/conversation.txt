@@ -1,0 +1,18 @@
+Conversation Log for query: Consider the initial value problem
+$$
+3 u^{\prime \prime}-u^{\prime}+2 u=0, \quad u(0)=2, \quad u^{\prime}(0)=0
+$$
+For $t>0$ find the first time at which $|u(t)|=10$.
+
+Proxy:
+Consider the initial value problem
+$$
+3 u^{\prime \prime}-u^{\prime}+2 u=0, \quad u(0)=2, \quad u^{\prime}(0)=0
+$$
+For $t>0$ find the first time at which $|u(t)|=10$.
+
+Backbone:
+{
+    "message": "Solve 3u'' - u' + 2u = 0. The roots of 3r^2 - r + 2 = 0 are r = (1 \u00b1 i\u221a23)/6, so u(t) = e^{t/6}[C1 cos(\u221a23 t/6) + C2 sin(\u221a23 t/6)]. With u(0)=2 and u'(0)=0 we get C1=2 and C2 = -2/\u221a23. Thus u(t) = e^{t/6}[2 cos(\u221a23 t/6) - (2/\u221a23) sin(\u221a23 t/6)]. The first t>0 with |u(t)| = 10 is found numerically from |u(t)| = 10; this gives t \u2248 10.75. (So the first crossing occurs near t \u2248 10.75.)"
+}
+

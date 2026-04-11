@@ -1,0 +1,18 @@
+Conversation Log for query: A device contains three components, each of which has a lifetime in hours with the pdf
+$$
+f(x)=\frac{2 x}{10^2} e^{-(x / 10)^2}, \quad 0 < x < \infty .
+$$
+The device fails with the failure of one of the components. Assuming independent lifetimes, what is the probability that the device fails in the first hour of its operation? HINT: $G(y)=P(Y \leq y)=1-P(Y>y)=1-P$ (all three $>y$ ).
+
+Proxy:
+A device contains three components, each of which has a lifetime in hours with the pdf
+$$
+f(x)=\frac{2 x}{10^2} e^{-(x / 10)^2}, \quad 0 < x < \infty .
+$$
+The device fails with the failure of one of the components. Assuming independent lifetimes, what is the probability that the device fails in the first hour of its operation? HINT: $G(y)=P(Y \leq y)=1-P(Y>y)=1-P$ (all three $>y$ ).
+
+Backbone:
+{
+    "message": "Let Xi (i=1,2,3) be i.i.d. component lifetimes with pdf f(x) = (2x/100) e^{-(x/10)^2}, x>0. This is a Rayleigh distribution with scale \u03c3 = sqrt(50). The device fails when the first component fails, so T = min(X1,X2,X3). For y>0, P(T > y) = [P(X > y)]^3, and P(X > y) = exp(-y^2/(2\u03c3^2)) = exp(-y^2/100). Hence P(T \u2264 1) = 1 - [exp(-1/100)]^3 = 1 - exp(-3/100) \u2248 0.02956 (about 2.96%)."
+}
+

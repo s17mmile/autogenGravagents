@@ -1,0 +1,10 @@
+Conversation Log for query: If the distribution of $Y$ is $b(n, 0.25)$, give a lower bound for $P(|Y / n-0.25|<0.05)$ when $n=1000$.
+
+Proxy:
+If the distribution of $Y$ is $b(n, 0.25)$, give a lower bound for $P(|Y / n-0.25|<0.05)$ when $n=1000$.
+
+Backbone:
+{
+    "message": "Let Y ~ Bin(n=1000, p=0.25). Then \u03bc = np = 250 and Var(Y) = np(1\u2212p) = 187.5. We want P(|Y/1000 \u2212 0.25| < 0.05) = P(|Y \u2212 250| < 50).\n\nChebyshev bound: P(|Y \u2212 250| < 50) \u2265 1 \u2212 Var(Y)/50^2 = 1 \u2212 187.5/2500 = 0.925.\n\nA sharper bound via Chernoff: with \u03b4 = 0.2 and \u03bc = 250,\nP(|Y \u2212 \u03bc| \u2265 50) \u2264 e^{\u2212\u03bc \u03b4^2/2} + e^{\u2212\u03bc \u03b4^2/3} = e^{\u22125} + e^{\u221210/3} \u2248 0.0424,\nso P(|Y \u2212 250| < 50) \u2265 1 \u2212 0.0424 \u2248 0.9576.\n\nTherefore, a safe lower bound is 0.925 (Chebyshev), and a tighter bound is about 0.9576 (Chernoff)."
+}
+

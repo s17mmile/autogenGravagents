@@ -1,0 +1,10 @@
+Conversation Log for query: Let a metallic rod $20 \mathrm{~cm}$ long be heated to a uniform temperature of $100^{\circ} \mathrm{C}$. Suppose that at $t=0$ the ends of the bar are plunged into an ice bath at $0^{\circ} \mathrm{C}$, and thereafter maintained at this temperature, but that no heat is allowed to escape through the lateral surface. Determine the temperature at the center of the bar at time $t=30 \mathrm{~s}$ if the bar is made of silver.
+
+Proxy:
+Let a metallic rod $20 \mathrm{~cm}$ long be heated to a uniform temperature of $100^{\circ} \mathrm{C}$. Suppose that at $t=0$ the ends of the bar are plunged into an ice bath at $0^{\circ} \mathrm{C}$, and thereafter maintained at this temperature, but that no heat is allowed to escape through the lateral surface. Determine the temperature at the center of the bar at time $t=30 \mathrm{~s}$ if the bar is made of silver.
+
+Backbone:
+{
+    "message": "Model: 1D heat equation \u2202T/\u2202t = \u03b1 \u2202\u00b2T/\u2202x\u00b2 with insulated lateral surface, ends held at 0\u00b0C, initial T(x,0)=100\u00b0C, 0\u2264x\u2264L, L=0.20 m. The solution for T is T(x,t)=\u03a3_{n odd} (4T0/(n\u03c0)) sin(n\u03c0x/L) e^{-(n\u03c0/L)\u00b2 \u03b1 t}, with T0=100\u00b0C and \u03b1 the thermal diffusivity of silver. At the center x=L/2, sin(n\u03c0x/L)=sin(n\u03c0/2)=\u00b11 for n odd, giving T_center(t)= (4T0/\u03c0) e^{-(\u03c0/L)\u00b2 \u03b1 t} - (4T0)/(3\u03c0) e^{-(3\u03c0/L)\u00b2 \u03b1 t} + \u2026 \u2248 (4T0/\u03c0) e^{-(\u03c0/L)\u00b2 \u03b1 t} for the dominant term.\n\nUsing \u03b1 for silver \u2248 1.74\u00d710\u207b\u2074 m\u00b2/s, t=30 s, L=0.20 m:\n(\u03c0/L)\u00b2 \u03b1 t \u2248 246.74 \u00d7 0.00522 \u2248 1.288\nT_center \u2248 (400/\u03c0) e^{-1.288} \u2248 127.3 \u00d7 0.276 \u2248 3.51\u00d710\u00b9 \u00b0C \u2248 35.1\u00b0C.\n\nAnswer: about 35.1\u00b0C at the center after 30 seconds (the next odd-term correction is \u2248 -4\u00d710\u207b\u2074\u00b0C, negligible)."
+}
+

@@ -1,0 +1,10 @@
+Conversation Log for query: Let $Y$ be the number of defectives in a box of 50 articles taken from the output of a machine. Each article is defective with probability 0.01 . Find the probability that $Y=0,1,2$, or 3 By using the binomial distribution.
+
+Proxy:
+Let $Y$ be the number of defectives in a box of 50 articles taken from the output of a machine. Each article is defective with probability 0.01 . Find the probability that $Y=0,1,2$, or 3 By using the binomial distribution.
+
+Backbone:
+{
+    "message": "Let Y be binomial with parameters n = 50 and p = 0.01, i.e., Y ~ Bin(50, 0.01). The probability that Y = k is P(Y = k) = C(50, k) (0.01)^k (0.99)^(50 - k). For k = 0, 1, 2, 3:\n- P(Y = 0) = C(50,0)(0.01)^0(0.99)^50 \u2248 0.6050\n- P(Y = 1) = C(50,1)(0.01)^1(0.99)^49 \u2248 0.3056\n- P(Y = 2) = C(50,2)(0.01)^2(0.99)^48 \u2248 0.0756\n- P(Y = 3) = C(50,3)(0.01)^3(0.99)^47 \u2248 0.0122\nThus P(Y \u2264 3) = sum \u2248 0.9984."
+}
+

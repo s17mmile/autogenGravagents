@@ -1,0 +1,17 @@
+Conversation Log for query: Assume that all gases are perfect and that data refer to 298.15 K unless otherwise stated. The standard enthalpy of combustion of solid phenol $\left(\mathrm{C}_6 \mathrm{H}_5 \mathrm{OH}\right)$ is $-3054 \mathrm{~kJ} \mathrm{~mol}^{-1}$ at $298 \mathrm{~K}_{\text {and }}$ its standard molar entropy is $144.0 \mathrm{~J} \mathrm{~K}^{-1} \mathrm{~mol}^{-1}$. Calculate the standard Gibbs energy of formation of phenol at $298 \mathrm{~K}$.
+
+Proxy:
+Assume that all gases are perfect and that data refer to 298.15 K unless otherwise stated. The standard enthalpy of combustion of solid phenol $\left(\mathrm{C}_6 \mathrm{H}_5 \mathrm{OH}\right)$ is $-3054 \mathrm{~kJ} \mathrm{~mol}^{-1}$ at $298 \mathrm{~K}_{\text {and }}$ its standard molar entropy is $144.0 \mathrm{~J} \mathrm{~K}^{-1} \mathrm{~mol}^{-1}$. Calculate the standard Gibbs energy of formation of phenol at $298 \mathrm{~K}$.
+
+Query_Handler:
+{
+    "message": "Calculated standard Gibbs energy of formation of phenol (solid) at 298 K.\nGiven: \u0394cH\u00b0rxn,phenol(s) = -3054 kJ/mol; S\u00b0(phenol,s) = 144.0 J/(K\u00b7mol).\nSteps:\n1) Find \u0394fH\u00b0 of phenol from combustion data.\n   Combustion: C6H6O(s) + 7 O2(g) -> 6 CO2(g) + 3 H2O(l)\n   \u0394cH\u00b0rxn = -3054 kJ/mol.\n   Using standard formation enthalpies: \u0394fH\u00b0f(CO2,g) = -393.5 kJ/mol; \u0394fH\u00b0f(H2O,l) = -285.83 kJ/mol.\n   Sum products: 6(-393.5) + 3(-285.83) = -2361.0 - 857.49 = -3218.49 kJ.\n   \u0394cH\u00b0rxn = [sum \u0394fH\u00b0f(products)] - [\u0394fH\u00b0f(phenol,s) + 7\u00b7\u0394fH\u00b0f(O2,g)=0].\n   So \u0394fH\u00b0f(phenol,s) = [sum products] - \u0394cH\u00b0rxn = (-3218.49) - (-3054) = -164.49 kJ/mol.\n   Therefore \u0394fH\u00b0f(phenol,s) \u2248 -164.5 kJ/mol.\n\n2) Compute \u0394S\u00b0rxn for formation of phenol from elements (C, H2, O2).\n   Formation reaction: 6 C(graphite) + 3 H2(g) + 0.5 O2(g) -> C6H6O(s)\n   Use standard molar entropies: S\u00b0(C, graphite) \u2248 5.74 J/mol\u00b7K; S\u00b0(H2,g) \u2248 130.68 J/mol\u00b7K; S\u00b0(O2,g) \u2248 205.15 J/mol\u00b7K; S\u00b0(phenol,s) = 144.0 J/mol\u00b7K.\n   \u0394S\u00b0rxn = S\u00b0(phenol) - [6 S\u00b0(C) + 3 S\u00b0(H2) + 0.5 S\u00b0(O2)]\n            \u2248 144.0 - [6(5.74) + 3(130.68) + 0.5(205.15)]\n            \u2248 144.0 - [34.44 + 392.04 + 102.58]\n            \u2248 144.0 - 529.06 \u2248 -385 J/mol\u00b7K = -0.385 kJ/mol\u00b7K.\n   At T = 298.15 K, T\u0394S\u00b0rxn \u2248 298.15 \u00d7 (-0.385) \u2248 -114.7 kJ/mol.\n\n3) Compute \u0394G\u00b0f(phenol,s) at 298 K:\n   \u0394G\u00b0f(phenol) = \u0394H\u00b0rxn \u2212 T\u0394S\u00b0rxn = (-164.5 kJ/mol) \u2212 (-114.7 kJ/mol) \u2248 -49.8 kJ/mol.\n\nResult: \u0394G\u00b0f,phenol(s,298 K) \u2248 -5.0 \u00d7 10^1 kJ/mol (about -50 kJ/mol).\nNote: The precise value depends on the adopted tabulated S\u00b0 values for the elemental states; using typical standard values yields a result near -50 kJ/mol.",
+    "subtasks": [
+        "Compute standard enthalpy of formation of solid phenol from its combustion data using \u0394fH\u00b0 of CO2(g) and H2O(l).",
+        "Compute standard entropy of formation of phenol from elements using standard molar entropies of C(graphite), H2(g), O2(g), and phenol(s).",
+        "Compute standard Gibbs energy of formation \u0394G\u00b0f(phenol) from \u0394H\u00b0f and \u0394S\u00b0f at 298 K (\u0394G\u00b0f = \u0394H\u00b0f \u2212 T\u0394S\u00b0f).",
+        "Provide final numeric value and note sensitivity to entropy data."
+    ],
+    "terminateChat": true
+}
+

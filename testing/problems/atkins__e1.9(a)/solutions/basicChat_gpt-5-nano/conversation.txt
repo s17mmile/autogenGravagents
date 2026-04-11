@@ -1,0 +1,10 @@
+Conversation Log for query: Calculate the mass of water vapour present in a room of volume $400 \mathrm{m}^3$ that contains air at $27^{\circ} \mathrm{C}$ on a day when the relative humidity is 60 percent.'
+
+Proxy:
+Calculate the mass of water vapour present in a room of volume $400 \mathrm{m}^3$ that contains air at $27^{\circ} \mathrm{C}$ on a day when the relative humidity is 60 percent.'
+
+Backbone:
+{
+    "message": "Approx. 6.2 kg of water vapor.\n\nMethod:\n1) p_sat at T = 27 \u00b0C (Magnus formula): p_sat \u2248 0.6108 \u00d7 exp[(17.27\u00d727)/(27+237.3)] \u2248 3.57 kPa.\n2) p_wv = RH \u00d7 p_sat = 0.60 \u00d7 3.57 \u2248 2.14 kPa \u2248 2140 Pa.\n3) Use ideal gas law for water vapor: n = pV/(RT), with V = 400 m^3, T = 27 \u00b0C = 300.15 K, R = 8.314 J/(mol\u00b7K).\n   n \u2248 (2140 \u00d7 400) / (8.314 \u00d7 300.15) \u2248 3.43\u00d710^2 mol.\n4) Mass m = n \u00d7 M_w = 3.43\u00d710^2 mol \u00d7 0.018015 kg/mol \u2248 6.2 kg.\n\nNote: assumes uniform mixing and ideal gas behavior; p_sat value is approximate."
+}
+

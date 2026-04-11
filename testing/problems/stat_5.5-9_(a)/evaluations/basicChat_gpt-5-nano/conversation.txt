@@ -1,0 +1,24 @@
+Conversation Log for query: 
+			Evaluate the following proposed solution to the given problem:
+			Problem Description: Suppose that the length of life in hours (say, $X$ ) of a light bulb manufactured by company $A$ is $N(800,14400)$ and the length of life in hours (say, $Y$ ) of a light bulb manufactured by company $B$ is $N(850,2500)$. One bulb is randomly selected from each company and is burned until 'death.' Find the probability that the length of life of the bulb from company $A$ exceeds the length of life of the bulb from company $B$ by at least 15 hours.
+			Reference Explanation: 
+			Correct Final Answer: 0.3085  	
+			Proposed Solution: [{"content": "Suppose that the length of life in hours (say, $X$ ) of a light bulb manufactured by company $A$ is $N(800,14400)$ and the length of life in hours (say, $Y$ ) of a light bulb manufactured by company $B$ is $N(850,2500)$. One bulb is randomly selected from each company and is burned until 'death.' Find the probability that the length of life of the bulb from company $A$ exceeds the length of life of the bulb from company $B$ by at least 15 hours.", "role": "user", "name": "Proxy"}, {"content": "{\"message\":\"Assuming the lifetimes are independent: X ~ N(800, 14400) and Y ~ N(850, 2500). Let D = X \u2212 Y. Then D ~ N(800 \u2212 850, 14400 + 2500) = N(\u221250, 16900) with SD = 130. We want P(X \u2265 Y + 15) = P(D \u2265 15) = P( (D \u2212 (\u221250))/130 \u2265 (15 \u2212 (\u221250))/130 ) = P(Z \u2265 0.5) with Z ~ N(0,1) = 1 \u2212 \u03a6(0.5) \u2248 0.3085. So the probability is about 0.309.\"}", "role": "user", "name": "Backbone"}]										
+		
+
+Proxy:
+
+			Evaluate the following proposed solution to the given problem:
+			Problem Description: Suppose that the length of life in hours (say, $X$ ) of a light bulb manufactured by company $A$ is $N(800,14400)$ and the length of life in hours (say, $Y$ ) of a light bulb manufactured by company $B$ is $N(850,2500)$. One bulb is randomly selected from each company and is burned until 'death.' Find the probability that the length of life of the bulb from company $A$ exceeds the length of life of the bulb from company $B$ by at least 15 hours.
+			Reference Explanation: 
+			Correct Final Answer: 0.3085  	
+			Proposed Solution: [{"content": "Suppose that the length of life in hours (say, $X$ ) of a light bulb manufactured by company $A$ is $N(800,14400)$ and the length of life in hours (say, $Y$ ) of a light bulb manufactured by company $B$ is $N(850,2500)$. One bulb is randomly selected from each company and is burned until 'death.' Find the probability that the length of life of the bulb from company $A$ exceeds the length of life of the bulb from company $B$ by at least 15 hours.", "role": "user", "name": "Proxy"}, {"content": "{\"message\":\"Assuming the lifetimes are independent: X ~ N(800, 14400) and Y ~ N(850, 2500). Let D = X \u2212 Y. Then D ~ N(800 \u2212 850, 14400 + 2500) = N(\u221250, 16900) with SD = 130. We want P(X \u2265 Y + 15) = P(D \u2265 15) = P( (D \u2212 (\u221250))/130 \u2265 (15 \u2212 (\u221250))/130 ) = P(Z \u2265 0.5) with Z ~ N(0,1) = 1 \u2212 \u03a6(0.5) \u2248 0.3085. So the probability is about 0.309.\"}", "role": "user", "name": "Backbone"}]										
+		
+
+Critic:
+{
+    "isAnswerCorrect": true,
+    "explanationRating": 9,
+    "comments": "Correct solution. D = X - Y ~ N(-50, 16900) since Var(X)=14400 and Var(Y)=2500; independence assumed so Var(D)=16900; P(D\u226515) = P(Z\u22650.5) with Z~N(0,1) \u2248 1-\u03a6(0.5) \u2248 0.3085. Final answer 0.3085 matches reference. Minor caveat: ensure the second parameter in N(\u03bc, \u03c3^2) is variance; many texts use variance, which is what was used here."
+}
+

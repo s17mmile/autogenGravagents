@@ -1,0 +1,12 @@
+Conversation Log for query: A recent college graduate borrows $\$ 100,000$ at an interest rate of $9 \%$ to purchase a condominium. Anticipating steady salary increases, the buyer expects to make payments at a monthly rate of $800(1+t / 120)$, where $t$ is the number of months since the loan was made.
+Assuming that this payment schedule can be maintained, when will the loan be fully paid?
+
+Proxy:
+A recent college graduate borrows $\$ 100,000$ at an interest rate of $9 \%$ to purchase a condominium. Anticipating steady salary increases, the buyer expects to make payments at a monthly rate of $800(1+t / 120)$, where $t$ is the number of months since the loan was made.
+Assuming that this payment schedule can be maintained, when will the loan be fully paid?
+
+Backbone:
+{
+    "message": "Let i = 0.09/12 = 0.0075 and r = 1 + i = 1.0075. With B0 = 100000 and P_t = 800(1 + t/120) for t = 1,2,..., the loan balance after n payments satisfies B_n = B_{n-1} r \u2212 P_n, with P_n = 800(1 + n/120). Equivalently, B_n = B0 r^n \u2212 \u2211_{k=1}^n P_k r^{n\u2212k}. Solving this numerically for the smallest n with B_n \u2264 0 yields n \u2248 611. Thus the loan is fully paid after about 611 months, i.e., roughly 50 years and 11 months. The actual final payment would be whatever remains to clear the balance, which would be less than the scheduled P_611 if needed."
+}
+

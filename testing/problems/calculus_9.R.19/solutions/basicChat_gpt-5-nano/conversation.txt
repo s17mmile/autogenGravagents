@@ -1,0 +1,10 @@
+Conversation Log for query: One model for the spread of an epidemic is that the rate of spread is jointly proportional to the number of infected people and the number of uninfected people. In an isolated town of 5000 inhabitants, 160 people have a disease at the beginning of the week and 1200 have it at the end of the week. How long does it take for $80 \%$ of the population to become infected?
+
+Proxy:
+One model for the spread of an epidemic is that the rate of spread is jointly proportional to the number of infected people and the number of uninfected people. In an isolated town of 5000 inhabitants, 160 people have a disease at the beginning of the week and 1200 have it at the end of the week. How long does it take for $80 \%$ of the population to become infected?
+
+Backbone:
+{
+    "message": "Model the spread with dI/dt = k I (N \u2212 I), where N = 5000 and I(0) = 160. The solution is I(t) = N / [1 + C e^(\u2212k N t)] with C = (N \u2212 I0)/I0 = 30.25. Using I(1) = 1200 gives e^(\u22125000 k) \u2248 0.1047, so k \u2248 4.5\u00d710^\u22124 per week. To reach I = 0.8N = 4000, solve 4000 = 5000/[1 + 30.25 e^(\u22125000 k t)], which yields e^(\u22125000 k t) = 0.25/30.25 \u2248 0.00826, so t \u2248 \u2212ln(0.00826)/(5000 k) \u2248 2.1\u20132.2 weeks. Therefore, it takes about 2.13 weeks (roughly 2 weeks and 1 day) from the start for 80% of the population to be infected."
+}
+

@@ -1,0 +1,10 @@
+Conversation Log for query: Suppose that the distribution of the weight of a prepackaged '1-pound bag' of carrots is $N\left(1.18,0.07^2\right)$ and the distribution of the weight of a prepackaged '3-pound bag' of carrots is $N\left(3.22,0.09^2\right)$. Selecting bags at random, find the probability that the sum of three 1-pound bags exceeds the weight of one 3-pound bag. HInT: First determine the distribution of $Y$, the sum of the three, and then compute $P(Y>W)$, where $W$ is the weight of the 3-pound bag.
+
+Proxy:
+Suppose that the distribution of the weight of a prepackaged '1-pound bag' of carrots is $N\left(1.18,0.07^2\right)$ and the distribution of the weight of a prepackaged '3-pound bag' of carrots is $N\left(3.22,0.09^2\right)$. Selecting bags at random, find the probability that the sum of three 1-pound bags exceeds the weight of one 3-pound bag. HInT: First determine the distribution of $Y$, the sum of the three, and then compute $P(Y>W)$, where $W$ is the weight of the 3-pound bag.
+
+Backbone:
+{
+    "message": "Assume the bag weights are independent. Let Y be the sum of three 1-lb bags: Y ~ N(3\u00d71.18, 3\u00d70.07^2) = N(3.54, 0.0147). Let W be the 3-lb bag: W ~ N(3.22, 0.09^2) = N(3.22, 0.0081). Then Z = Y \u2212 W ~ N(3.54\u22123.22, 0.0147+0.0081) = N(0.32, 0.0228), with SD \u2248 sqrt(0.0228) \u2248 0.151. We want P(Y > W) = P(Z > 0) = \u03a6(0.32/0.151) \u2248 \u03a6(2.12) \u2248 0.983. So the probability is about 0.983 (98.3%)."
+}
+

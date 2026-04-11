@@ -1,0 +1,22 @@
+Conversation Log for query: Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below $$
+\begin{array}{ll}
+H_0(\xi)=1 & H_1(\xi)=2 \xi \\
+H_2(\xi)=4 \xi^2-2 & H_3(\xi)=8 \xi^3-12 \xi \\
+H_4(\xi)=16 \xi^4-48 \xi^2+12 & H_5(\xi)=32 \xi^5-160 \xi^3+120 \xi
+\end{array}
+$$, show that a $0 \rightarrow 1$ vibrational transition is allowed and that a $0 \rightarrow 2$ transition is forbidden.
+
+Proxy:
+Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below $$
+\begin{array}{ll}
+H_0(\xi)=1 & H_1(\xi)=2 \xi \\
+H_2(\xi)=4 \xi^2-2 & H_3(\xi)=8 \xi^3-12 \xi \\
+H_4(\xi)=16 \xi^4-48 \xi^2+12 & H_5(\xi)=32 \xi^5-160 \xi^3+120 \xi
+\end{array}
+$$, show that a $0 \rightarrow 1$ vibrational transition is allowed and that a $0 \rightarrow 2$ transition is forbidden.
+
+Backbone:
+{
+    "message": "Let \u03c8_n(\u03be) \u221d e^{\u2212\u03be^2/2} H_n(\u03be). The vibrational dipole moment (up to a constant factor) is \u03bc_{0\u2192n'} \u221d \u27e80|\u03be|n'\u27e9 = \u222b_{\u2212\u221e}^{\u221e} \u03c8_0(\u03be) \u03be \u03c8_{n'}(\u03be) d\u03be \u221d \u222b_{\u2212\u221e}^{\u221e} e^{\u2212\u03be^2} H_0(\u03be) \u03be H_{n'}(\u03be) d\u03be.\n\n0 \u2192 1:\n- H_0(\u03be) = 1, H_1(\u03be) = 2\u03be.\n- \u03bc_{0\u21921} \u221d \u222b_{\u2212\u221e}^{\u221e} e^{\u2212\u03be^2} (\u03be)(2\u03be) d\u03be = 2 \u222b_{\u2212\u221e}^{\u221e} e^{\u2212\u03be^2} \u03be^2 d\u03be.\n- The integrand is even, and \u222b_{\u2212\u221e}^{\u221e} e^{\u2212\u03be^2} \u03be^2 d\u03be = \u221a\u03c0/2, so \u03bc_{0\u21921} \u221d \u221a\u03c0 \u2260 0. Therefore the 0 \u2192 1 transition is allowed.\n\n0 \u2192 2:\n- H_2(\u03be) = 4\u03be^2 \u2212 2.\n- \u03bc_{0\u21922} \u221d \u222b_{\u2212\u221e}^{\u221e} e^{\u2212\u03be^2} (\u03be)(4\u03be^2 \u2212 2) d\u03be = \u222b_{\u2212\u221e}^{\u221e} (4\u03be^3 \u2212 2\u03be) e^{\u2212\u03be^2} d\u03be.\n- The integrand is odd, so the integral over (\u2212\u221e, \u221e) vanishes. Therefore the 0 \u2192 2 transition is forbidden.\n\nThus, using the given Hermite polynomials, the selection rule \u0394n = \u00b11 holds here, giving 0\u21921 allowed and 0\u21922 forbidden."
+}
+

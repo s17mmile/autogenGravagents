@@ -1,0 +1,12 @@
+Conversation Log for query: In a FRET experiment designed to monitor conformational changes in T4 lysozyme, the fluorescence intensity fluctuates between 5000 and 10,000 counts per second.
+Assuming that 7500 counts represents a FRET efficiency of 0.5 , what is the change in FRET pair separation distance during the reaction? For the tetramethylrhodamine/texas red FRET pair employed $r_0=50 . Å$.
+
+Proxy:
+In a FRET experiment designed to monitor conformational changes in T4 lysozyme, the fluorescence intensity fluctuates between 5000 and 10,000 counts per second.
+Assuming that 7500 counts represents a FRET efficiency of 0.5 , what is the change in FRET pair separation distance during the reaction? For the tetramethylrhodamine/texas red FRET pair employed $r_0=50 . Å$.
+
+Backbone:
+{
+    "message": "Assume a simple linear mapping between intensity and FRET efficiency: E = (I \u2212 5000)/5000, so E(5000)=0, E(7500)=0.5, E(10000)=1. Using r = R0[(1/E) \u2212 1]^(1/6) with R0 = 50 \u00c5:\n- r(5000) \u2192 \u221e (no FRET)\n- r(7500) = 50 \u00c5\n- r(10000) \u2192 0 \u00c5 (max FRET)\nThus the distance change during the reaction is from effectively infinite separation to near zero separation. In this idealized model \u0394r is not a finite value. For a finite estimate in practice, use E values slightly below 1 and above 0 (e.g., E = 0.99 gives \u224822 \u00c5, E = 0.01 gives \u2248107 \u00c5), but with the provided extremes the change is from \u221e to ~0 \u00c5."
+}
+

@@ -1,0 +1,18 @@
+Conversation Log for query: Consider the initial value problem
+$$
+y^{\prime}=t y(4-y) / 3, \quad y(0)=y_0
+$$
+Suppose that $y_0=0.5$. Find the time $T$ at which the solution first reaches the value 3.98.
+
+Proxy:
+Consider the initial value problem
+$$
+y^{\prime}=t y(4-y) / 3, \quad y(0)=y_0
+$$
+Suppose that $y_0=0.5$. Find the time $T$ at which the solution first reaches the value 3.98.
+
+Backbone:
+{
+    "message": "Solve the ODE by separation: dy/(y(4\u2212y)) = (t/3) dt. Using partial fractions 1/(y(4\u2212y)) = (1/4)(1/y + 1/(4\u2212y)) gives (1/4)ln(y/(4\u2212y)) = t^2/6 + C. With y(0)=0.5, C = ln(1/7), so ln(y/(4\u2212y)) = (2/3)t^2 + ln(1/7). Thus y/(4\u2212y) = (1/7) e^{(2/3)t^2} and y(t) = 4 e^{(2/3)t^2}/(7 + e^{(2/3)t^2}). To reach y=3.98, e^{(2/3)T^2} = 7\u00b73.98/(4\u22123.98) = 1393, so T^2 = (3/2) ln(1393) \u2248 10.8588 and T \u2248 3.295. Therefore the first time is T \u2248 3.30 (in the same units as t)."
+}
+

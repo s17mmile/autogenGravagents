@@ -1,0 +1,12 @@
+Conversation Log for query: Suppose that a tank containing a certain liquid has an outlet near the bottom. Let $h(t)$ be the height of the liquid surface above the outlet at time $t$. Torricelli's principle states that the outflow velocity $v$ at the outlet is equal to the velocity of a particle falling freely (with no drag) from the height $h$.
+Consider a water tank in the form of a right circular cylinder that is $3 \mathrm{~m}$ high above the outlet. The radius of the tank is $1 \mathrm{~m}$ and the radius of the circular outlet is $0.1 \mathrm{~m}$. If the tank is initially full of water, determine how long it takes to drain the tank down to the level of the outlet.
+
+Proxy:
+Suppose that a tank containing a certain liquid has an outlet near the bottom. Let $h(t)$ be the height of the liquid surface above the outlet at time $t$. Torricelli's principle states that the outflow velocity $v$ at the outlet is equal to the velocity of a particle falling freely (with no drag) from the height $h$.
+Consider a water tank in the form of a right circular cylinder that is $3 \mathrm{~m}$ high above the outlet. The radius of the tank is $1 \mathrm{~m}$ and the radius of the circular outlet is $0.1 \mathrm{~m}$. If the tank is initially full of water, determine how long it takes to drain the tank down to the level of the outlet.
+
+Backbone:
+{
+    "message": "Let h(t) be the liquid height above the outlet. The outlet area a = \u03c0(0.1)^2 = 0.01\u03c0 m^2, and the tank cross-sectional area A = \u03c0(1)^2 = \u03c0 m^2. Torricelli\u2019s law gives the outflow velocity v = sqrt(2 g h), so the discharge Q = a v = 0.01\u03c0 sqrt(2 g h). The tank volume is V = A h, so dV/dt = A dh/dt = -Q, which yields dh/dt = -(a/A) sqrt(2 g h) = -0.01 sqrt(2 g h). Separate variables and integrate from h(0)=3 m to h(final)=0 m:\n\n\u222b_{3}^{0} dh / sqrt(h) = -0.01 sqrt(2 g) \u222b_{0}^{t} dt\n\n2[\u221ah]_{3}^{0} = -0.01 sqrt(2 g) t\n\nt = (2\u221a3) / (0.01\u221a(2 g)) = 200 \u221a(3/(2 g)).\n\nWith g \u2248 9.81 m/s^2, t \u2248 78 seconds (about 1 minute 18 seconds).\n\nAssumptions: negligible viscosity, turbulence, and air resistance; discharge through a sharp-edged orifice with constant area."
+}
+

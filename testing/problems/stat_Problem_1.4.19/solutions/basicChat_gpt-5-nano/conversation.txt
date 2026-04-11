@@ -1,0 +1,10 @@
+Conversation Log for query: Suppose that a fair $n$-sided die is rolled $n$ independent times. A match occurs if side $i$ is observed on the $i$ th trial, $i=1,2, \ldots, n$. Find the limit of this probability as $n$ increases without bound.
+
+Proxy:
+Suppose that a fair $n$-sided die is rolled $n$ independent times. A match occurs if side $i$ is observed on the $i$ th trial, $i=1,2, \ldots, n$. Find the limit of this probability as $n$ increases without bound.
+
+Backbone:
+{
+    "message": "There are two plausible interpretations:\n\n1) A match means a match for all i (the i-th trial shows i for every i = 1,...,n). Then the probability is (1/n)^n, and as n \u2192 \u221e this tends to 0.\n\n2) A match means at least one i with the i-th trial showing i (i.e., there exists i such that the i-th trial equals i). Since each trial has P(trial i = i) = 1/n and the trials are independent, P(no match) = (1 - 1/n)^n \u2192 e^{-1}, so P(at least one match) \u2192 1 - e^{-1} \u2248 0.6321.\n\nIf you intended the first interpretation, the limit is 0. If you intended the second, the limit is 1 - e^{-1}. Let me know which interpretation you had in mind and I\u2019ll provide the full derivation."
+}
+

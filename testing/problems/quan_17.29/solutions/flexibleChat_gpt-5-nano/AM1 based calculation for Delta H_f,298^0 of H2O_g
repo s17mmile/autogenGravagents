@@ -1,0 +1,56 @@
+# AM1 based calculation for Delta H_f,298^0 of H2O_g
+# All energies in electronvolts (eV) except final enthalpies in kcal/mol
+
+def am1_delta_hf_h2o(E_H, E_O, E_H2O_valence, E_H2O_cc, DeltaHf_H, DeltaHf_O, eV_to_kcal=23.065):
+    """Compute DeltaHf for H2O_g using AM1 energies and Hess's law.
+
+    Parameters:
+    - E_H, E_O: energies of H and O atoms (eV)
+    - E_H2O_valence, E_H2O_cc: valence and core-core energies of H2O (eV)
+    - DeltaHf_H, DeltaHf_O: formation enthalpies of H and O atoms (kcal/mol)
+    - eV_to_kcal: conversion factor from eV to kcal/mol (per molecule)
+
+    Returns:
+    - dict with intermediate values and final DeltaHf_H2O_AM1_kcal_per_mol and kJ_per_mol
+    """
+    # Build total energy for H2O molecule (AM1 total energy omits core-core in the energy balance here as given)
+    E_H2O = E_H2O_valence + E_H2O_cc
+
+    # Reactants: 2 H atoms + 1 O atom
+    E_rxn_atoms = 2 * E_H + E_O
+    DeltaE_AM1_rxn = E_H2O - E_rxn_atoms  # per molecule AM1 reaction energy (eV)
+    DeltaHrxn_AM1 = DeltaE_AM1_rxn * eV_to_kcal  # kcal/mol
+
+    # Hess's law: DeltaHf(H2O) = 2*DeltaHf(H) + DeltaHf(O) + DeltaHrxn_AM1
+    sum_Hf_atoms = 2 * DeltaHf_H + DeltaHf_O  # kcal/mol
+    DeltaHf_H2O_AM1 = sum_Hf_atoms + DeltaHrxn_AM1  # kcal/mol
+    DeltaHf_H2O_AM1_kJ_per_mol = DeltaHf_H2O_AM1 * 4.184
+
+    return {
+        "E_H2O_eV": E_H2O,
+        "DeltaE_AM1_rxn_eV": DeltaE_AM1_rxn,
+        "DeltaHrxn_AM1_kcal_per_mol": DeltaHrxn_AM1,
+        "sum_Hf_atoms_kcal_per_mol": sum_Hf_atoms,
+        "DeltaHf_H2O_AM1_kcal_per_mol": DeltaHf_H2O_AM1,
+        "DeltaHf_H2O_AM1_kJ_per_mol": DeltaHf_H2O_AM1_kJ_per_mol,
+    }
+
+# Given AM1 energies (from the prompt)
+E_H = -11.396
+E_O = -316.100
+E_H2O_valence = -493.358
+E_H2O_cc = 144.796
+DeltaHf_H = 52.102
+DeltaHf_O = 59.559
+
+# Perform calculation
+result = am1_delta_hf_h2o(E_H, E_O, E_H2O_valence, E_H2O_cc, DeltaHf_H, DeltaHf_O, eV_to_kcal=23.065)
+
+# Print formatted results
+print("H2O AM1 based DeltaHf:")
+print(f" E_H2O = {result['E_H2O_eV']:.3f} eV")
+print(f" DeltaE_AM1_rxn = {result['DeltaE_AM1_rxn_eV']:.3f} eV")
+print(f" DeltaHrxn_AM1 = {result['DeltaHrxn_kcal_per_mol']:.3f} kcal/mol" if 'DeltaHrxn_kcal_per_mol' in result else f" DeltaHrxn_AM1 = {result['DeltaHrxn_AM1_kcal_per_mol']:.3f} kcal/mol")
+print(f" sum_Hf_atoms = {result['sum_Hf_atoms_kcal_per_mol']:.3f} kcal/mol")
+print(f" DeltaHf_H2O_AM1 = {result['DeltaHf_H2O_AM1_kcal_per_mol']:.3f} kcal/mol")
+print(f" DeltaHf_H2O_AM1 = {result['DeltaHf_H2O_AM1_kJ_per_mol']:.3f} kJ/mol")

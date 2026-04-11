@@ -9,19 +9,18 @@ from pathlib import Path
 import PyPDF2
 
 # Query engine, LLM and AG2 imports
+print("Importing OpenAI client...")
 from llama_index.llms.openai import OpenAI
+print("Importing VectorChromaQueryEngine and related...")
 from autogen.agents.experimental import VectorChromaQueryEngine
 from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
 from autogen.agents.experimental import DocAgent
 
 # Docling imports for fine-grained document parsing control before ingestion
+print("Importing Docling...")
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter, PdfFormatOption
-
-# Needed for vector DB management
-import chromadb
-import chromadb.utils.embedding_functions as embedding_functions
 
 # Note: the documentRetrievalAgent also has browser-use in the background, which causes a few warnings internally:
 # - a pydantic warning about an improper field
@@ -171,8 +170,7 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 		{os.listdir(corpusPath)}
 	"""
 
-	description = 
-	f"""
+	description = f"""
 		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus or the web to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
 		It can be given natural language queries including data ingestion requests from given URLs or local files.

@@ -1,0 +1,10 @@
+Conversation Log for query: Calculate the minimum $\Delta v$ required to place a satellite already in Earth's heliocentric orbit (assumed circular) into the orbit of Venus (also assumed circular and coplanar with Earth). Consider only the gravitational attraction of the Sun. 
+
+Proxy:
+Calculate the minimum $\Delta v$ required to place a satellite already in Earth's heliocentric orbit (assumed circular) into the orbit of Venus (also assumed circular and coplanar with Earth). Consider only the gravitational attraction of the Sun. 
+
+Backbone:
+{
+    "message": "Minimum \u0394v (solar gravity only, two-impulse Hohmann transfer, coplanar circular orbits):\n- r1 (Earth) = 1 AU, r2 (Venus) = 0.723332 AU, a = (r1 + r2)/2 \u2248 0.861666 AU\n- v1 = sqrt(mu/r1) \u2248 6.283 AU/yr \u2248 29.78 km/s\n- v_transfer at r1 (aphelion) = sqrt(mu*(2/r1 - 1/a)) \u2248 5.754 AU/yr \u2248 27.40 km/s\n- \u0394v1 = v1 \u2212 v_transfer(r1) \u2248 0.529 AU/yr \u2248 2.51 km/s\n- v2 = sqrt(mu/r2) \u2248 7.392 AU/yr \u2248 35.0 km/s\n- v_transfer at r2 (perihelion) = sqrt(mu*(2/r2 - 1/a)) \u2248 7.955 AU/yr \u2248 37.74 km/s\n- \u0394v2 = v_transfer(r2) \u2212 v2 \u2248 0.563 AU/yr \u2248 2.67 km/s\n- Total \u0394v \u2248 \u0394v1 + \u0394v2 \u2248 5.18 km/s\n\nNotes: This is the theoretical minimum for a two-impulse Hohmann transfer under only solar gravity. Real missions would add corrections for planet positions, plane-change, atmosphere, n-body effects, etc."
+}
+

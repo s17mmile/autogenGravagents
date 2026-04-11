@@ -1,0 +1,10 @@
+Conversation Log for query: How large should we take $n$ in order to guarantee that the Trapezoidal and Midpoint Rule approximations for $\int_1^2(1 / x) d x$ are accurate to within 0.0001 ?
+
+Proxy:
+How large should we take $n$ in order to guarantee that the Trapezoidal and Midpoint Rule approximations for $\int_1^2(1 / x) d x$ are accurate to within 0.0001 ?
+
+Backbone:
+{
+    "message": "The function f(x) = 1/x on [1,2] has f''(x) = 2/x^3, so max_{[1,2]} |f''(x)| = 2 (at x=1).\nFor the composite rules with n subintervals (h = (b-a)/n, here b-a=1):\n- Trapezoidal error bound: |E_T| \u2264 (b-a)^3/(12 n^2) max|f''| = 1/(6 n^2).\n- Midpoint error bound: |E_M| \u2264 (b-a)^3/(24 n^2) max|f''| = 1/(12 n^2).\nWe want these \u2264 1e-4.\n- Trapezoidal: 1/(6 n^2) \u2264 1e-4 \u2192 n^2 \u2265 1/0.0006 \u2248 1666.67 \u2192 n \u2265 40.82 \u2192 n \u2265 41.\n- Midpoint: 1/(12 n^2) \u2264 1e-4 \u2192 n^2 \u2265 1/0.0012 \u2248 833.33 \u2192 n \u2265 28.87 \u2192 n \u2265 29.\nTo guarantee both approximations within 1e-4, choose n \u2265 41.\n(For reference, \u222b_1^2 (1/x) dx = ln 2 \u2248 0.69314718056.)"
+}
+
