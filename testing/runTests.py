@@ -250,6 +250,8 @@ if __name__ == "__main__":
 	print(f"Progress: {tester.numTested}/{tester.numProblems} problems fully tested with model {tester.model}.")
 	tester = None
 
+	quit()
+
 	# Process each problem in the dataset with map(). Uses multiple processes at the same time for speedup - this will clutter the output.
 	problems.map(
 		testPassthrough,

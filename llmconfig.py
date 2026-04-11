@@ -26,8 +26,8 @@ commercial_llm_config_5_nano = {
                         "api_key":os.getenv("OPENAI_API_KEY")
                         }
 
-commercial_llm_config_5_4_nano = {
+commercial_llm_config_5_4 = {
                         "api_type": os.getenv("OPENAI_API_TYPE"), 
-                        "model": "gpt-5.4-nano",
+                        "model": "gpt-5.4-mini",
                         "api_key":os.getenv("OPENAI_API_KEY")
                         }
