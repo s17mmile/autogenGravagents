@@ -1,8 +1,9 @@
-import os, sys, json, math
+import os, sys, json, math, time
 import numpy as np
 import matplotlib.pyplot as plt
 
 import pickle
+import openai
 from tqdm import tqdm
 
 # Add parent directory to path for imports as testing is in subdir
@@ -40,6 +41,7 @@ def retrieveResultsFromDisk():
         print("Compiled results already exist. Loading from disk...")
         with open(os.path.join(os.path.dirname(__file__), "compiled_results.pkl"), "rb") as f:
             results = pickle.load(f)
+        print("Results loaded from disk.")
         return results
 
     results = {
@@ -104,8 +106,6 @@ def retrieveResultsFromDisk():
 
     return results
 
-
-
 def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__), "charts"), hist_bins = 100, show=False):
     """
     Creates:
@@ -128,6 +128,8 @@ def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__)
     dict
         File paths of generated plots.
     """
+    print("Creating comparison charts...")
+
     os.makedirs(output_dir, exist_ok=True)
 
     def to_numeric_array(values):
@@ -348,14 +350,132 @@ def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__)
 
         output_files[f"{stat_key}_histogram"] = hist_path
 
+    print("Charts created and saved to disk.")
+
     return output_files
 
+def createSplitQuery(results):
+    # Create split prompt with all comments for summarization
+    # Splitting is necessary to circumvent the GPT-5.4 rate limit (400k TPM), which we BARELY hit otherwise :(
+    # Instead, we will just summarize half of the comments at a time.
+    query1 = f"""
+        You will receive a list of LLM-generated comments about the performance of an agentic system on a set of problems - one comment per problem. Each such solver is identified by the model and agent configuration used to generate the solution that the comment is about (e.g. gpt-4o-mini with basicChat config vs gpt-5-nano with flexibleChat config).
+        Each model/solver will be abbreviated, with "gpt-4o-mini" being "4", "gpt-5-nano" being "5", "basicChat" being "B", and "flexibleChat" being "F". For example, a comment about the performance of the gpt-4o-mini model with the basicChat agent config will be labeled as "4 - B: [comment]".
+        Your task is to analyze these comments and provide a comprehensive summary of any trends, common themes, or notable observations that emerge from the feedback.
+        Especially, discern the differences in feedback received between different model-solver pairs and try to identify any patterns in the comments that could explain performance differences.
+        Highlight any recurring praises or criticisms for each model-solver pair, and note if certain issues are consistently mentioned for one model-solver pair but not the other.
+        Also try to identify the consistency of the evaluations - are all answers evaluated to the same standard, or do some comments indicate that the evaluator was more lenient/strict on certain problems or for certain model-solver pairs?
+        You will now receive the comments in the following format "[model]-[solver]: [comment]". They are grouped by problem, so you can immediately compare the feedback for the same question across different model-solver pairs.
+        \n
+    """
+
+    query2 = query1
+
+    # Name shortening to help the rate limit lol
+    # Without it's I'm just barely above, needing to shave ~5% tokens off the query
+    # This shaves ~12k tokens off the input, but it's not enough :(
+    shortenedModelNames = {
+        "gpt-4o-mini": "4",
+        "gpt-5-nano": "5",
+    }
+
+    shortenedSolverNames = {
+        "basicChat": "B",
+        "flexibleChat": "F"
+    }
+    
+    # Build queries
+    numProblems = len(results["gpt-4o-mini"]["basicChat"]["comments"])
+    for idx in range(numProblems):
+        for model_name in results.keys():
+            for solver_name in results[model_name].keys():
+                comment = results[model_name][solver_name]["comments"][idx]
+                format = f"{shortenedModelNames.get(model_name, model_name)}-{shortenedSolverNames.get(solver_name, solver_name)}: {comment}\n"
+                
+                if idx < numProblems // 2:
+                    query1 += format
+                else:
+                    query2 += format
+
+        if idx < numProblems // 2:
+            query1 += "\n\n"
+        else:
+            query2 += "\n\n"
+
+    return query1, query2
 
 
+# I do not like this part at all, but whatever
+# Separate querying, directly to openai client (not using flexibleChat) as the chat doesn't really have a way of dealing with these split prompts and I'm worried the group chat will time put in between.
+def summarizeCommentTrends(results):
+    summaryPath1 = os.path.join(os.path.dirname(__file__), "commentTrendsSummary1")
+    summaryPath2 = os.path.join(os.path.dirname(__file__), "commentTrendsSummary2")
+
+
+    # Do not run if conversation history exists, instead load pickled summaries
+    if os.path.exists(os.path.join(os.path.dirname(__file__), "summary1.pkl")) and os.path.exists(os.path.join(os.path.dirname(__file__), "summary2.pkl")):
+        print(f"Full comment summary already exists. Skipping comment summarization and loading summary from disk.")
+        with open(os.path.join(os.path.dirname(__file__), "summary1.pkl"), "rb") as f:
+            summary1 = pickle.load(f)
+        with open(os.path.join(os.path.dirname(__file__), "summary2.pkl"), "rb") as f:
+            summary2 = pickle.load(f)
+        return summary1, summary2
+
+    os.makedirs(summaryPath1, exist_ok=True)
+    os.makedirs(summaryPath2, exist_ok=True)
+
+    print("Summarizing comment trends...")
+
+    query1, query2 = createSplitQuery(results)
+
+    chat = flexibleAgentChat(
+        configPath="flexibleAgents/agentConfigs/basicAgent.txt",
+        llm_config=commercial_llm_config_5_4,
+        maxRounds=2,
+        trackTokens=False
+    )
+
+    if not os.path.exists(os.path.join(summaryPath1, "conversation.txt")):
+        chat.setConversationPath(summaryPath1)
+        summary1 = chat.startConversation(query=query1)
+
+    if not os.path.exists(os.path.join(summaryPath2, "conversation.txt")):
+        chat.setConversationPath(summaryPath2)
+        summary2 = chat.startConversation(query=query2)
+
+    with open(os.path.join(os.path.dirname(__file__), "summary1.pkl"), "wb") as f:
+        pickle.dump(summary1, f)
+
+    with open(os.path.join(os.path.dirname(__file__), "summary2.pkl"), "wb") as f:
+        pickle.dump(summary2, f)
+
+    # Save results as txt and pkl
+    saveSummariesToTxt(summary1, summary2)
+
+    return summary1, summary2
+
+def saveSummariesToTxt(summary1, summary2):
+    with open(os.path.join(os.path.dirname(__file__), "commentTrendsSummary.txt"), "w", encoding="utf-8") as f:
+        f.write("Summary of comment trends (part 1):\n")
+        f.write(fetchLastMsgContent(summary1)["message"])
+        f.write("\n\n---\n\n")
+        f.write("\n\nSummary of comment trends (part 2):\n")
+        f.write(fetchLastMsgContent(summary2)["message"])
+
+def fetchLastMsgContent(messageList):
+    if len(messageList) == 0:
+        return ""
+    lastMsg = messageList[-1]
+    content = json.loads(lastMsg.get("content", ""))
+    return content
 
 if __name__ == "__main__":
+    # Load from disk
     results = retrieveResultsFromDisk()
     
+    # Create comparison charts
     comparison_files = createComparisons(results)
 
-    
+    summary1, summary2 = summarizeCommentTrends(results)
+
+    saveSummariesToTxt(summary1, summary2)

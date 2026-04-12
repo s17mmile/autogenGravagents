@@ -7,7 +7,7 @@ load_dotenv()
 # LOCAL API
 local_llm_config = {
                     "api_type": os.getenv("IZ_API_TYPE"), 
-                    "model": os.getenv("IZ_MODEL"),
+                    "model": "gpt-4o-mini",
                     "api_key":os.getenv("IZ_API_KEY"),
                     "base_url":os.getenv("IZ_BASE_URL")
                     }
@@ -28,6 +28,6 @@ commercial_llm_config_5_nano = {
 
 commercial_llm_config_5_4 = {
                         "api_type": os.getenv("OPENAI_API_TYPE"), 
-                        "model": "gpt-5.4-mini",
+                        "model": "gpt-5.4",
                         "api_key":os.getenv("OPENAI_API_KEY")
                         }

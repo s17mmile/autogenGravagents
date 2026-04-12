@@ -64,6 +64,7 @@ class flexibleAgentChat(QObject):
 		# Conversation path
 		# If none is given, create a new temporary conversation directory with a random string to avoid overwriting previous conversations.
 		# If given, use the provided path.
+		self.isConversationPathRandom = False
 		if conversationPath:
 			self.conversationPath = conversationPath
 		else:
@@ -74,8 +75,7 @@ class flexibleAgentChat(QObject):
 				print("Collision in random conversation directory name, generating a new one...")
 				randomString = "".join(random.choices(string.ascii_letters, k=10))
 			self.conversationPath = os.path.join(conversationsDir, f"conversation_{randomString}")
-
-			print(f"No conversation path given, generated random conversation directory at {self.conversationPath}")
+			self.isConversationPathRandom = True
 
 		os.makedirs(self.conversationPath, exist_ok=True)
 
@@ -269,7 +269,14 @@ class flexibleAgentChat(QObject):
 	
 	# Set path to conversation history (useful for testing, where this changes between each test)
 	def setConversationPath(self, path):
+		# Check if old, temporary dir was empty - if yes, clear it out. If not, leave it be to avoid accidental deletion of conversation histories.
+		if os.path.exists(self.conversationPath) and len(os.listdir(self.conversationPath)) == 0 and self.isConversationPathRandom:
+			shutil.rmtree(self.conversationPath, ignore_errors=True)
+		else:
+			print(f"Warning: current conversation path {self.conversationPath} is not empty. Leaving it be to avoid accidental deletion of conversation history.")
 		self.conversationPath = path
+		self.isConversationPathRandom = False
+		return
 
 	def checkTermination(self, message) -> bool:
 		# print(f"Checking for termination signal in message {message}...")

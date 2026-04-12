@@ -11,8 +11,7 @@ maxRounds = 20
 
 # Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-	configPath="flexibleAgents/agentConfigs/testingConfig.txt",
-	conversationPath=os.path.abspath("conversations/testingConversation"),
+	configPath="flexibleAgents/agentConfigs/defaultConfig.txt",
 	llm_config=commercial_llm_config,
 	maxRounds=maxRounds,
 	trackTokens=True
