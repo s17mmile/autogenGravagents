@@ -106,7 +106,7 @@ def retrieveResultsFromDisk():
 
     return results
 
-def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__), "charts"), hist_bins = 100, show=False):
+def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__), "charts"), hist_bins = 200, show=False):
     """
     Creates:
     1. A multi-panel grouped bar chart figure with one subplot per summary statistic,
@@ -213,11 +213,11 @@ def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__)
     }
 
     hist_xlims = {
-        "scores": (0, 10),
+        "scores": (-0.5, 10.5),
         "cost": (0, 0.01),
-        "inputTokens": (0, 100000),
-        "outputTokens": (0, 50000),
-        "totalTokens": (0, 150000),
+        "inputTokens": (0, 10000),
+        "outputTokens": (0, 20000),
+        "totalTokens": (0, 50000),
         # "correctness": (-0.5, 1.5)
     }
 

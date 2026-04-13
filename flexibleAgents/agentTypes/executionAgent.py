@@ -15,14 +15,24 @@ class executionAgentResponse(BaseModel):
 
 def injectSnippets(agent, messages, sender, config):
 	# Extract code snippets as single strings from incoming message
-	lastMessage = json.loads(messages[-1].get("content")) if "content" in messages[-1] else {}
-	snippet = lastMessage["codeSnippet"] if "codeSnippet" in lastMessage else []
-	
+	# Execution requires the CodeSnippet Field - I might want to find a way around this...
+	# Problem I ran into was proper formatting and the "python" header missing or being incorrectly placed.
+	lastMessage = messages[-1].get("content") if "content" in messages[-1] else {}
+	try:
+		snippet = json.loads(lastMessage)["codeSnippet"]
+	except (json.JSONDecodeError, KeyError, TypeError):
+		snippet = None
+
 	if not snippet:
+		messages.append({
+			"content": f"No code snippet found in last message. Assert Execution failure.",
+			"role": "user"
+		})
 		return False, {}
 	
 	# Inject as single "code prompt" message --> Yes, this loses the format going in, but that should be fine.
 	code_content = f"```python\n{snippet}\n```"
+	print(f"Injecting code snippet into message history")
 	messages.append({
 		"content": f"Execute this code snippet:\n{code_content}",
 		"role": "user"
@@ -57,10 +67,13 @@ def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 		- The result field should contain the output or result of the code execution if it can be represented as a short string or number.
 		- The createdFiles field should list any files that were created during the execution process, such as images or text outputs. It should also include the names of the scripts created during execution.
 		- The requiredDependencies field should list any required, but not yet installed dependencies needed to run the code. If dependencies are missing, hand control back to the human agent to install these dependencies.
+
+		If no code is actually run, explicitly claim that NO CODE WAS EXECUTED in your reply. Otherwise, you keep lying!
 	"""
 
 	description = """
 		The EXECUTION AGENT is responsible for executing code snippets from other agents' responses in a local command line environment.
+		It should only be called immediately after a coding agent's response that includes a code snippet to execute.
 	"""
 
 	execution_llm_config = chat.llm_config.copy()

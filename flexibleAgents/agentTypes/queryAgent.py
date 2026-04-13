@@ -11,7 +11,10 @@ class queryAgentResponse(BaseModel):
 # Query Agent takes in the initial query and then delegates tasks to other agents
 # Based on the user's input, it breaks down the task into sub-tasks for other agents to handle
 # Each Conversation Config must include a Query Agent as the starting point
-def queryAgent(chat, name = "QueryAgent") -> ConversableAgent:
+def queryAgent(
+		chat,
+		name = "QueryAgent"
+	) -> ConversableAgent:
 	systemMessage = f"""
 		You are a QUERY AGENT specializing in breaking down user requests into manageable sub-tasks for a team of specialized agents.
 		You will receive the user's query as well as a short description of the agent conversation configuration.
