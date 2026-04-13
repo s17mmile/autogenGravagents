@@ -46,7 +46,7 @@ class agentChatSignals(QObject):
 # Main class that allows flexible agent conversations based on config files
 # Extends QObject so that it can be properly used with the GUI
 class flexibleAgentChat(QObject):
-	def __init__(self, configPath: str = None, llm_config = None, conversationPath = None, maxRounds: int = 10, trackTokens: bool = False, parent = None):
+	def __init__(self, configPath: str = None, llm_config = None, conversationPath = None, maxRounds: int = 10, trackTokens: bool = False, resetAfterConversation: bool = False, parent = None):
 		super().__init__(parent)
 
 		# Config parsing setters
@@ -60,6 +60,7 @@ class flexibleAgentChat(QObject):
 		self.llm_config = llm_config
 		self.maxRounds = maxRounds
 		self.interruptRequested = False
+		self.resetAfterConversation = resetAfterConversation
 
 		# Conversation path
 		# If none is given, create a new temporary conversation directory with a random string to avoid overwriting previous conversations.
@@ -259,10 +260,37 @@ class flexibleAgentChat(QObject):
 			dest_agents = [self.chatGraph.agents[dest_name] for dest_name in dest_names]
 			self.chatGraph.transitions[source_agent] = dest_agents
 
-		print("Agent building complete.")
+		print("Agent building complete. Compiling into GroupChat...")
+
+		self.initGroupChatAndManager()
+
+		print("GroupChat initialization complete.")
 
 		return
 	
+
+	def initGroupChatAndManager(self):
+		# Initialize a group chat with the instantiated agents and the query
+		agentList = list(self.chatGraph.agents.values())
+		self.groupchat = GroupChat(
+			agents=agentList,
+			messages=[],
+			send_introductions=True,
+			max_round=self.maxRounds,
+			allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
+			speaker_transitions_type="allowed",
+			speaker_selection_method="auto"
+		)
+
+		# Process flow within this group chat is managed by the following manager (necessary even when agents are choosing their own transitions, then it will simply not use an llm but the fixed rules)
+		# Termination condition: if interrupt requested by GUI or if agent signals termination through its output (default: only doable by queryAgent)
+		self.manager = GroupChatManager(
+			groupchat=self.groupchat,
+			llm_config=self.llm_config,
+			name = "ManagerAgent",
+			is_termination_msg = self.checkTermination
+		)
+
 	# Return path to conversation history
 	def getConversationPath(self):
 		return self.conversationPath
@@ -310,7 +338,17 @@ class flexibleAgentChat(QObject):
 
 	# Save conversation history as text file in conversation directory
 	def saveConversationHistory(self, groupchat: GroupChat, query: str = None):
-		path = os.path.join(self.conversationPath, "conversation.txt")
+		# Find non-duplicate conversation name for text file
+		counter = 1
+		while True:
+			filename = f"conversation_{counter}.txt"
+			if not os.path.exists(os.path.join(self.conversationPath, filename)):
+				break
+			counter += 1
+
+		path = os.path.join(self.conversationPath, filename)
+
+		# Save conversation history to new text file
 		with open(path, "w", encoding="utf-8") as f:
 			f.write(f"Conversation Log for query: {query}\n\n")
 			for msg in groupchat.messages:
@@ -331,6 +369,8 @@ class flexibleAgentChat(QObject):
 				# Write to file and also print so manager/summary messages are visible in the terminal
 				f.write(f"{name}:\n{formatted}\n\n")
 
+
+
 	# Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
 	@Slot(str)
 	def startConversation(self, query: str):
@@ -339,58 +379,39 @@ class flexibleAgentChat(QObject):
 		if self.GUI:
 			self.signals.outgoingMessage.emit({"name": "System", "content": {"message": f"Starting conversation with query: {query}"}})
 
-		# Initialize a group chat with the instantiated agents and the query
-		agentList = list(self.chatGraph.agents.values())
-		groupchat = GroupChat(
-			agents=agentList,
-			messages=[],
-			send_introductions=True,
-			max_round=self.maxRounds,
-			allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
-			speaker_transitions_type="allowed",
-			speaker_selection_method="auto"
-		)
-
-		# Process flow within this group chat is managed by the following manager (necessary even when agents are choosing their own transitions, then it will simply not use an llm but the fixed rules)
-		# Termination condition: if interrupt requested by GUI or if agent signals termination through its output (default: only doable by queryAgent)
-		manager = GroupChatManager(
-			groupchat=groupchat,
-			llm_config=self.llm_config,
-			name = "ManagerAgent",
-			is_termination_msg = self.checkTermination
-		)
-
-		# Clear and re-initialize conversation history directory (deletion and recreation of directory, no undoing this!) before chat starts
-		shutil.rmtree(self.conversationPath, ignore_errors=True)
-		os.makedirs(self.conversationPath, exist_ok=True)
-
 		# Clear interruption request state at the beginning of the conversation
 		self.interruptRequested = False
 
 		# Start the conversation with the prompt coming from the human and being passed to the manager.
 		# We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
+		# I'm unsure if clearing the history here equates to a full agent reset, so I've opted to do it separately if required.
 		result = self.humanAgent.initiate_chat(
-			manager,
+			self.manager,
 			message=query,
 			clear_history=False
 		)
 
-		self.saveConversationHistory(groupchat, query)
+		self.saveConversationHistory(self.groupchat, query)
 
 		# Return all messages for potential further processing, including agent usage summary if asked
 		# Calculate total tokens used if tracking enabled
 		if self.trackTokens:
-			tokenUsage = gather_usage_summary(groupchat.agents + [manager])
-			messageHistory = groupchat.messages.copy()
+			tokenUsage = gather_usage_summary(self.groupchat.agents + [self.manager])
+			messageHistory = self.groupchat.messages.copy()
 
 			print(f"Cost including cached inference: {tokenUsage["usage_including_cached_inference"]["total_cost"]}")
 			print(f"Cost excluding cached inference: {tokenUsage["usage_excluding_cached_inference"]["total_cost"]}")
 			
 			# Reset token usage for re-use of FlexibleAgents instance
-			for agent in groupchat.agents + [manager]:
-				agent.reset()
+			if self.resetAfterConversation:
+				for agent in self.groupchat.agents + [self.manager]:
+					agent.reset()
 
 			return messageHistory, tokenUsage
 		else:
-			return groupchat.messages
+			if self.resetAfterConversation:
+				for agent in self.groupchat.agents + [self.manager]:
+					agent.reset()
+			
+			return self.groupchat.messages
 	

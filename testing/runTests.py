@@ -54,7 +54,8 @@ class Tester:
 			configPath="flexibleAgents/agentConfigs/testingConfig.txt",
 			llm_config=self.llmconfig,
 			maxRounds=20,
-			trackTokens=True
+			trackTokens=True,
+			resetAfterConversation=True
 		)
 
 		print("Setting up solver: basicChat...")
@@ -63,7 +64,8 @@ class Tester:
 			configPath="flexibleAgents/agentConfigs/basicAgent.txt",
 			llm_config=self.llmconfig,
 			maxRounds=2,
-			trackTokens=True
+			trackTokens=True,
+			resetAfterConversation=True
 		)
 
 		print("Setting up critic agent: solutionCritic...")
@@ -72,7 +74,8 @@ class Tester:
 			configPath="flexibleAgents/agentConfigs/solutionCritic.txt",
 			llm_config=self.llmconfig,
 			maxRounds=2,
-			trackTokens=True
+			trackTokens=True,
+			resetAfterConversation=True
 		)
 		
 		return
