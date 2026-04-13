@@ -10,9 +10,7 @@ print("Flexible chat GUI instance creating...")
 flexibleChatGUI = AgentChatGuiHandler(
     configPath="flexibleAgents/agentConfigs/defaultConfig.txt",
     llm_config=commercial_llm_config_4o_mini,
-    maxRounds=maxRounds,
-    trackTokens=True,
-    resetAfterConversation=False
+    maxRounds=maxRounds
 )
 
 print("Flexible chat GUI instance created.")

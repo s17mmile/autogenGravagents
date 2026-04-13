@@ -78,6 +78,7 @@ class flexibleAgentChat(QObject):
 			self.conversationPath = os.path.join(conversationsDir, f"conversation_{randomString}")
 			self.isConversationPathRandom = True
 
+		print(f"Conversation path set to {self.conversationPath}. Creating directory if it doesn't exist...")
 		os.makedirs(self.conversationPath, exist_ok=True)
 
 		# GUI-related setters

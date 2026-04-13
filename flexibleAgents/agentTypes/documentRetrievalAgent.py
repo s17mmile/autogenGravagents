@@ -174,10 +174,7 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 		The DOCUMENT RETRIEVAL AGENT is responsible for retrieving relevant documents from a local document corpus or the web to answer queries posed by other agents.
 		It should utilize document search to back up argumentations or answer questions with facts from given sources.
 		It can be given natural language queries including data ingestion requests from given URLs or local files.
-		It is not to be used for general question answering or code criticism.
-		If the agent does not know the answer to a query, it should not be re-queried for the same information!
-		It has knowledge of the following documents:
-		{os.listdir(corpusPath)}
+		You may aks this agent for code examples to be used as a reference for implementation of library-specific functions or APIs. 
 	"""
 
 	documentRetrieval_llm_config = chat.llm_config.copy()

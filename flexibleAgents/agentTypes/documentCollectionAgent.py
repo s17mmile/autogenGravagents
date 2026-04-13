@@ -38,6 +38,9 @@ def documentCollectionAgent(chat, name = "DocumentCollectionAgent") -> WebSurfer
 		Your output includes a message field and a relevantDocumentURLs field:
 		- The message field should contain an overview of the pages visited and important takeaways to answer the query.
 		- The relevantDocumentURLs field should list the URLs of documents or web pages containing the requested information. Do not include search engine result pages, only direct URLs to relevant documents or web pages.
+	
+		If any agent asks for clarification on how to use a specific library function or API, you should search for or create code examples of that function or API as a reference.
+		If you do not have any documentation about a specific library function or API in your current knowledge base, simply state that these documents are missing. Do not attempt to fill in the gaps yourself, as you may provide inaccurate information. Instead, suggest that the agent asking for this information should query you for relevant code examples or documentation on that function or API.
 	"""
 
 	description = """

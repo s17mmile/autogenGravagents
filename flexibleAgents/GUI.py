@@ -255,7 +255,12 @@ class AgentChatGuiHandler(QObject):
         # ConfigPath is not yet passed sa GUI registration should happen before - didn't quite build this as cleanly as I may have liked.
         # Could have made a GUI parameter passable to flexibleAgentChat but preferred separate GUI registration to keep backend clean.
         self.agentChatThread = QThread()
-        self.agentChat = flexibleAgentChat(None, llm_config, maxRounds)
+        self.agentChat = flexibleAgentChat(None, llm_config=llm_config, maxRounds=maxRounds)
+
+        # Guild agents if config is provided
+        if configPath:
+            self.agentChat.parseAgentConfig(configPath)
+            self.agentChat.buildAgents()
 
         # Build Agent Chat GUI
         self.window = AgentChatGUI(self.agentChat, parent = None)
@@ -265,11 +270,6 @@ class AgentChatGuiHandler(QObject):
 
         # Register GUI to agent chat for bidirectional signal-slot communication
         self.agentChat.registerGUI(self.window)
-
-        # Guild agents if config is provided
-        if configPath:
-            self.agentChat.parseAgentConfig(configPath)
-            self.agentChat.buildAgents()
         
         # Run PySide6 App on main thread while the agentChat lives on a second thread to avoid blocking. Communication happens through signals/slots.
         self.agentChat.moveToThread(self.agentChatThread)
