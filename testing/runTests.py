@@ -72,7 +72,7 @@ class Tester:
 		# Critic agent for solution evaluation
 		self.criticAgentChat = agentChat.flexibleAgentChat(
 			configPath="flexibleAgents/agentConfigs/solutionCritic.txt",
-			llm_config=self.llmconfig,
+			llm_config=commercial_llm_config_4o_mini,
 			maxRounds=2,
 			trackTokens=True,
 			resetAfterConversation=True
