@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from flexibleAgents import agentChat
 from autogen import LLMConfig, ConversableAgent
-from llmconfig import local_llm_config, commercial_llm_config_4o_mini, commercial_llm_config_5_nano, commercial_llm_config_5_4_nano
+from llmconfig import local_llm_config_4o_mini, local_llm_config_5_nano, local_llm_config_codestral, local_llm_config_mistral_small
 from datasets import load_dataset, load_from_disk
 
 from dotenv import load_dotenv
@@ -28,8 +28,9 @@ class PathConfig:
 	evaluation_cost_pkl: str
 
 class Tester:
-	def __init__(self):
-		self.llmconfig = commercial_llm_config_5_nano
+	def __init__(self, llmconfig):
+		self.llmconfig = llmconfig
+
 		self.model = self.llmconfig["model"]
 
 		self.numTested = 0
@@ -70,9 +71,10 @@ class Tester:
 
 		print("Setting up critic agent: solutionCritic...")
 		# Critic agent for solution evaluation
+		# The critic agent always uses the exact same GPT-4o-mini config for evaluation for consistency.
 		self.criticAgentChat = agentChat.flexibleAgentChat(
 			configPath="flexibleAgents/agentConfigs/solutionCritic.txt",
-			llm_config=commercial_llm_config_4o_mini,
+			llm_config=local_llm_config_4o_mini,
 			maxRounds=2,
 			trackTokens=True,
 			resetAfterConversation=True
@@ -224,17 +226,17 @@ tester = None
 
 # Top-level function is required for multiprocessing with map() on the HuggingFace dataset.
 # Also, each process will create a separate Tester instance to avoid issues with shared state and potential concurrency problems.
-def testPassthrough(example):
+def testPassthrough(example, llmconfig=None):
 	global tester
 	if tester is None:
-		tester = Tester()
+		tester = Tester(llmconfig)
 		tester.prepareForTest()
 	tester.run_test(example)
 
-def checkTestProgress(example):
+def checkTestProgress(example, llmconfig=None):
 	global tester
 	if tester is None:
-		tester = Tester()
+		tester = Tester(llmconfig)
 	return tester.checkTestProgress(example)
 
 if __name__ == "__main__":
@@ -246,20 +248,20 @@ if __name__ == "__main__":
 		problems = load_from_disk(os.path.join(os.path.dirname(__file__), "dataset"))
 
 	# Check completion and reset tester afterwards
-	problems.map(
-		checkTestProgress,
-		desc = "Checking test progress..."
-	)
-	print(f"Progress: {tester.numTested}/{tester.numProblems} problems fully tested with model {tester.model}.")
-	tester = None
+	for config in [local_llm_config_4o_mini, local_llm_config_5_nano, local_llm_config_codestral, local_llm_config_mistral_small]:
+		# Reset tester globally! This is needed for multiprocessing to work properly as each one needs an own tester instance.
+		problems.map(
+			checkTestProgress,
+			desc = "Checking test progress..."
+			fn_kwargs={"llmconfig": llmconfig}
+		)
+		print(f"Progress: {tester.numTested}/{tester.numProblems} problems fully tested with model {tester.model}.")
+		tester = None
 
-	quit()
-
-	# Process each problem in the dataset with map(). Uses multiple processes at the same time for speedup - this will clutter the output.
-	problems.map(
-		testPassthrough,
-		num_proc=6,
-		desc = "Running tests on SciBench..."
-	)
-
-	# FUCK RIGHT OFF WHY DO THESE TESTS JUST KEEP STALLING FUCK OFFGFGFFFFF
+		# # Process each problem in the dataset with map(). Uses multiple processes at the same time for speedup - this will clutter the output.
+		# problems.map(
+		# 	testPassthrough,
+		# 	num_proc=6,
+		# 	desc = "Running tests on SciBench..."
+		# 	fn_kwargs={"llmconfig": llmconfig}
+		# )
