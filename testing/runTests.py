@@ -258,13 +258,16 @@ if __name__ == "__main__":
 		problems = load_from_disk(os.path.join(os.path.dirname(__file__), "dataset"))
 
 	# Reset (used if debugging model-specific issues)
-	
-	# tester = Tester(local_llm_config_codestral)
-	# tester.hardResetResultsForCurrentModel()
-	# quit()
+	configsToReset = [local_llm_config_gemma, local_llm_config_4_1_mini, local_llm_config_4_1_nano, local_llm_config_codestral, local_llm_config_mistral_small]
+	# configsToReset = []
+	for config in configsToReset:
+		tester = Tester(config)
+		tester.hardResetResultsForCurrentModel()
+
+	quit()
 
 	# Check completion and reset tester afterwards
-	for llmconfig in [local_llm_config_4o_mini, local_llm_config_5_nano, commercial_llm_config_gemma]:
+	for llmconfig in [local_llm_config_4o_mini, local_llm_config_5_nano, commercial_llm_config_4_1_nano]:
 		# Reset tester globally! This is needed for multiprocessing to work properly as each thread needs an own tester instance.
 		tester = None
 		problems.map(

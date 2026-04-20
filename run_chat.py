@@ -24,7 +24,7 @@ flexibleChat = agentChat.flexibleAgentChat(
 	# configPath="flexibleAgents/agentConfigs/defaultConfigMinusSurfer.txt",
 	configPath="flexibleAgents/agentConfigs/basicAgent.txt",
     conversationPath=basePath,
-	llm_config=local_llm_config_gemma,
+	llm_config=commercial_llm_config_4_1_nano,
 	maxRounds=maxRounds,
 	trackTokens=False
 )
