@@ -9,9 +9,8 @@ from pathlib import Path
 import PyPDF2
 
 # Query engine, LLM and AG2 imports
-print("Importing OpenAI client...")
-from llama_index.llms.openai import OpenAI
 print("Importing VectorChromaQueryEngine and related...")
+from llama_index.llms.openai_like import OpenAILike
 from autogen.agents.experimental import VectorChromaQueryEngine
 from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
 from autogen.agents.experimental import DocAgent
@@ -30,14 +29,14 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 # This is out of my control and does not affect execution.
 # I believe this occurs because ag2 requires on old version of the browser-use tool (0.1.37). I will try updating it to see if it fixes warnings, but no promises.
 
-def buildQueryEngine(llm_config, chromaDbPath, collection_name):
-	# Define LLM instance for query engine --> hardcoded to be OpenAI here because it's a proof of concept and proper LLMConfig usage is annoying.
-	queryEngineLLM = OpenAI(
-						temperature=llm_config["temperature"] if "temperature" in llm_config else None,
-						model=llm_config["model"],
-						api_key=llm_config["api_key"],
-						base_url=llm_config.get("base_url", None)
-						)
+def buildQueryEngine(llmconfig, chromaDbPath, collection_name):
+	# Define LLM instance for query engine
+	queryEngineLLM = OpenAILike(
+		model=llmconfig.get("model"),
+		api_base=llmconfig.get("base_url", None),
+		api_key=llmconfig.get("api_key", None),
+		temperature=llmconfig.get("temperature", 0.1)
+	)
 
 	# Build AG2 Query Engine using the chroma collection and the same llm config as for the agent backbone
 	# The LLM here is used to handle the DB queries (separate from the rest of the docAgent!)
@@ -129,7 +128,6 @@ def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
 	
 	return
 
-
 # Define doc agent response format
 class documentRetrievalAgentResponse(BaseModel):
 	message: str								# Answer to the query based on retrieved documents
@@ -177,11 +175,20 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 		You may aks this agent for code examples to be used as a reference for implementation of library-specific functions or APIs. 
 	"""
 
-	documentRetrieval_llm_config = chat.llm_config.copy()
-	documentRetrieval_llm_config["response_format"] = documentRetrievalAgentResponse
+	# Overwriting the llmconfig's model because the Query Engine's internals have massive issues routing queries with non-openAI models.
+	# Using 4o-mini on litellm also changes the price, so for tracking purposes that's coded in here (per 1k tokens)
+	documentRetrieval_llm_config = {
+                    "api_type": "openai", 
+                    "model": "gpt-4o-mini",
+                    "api_key":os.getenv("IZ_API_KEY"),
+                    "base_url":os.getenv("IZ_BASE_URL"),
+                    "temperature": 0.01
+                    }
 
-	# Build query engine for the DocAgent to use
-	query_engine = buildQueryEngine(llm_config=documentRetrieval_llm_config, chromaDbPath=chromaDbPath, collection_name=collection_name)
+	# Build query engine for the DocAgent to use (also uses gpt-4o-mini)
+	query_engine = buildQueryEngine(llmconfig=documentRetrieval_llm_config, chromaDbPath=chromaDbPath, collection_name=collection_name)
+
+	documentRetrieval_llm_config["response_format"] = documentRetrievalAgentResponse
 
 	# Using a given collection name is needed to retain knowledge across runs
 	doc_agent = DocAgent(

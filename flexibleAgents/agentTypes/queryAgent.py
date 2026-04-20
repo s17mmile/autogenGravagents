@@ -29,12 +29,13 @@ def queryAgent(
 		Your output includes a message field, a subtasks field, and a terminateChat field:
 		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
 		- The subtasks field should contain a breakdown of the overall task into simpler-to-manage tasks for other agents.
-		- The terminateChat field contains a boolean value. Set this to one if and only if the agentic system has sufficiently answered the original query. If not, leave it at zero.
+		- The terminateChat field contains a boolean value. Set this to one if and only if the agentic system has sufficiently answered the original query or if it has fully stalled/exhausted all reasonable options to proceed. If not, leave it at zero.
 	"""
 
 	description = """
 		The QUERY AGENT is responsible for breaking down user requests into manageable sub-tasks based on the capabilities of the available agents in the conversation configuration.
 		It ensures that the task flow is supported by the allowed agent transitions and leverages a Human Agent if needed for clarification.
+		If other agents are satisifed with task completion, the Query Agent should be called to check proper completion and terminate the chat!
 	"""
 
 	query_llm_config = chat.llm_config.copy()

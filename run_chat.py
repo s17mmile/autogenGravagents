@@ -2,7 +2,7 @@ import os, warnings
 from autogen import LLMConfig
 
 from flexibleAgents import agentChat
-from llmconfig import local_llm_config, commercial_llm_config_4o_mini
+from llmconfig import *
 
 os.system("clear")
 
@@ -22,9 +22,9 @@ conversationPath = os.path.join(basePath, dirname)
 # Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
 	# configPath="flexibleAgents/agentConfigs/defaultConfigMinusSurfer.txt",
-	configPath="flexibleAgents/agentConfigs/rag.txt",
+	configPath="flexibleAgents/agentConfigs/basicAgent.txt",
     conversationPath=basePath,
-	llm_config=commercial_llm_config_4o_mini,
+	llm_config=local_llm_config_gemma,
 	maxRounds=maxRounds,
 	trackTokens=False
 )
@@ -86,4 +86,6 @@ query4 = f"""
 
 query5 = "What can you tell me about the functions provided by PyCBC for Gravitational Wave Data pre-processing? What about the function signatures and syntax needed to use them?"
 
-flexibleChat.startConversation(query5)
+query6 = r"""Assume that all gases are perfect and that data refer to 298.15 K unless otherwise stated. Calculate the change in chemical potential of a perfect gas when its pressure is increased isothermally from $1.8 \mathrm{~atm}$ to $29.5 \mathrm{~atm}$ at $40^{\circ} \mathrm{C}$."""
+
+flexibleChat.startConversation(query6)

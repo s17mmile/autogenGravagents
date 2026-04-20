@@ -37,8 +37,6 @@ class chatGraph:
 	agents: Dict[str, ConversableAgent]
 	transitions: Dict[ConversableAgent, List[ConversableAgent]]
 
-
-
 class agentChatSignals(QObject):
 	outgoingMessage = Signal(dict)
 	guiPopUp = Signal(str)
@@ -301,8 +299,7 @@ class flexibleAgentChat(QObject):
 		# Check if old, temporary dir was empty - if yes, clear it out. If not, leave it be to avoid accidental deletion of conversation histories.
 		if os.path.exists(self.conversationPath) and len(os.listdir(self.conversationPath)) == 0 and self.isConversationPathRandom:
 			shutil.rmtree(self.conversationPath, ignore_errors=True)
-		else:
-			print(f"Warning: current conversation path {self.conversationPath} is not empty. Leaving it be to avoid accidental deletion of conversation history.")
+		
 		self.conversationPath = path
 		self.isConversationPathRandom = False
 		return
