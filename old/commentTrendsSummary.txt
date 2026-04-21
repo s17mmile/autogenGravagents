@@ -1,0 +1,162 @@
+Summary of comment trends (part 1):
+Across the comments, a very strong overall pattern emerges: the gpt-5-nano variants (5-B and 5-F) are consistently evaluated as more accurate, more numerically reliable, and more critical of dubious reference answers than the gpt-4o-mini variants (4-B and 4-F). The 4-* systems often show a mixed profile: they usually get the setup or formula right and are frequently praised for clear structure, but they much more often fail in the final arithmetic, unit conversion, sign convention, or interpretation. By contrast, the 5-* systems are usually correct end-to-end, and even when they disagree with the provided “correct answer,” the comments often say their reasoning is actually physically or mathematically sound and that the reference may be flawed.
+
+By model/solver pair:
+
+• 4-B
+Recurring praise: explanations are usually clear, structured, and methodical. In many straightforward textbook problems it gets close numerically or exactly right, especially basic ideal-gas-law, simple mechanics, elementary thermodynamics, and some calculus/integration tasks.
+Recurring criticism: a very common failure mode is “right method, wrong number.” It repeatedly loses accuracy in the final arithmetic, rounding, exponent handling, or unit conversion. There are many cases where it lands near the target but is still marked wrong for not matching the expected rounding, and many other cases where it is substantially wrong. It also seems vulnerable to sign errors, using the wrong convention, or not carrying the setup through to the correct numerical conclusion.
+Typical pattern: moderate-to-good reasoning quality, weak numerical reliability.
+
+• 4-F
+Recurring praise: often slightly more elaborate than 4-B, with clearer logic, more commentary, and sometimes stronger methodological framing. It is regularly credited for identifying the correct formulas and organizing the solution well.
+Recurring criticism: like 4-B, it often fails at the last mile. A striking pattern is that 4-F is frequently described as “mostly correct, but final result incorrect,” sometimes due to a code/output mismatch, execution mistake, or final-value discrepancy after otherwise good reasoning. It also gets marked wrong for tiny rounding differences more often than 5-* does, suggesting either stricter treatment by evaluators or less robust alignment to expected final formatting.
+Typical pattern: good reasoning narrative, but weak execution fidelity and many final-answer misses.
+
+• 5-B
+Recurring praise: highly reliable numerically, concise, and often exactly aligned with the reference answer. It regularly gives correct formulas, correct substitutions, and correct conclusions. Another major theme is that 5-B often detects inconsistencies in the provided “correct” answers and explicitly says so, while still giving a principled solution.
+Recurring criticism: usually minor. Common notes are editorial: could mention rounding more explicitly, show one more algebraic step, or clarify assumptions/sign conventions. In a handful of problems it gives a sound answer that conflicts with the official reference because the reference itself appears wrong or ambiguous.
+Typical pattern: strongest balance of correctness and brevity; very dependable.
+
+• 5-F
+Recurring praise: usually the most detailed, thorough, and technically robust. It often includes caveats, alternative derivations, regime checks, validation by substitution, discussion of ambiguity, and explicit commentary on assumptions. It is repeatedly praised for unit consistency, cross-checks, and awareness of edge cases. In difficult problems, this pair most often identifies whether a discrepancy comes from the solver, the model assumptions, or the reference answer itself.
+Recurring criticism: mostly minor and stylistic. It can be overly long, sometimes includes extra discussion not needed for the question, and occasionally gives a correct result but in a form slightly different from the requested one. A few comments note that it explores multiple interpretations without committing quickly enough to the single expected answer. But compared with 4-* these are mild issues.
+Typical pattern: highest rigor and best error diagnosis; strongest on nuanced or ambiguous tasks.
+
+Major comparative trends:
+
+1. Numerical accuracy gap
+This is the clearest trend. 4-B and 4-F repeatedly receive comments of the form “method is correct, but final answer is wrong,” whereas 5-B and 5-F much more often receive “correct, clear, and matches the reference.” The 4-* pairs especially struggle with:
+- arithmetic slips,
+- exponent/sign errors,
+- wrong root selection,
+- incorrect unit conversions,
+- mishandled rounding.
+The 5-* pairs usually avoid these.
+
+2. Handling of ambiguity and bad references
+A standout difference is that 5-B and especially 5-F repeatedly flag problems where the provided “correct answer” seems inconsistent with the physics/math. This happens in several comments involving thermodynamics, gas laws, osmotic pressure, molecular dimensions, pressure/escape-speed contexts, uncertainty principle values, and some applied mechanics. In those cases, the evaluator often sides with 5-* reasoning even while noting mismatch with the official target. The 4-* systems much less often surface that kind of meta-level diagnosis.
+
+3. Solver-style differences: B vs F
+The backbone/basic variants (B) tend to be more concise and often cleaner when the problem is straightforward. The flexible variants (F) tend to provide more assumptions, caveats, and side analysis. For 5-F, this is usually a strength. For 4-F, it sometimes means the reasoning looks good but the final answer still goes astray. So flexibility seems to help only when the underlying model is already strong enough to manage the extra complexity.
+
+4. Sign-convention sensitivity
+Several mechanics and thermodynamics problems reveal a recurring evaluator theme: many disagreements are not conceptual but about whether work is defined as done by the system or on the system. The 5-* systems are much better at explicitly naming both conventions and reconciling them. The 4-* systems more often get marked wrong because they either choose the non-reference sign convention without clarifying, or fail to map their result back to the expected convention.
+
+5. Unit awareness
+The 5-* systems repeatedly get praised for careful unit handling and for noticing equivalences (e.g., J vs Pa·m^3, L vs dm^3, bar·cm^3 to J, Hz vs rad/s, etc.). The 4-* systems much more often lose credit for not converting to the target units or for presenting an equivalent quantity in a form the evaluator still marks as incorrect.
+
+6. Precision/rounding standards are not fully consistent
+There is strong evidence that the evaluations are not perfectly uniform in strictness. In many places, 4-B or 4-F are marked incorrect for tiny differences (e.g. 0.879 vs 0.88, 168.7 vs 169, 21.73 vs 22, 79.64 vs 80), while similar tiny discrepancies for 5-B and 5-F are often accepted as “within rounding.” That suggests either:
+- evaluators were somewhat harsher on 4-* outputs,
+- or 5-* explanations better preempted criticism by explicitly discussing rounding/significance.
+Likely both are true.
+
+7. Reference-answer mismatch issues recur often
+A nontrivial number of comments suggest the benchmark/reference itself is dubious, ambiguous, or based on a different interpretation. The 5-* pairs get credit for noticing this; the 4-* pairs usually do not. This is especially visible in problems involving:
+- “typical” neutron wavelength definitions,
+- polymer molar mass from osmotic data,
+- ideal vs real gas interpretations,
+- some AgCl solution enthalpy data,
+- some uncertainty-principle numerical targets,
+- some orbital/halfway-interpretation questions,
+- several applied mechanics and drag-model problems.
+This means raw correctness counts may understate 5-* quality, because some “incorrect relative to reference” answers are actually better reasoned.
+
+High-level verdict:
+- Best overall pair: 5-F, for rigor, reliability, and ambiguity handling.
+- Most efficient strong pair: 5-B, for concise correctness with few mistakes.
+- 4-F is often better reasoned than 4-B, but not reliably more correct.
+- 4-B is often understandable and structured, but has the highest rate of final-answer failure through arithmetic/rounding/sign/unit issues.
+
+In short: the biggest performance difference is not in recognizing the right formula, but in executing it correctly, handling units/signs precisely, and diagnosing ambiguity. That is where 5-B and especially 5-F clearly outperform 4-B and 4-F.
+
+---
+
+
+
+Summary of comment trends (part 2):
+Overall trend: the 5-series solvers (both 5-B and 5-F) were dramatically stronger and more consistent than the 4-series solvers, with 5-F usually the most robust and 5-B a close second. Across the full set, 5-* comments are dominated by “correct,” “clear,” “well-reasoned,” and “matches the reference,” whereas 4-* comments much more often report arithmetic mistakes, sign/unit mistakes, incomplete execution, or incorrect final answers despite sometimes having the right method.
+
+By model-solver pair:
+
+• 4-B
+- Most error-prone pair overall.
+- Common pattern: starts with a plausible or even correct method, but fails in execution.
+- Frequent issues: arithmetic slips, wrong unit conversions, sign mistakes, missing final numeric answers, and occasional serious conceptual confusion.
+- Especially weak on multi-step quantitative physics/chemistry problems where a small setup error propagates into a clearly wrong result.
+- Sometimes got simple textbook or combinatorics/probability items right, but even there comments occasionally noted overly strict grading for tiny rounding differences.
+- Recurring evaluator language: “approach is correct, but execution contains critical errors,” “final answer incorrect,” “significant error in calculation,” “fails to provide numerical answer.”
+
+• 4-F
+- Generally better than 4-B in structure and explanation, but still frequently failed on final numerical accuracy.
+- A repeated pattern is that the reasoning is described as clear, well-structured, or detailed, yet the final result is marked wrong due to a bad calculation, wrong sign, unit mismatch, or flawed assumption.
+- More likely than 4-B to have coherent setup and polished presentation, but still unreliable in exact execution.
+- In some cases comments seem overly harsh: answers numerically equivalent to the reference after rounding were sometimes marked incorrect anyway.
+- Compared with 4-B, 4-F seems stronger in exposition and process, weaker mainly in final verification.
+
+• 5-B
+- Strong performer overall.
+- Usually concise, correct, and efficient: many comments say the final answer matches the reference and the method is sound.
+- Relative weakness versus 5-F: sometimes too terse, occasionally omits full derivation, direction, or convention details; sometimes gives the right number without enough explanation.
+- Also more willing to challenge the reference answer when the reference seemed wrong, and in many cases that criticism appears justified.
+- A common comment pattern is “correct final result, minor clarification/formatting note.”
+- Among all pairs, 5-B looks like the best balance of brevity and correctness when the task is straightforward.
+
+• 5-F
+- Best overall on completeness, robustness, and nuance.
+- Frequently praised for correct derivations, consistency checks, alternative methods, discussion of assumptions, and interpreting ambiguity in the problem.
+- More likely than the others to catch when a reference answer was inconsistent, when there was a unit typo in the prompt, or when multiple interpretations existed.
+- Weakness: sometimes over-elaborate, occasionally presents multiple interpretations when the problem expects one, and sometimes drifts into caveats or extensions beyond what is needed.
+- Still, its comments are overwhelmingly positive; errors are rare and usually minor (rounding, verbosity, or not aligning exactly with a flawed reference).
+
+Cross-pair patterns:
+
+1. Biggest separator was execution, not setup.
+- 4-B and 4-F often knew the relevant formula or principle but failed in arithmetic, sign, or substitution.
+- 5-B and especially 5-F were much better at carrying calculations through correctly.
+
+2. 5-F handled ambiguity best.
+- It often distinguished sign conventions, interpretation differences, or reference-answer typos.
+- This likely improved apparent performance on nuanced problems, though sometimes at the cost of being less concise.
+
+3. 5-B was usually cleaner than 5-F when the problem was standard.
+- It often delivered the right result with minimal fuss.
+- But compared with 5-F, it less often documented assumptions or edge cases.
+
+4. 4-F improved presentation but not enough reliability.
+- Compared with 4-B, 4-F comments more often praise structure and clarity.
+- But both 4 variants still accumulated many wrong final answers.
+
+5. The 4-series had recurring numeric fragility.
+- Tiny algebraic or conversion mistakes repeatedly turned otherwise reasonable approaches into incorrect solutions.
+- This is the dominant explanation for the large gap between 4-* and 5-* feedback.
+
+About evaluation consistency:
+
+- There is noticeable inconsistency and occasional over-strictness, especially on the 4-series.
+- Many 4-F and some 4-B answers were marked incorrect for tiny rounding differences or equivalent unit conversions that would normally be acceptable.
+- In contrast, 5-B and 5-F often received more tolerant treatment for similar small deviations.
+- Several comments explicitly reveal reference-answer problems: typos, wrong units, or even incorrect “correct” answers. In those cases, 5-* solvers were more often credited for noticing the issue, while 4-* were more often simply marked wrong.
+- So the standard was not perfectly uniform: 5-series answers appear to have benefited somewhat from evaluators recognizing deeper correctness, while 4-series answers were more often judged rigidly by the stated reference.
+
+Most notable recurring praise/criticism by pair:
+
+- 4-B praise: logical structure on simple problems; sometimes correct on straightforward formula application.
+- 4-B criticism: major arithmetic/sign/unit errors; incomplete answers; incorrect finals despite right method.
+
+- 4-F praise: clearer explanations, better structure, sometimes solid coding/process discussion.
+- 4-F criticism: polished but numerically wrong; occasional flawed assumptions; often “almost right” but still incorrect.
+
+- 5-B praise: correct, concise, efficient, matches reference.
+- 5-B criticism: could show more steps, clarify conventions, or be more explicit about assumptions.
+
+- 5-F praise: most thorough, strongest reasoning, best at checks and ambiguity handling.
+- 5-F criticism: sometimes verbose, occasionally too expansive or interpretive for problems expecting a direct answer.
+
+Bottom line:
+- Ranking by feedback is clearly 5-F ≈ best, then 5-B, then 4-F, then 4-B.
+- The main gap is numerical reliability and self-checking.
+- 4-F improved style over 4-B but not enough correctness.
+- 5-B excelled at direct accuracy; 5-F excelled at accuracy plus robustness and nuance.
+- Evaluations were somewhat uneven, with stricter treatment of 4-* and occasional tolerance toward 5-* when references were flawed or ambiguous.

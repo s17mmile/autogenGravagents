@@ -1,0 +1,66 @@
+Combined summary of comment trends:
+Across all summaries, the same broad picture emerges:
+
+- **5n is the strongest family overall**, with **5n-F and 5n-B** consistently receiving the best feedback.
+- **41m is the middle tier**: often substantively decent, but disproportionately affected by strict or inconsistent grading on rounding, units, notation, and formatting.
+- **4om is the weakest family overall**: often well-structured in presentation, but much less reliable in final numerical correctness, especially on multi-step quantitative problems.
+
+### Overall pair-wise pattern
+- **5n-F**: usually the best on deep reasoning, caveats, ambiguity handling, cross-checks, and scientific robustness. Its main downside is occasional over-elaboration or failure to commit cleanly to the exact benchmark-style final answer.
+- **5n-B**: usually the best \u201cclean benchmark solver\u201d \u2014 concise, accurate, and highly reliable. Slightly less rich than 5n-F, but often better aligned to the expected final answer format.
+- **41m-F / 41m-B**: generally competent and often close to correct, but repeatedly judged harshly for tiny numerical differences, equivalent unit choices, or alternative formatting. 41m-F is often somewhat more complete than 41m-B, but not consistently better in judged outcomes.
+- **4om-B / 4om-F**: often identify the right general method and produce polished-looking reasoning, but repeatedly fail in execution \u2014 arithmetic slips, sign mistakes, unit conversion errors, wrong assumptions, incomplete endings, or wrong final numbers. Flexible mode improves exposition more than accuracy.
+
+### Common praise themes
+Across the stronger outputs, evaluators repeatedly praised:
+- clear step-by-step derivations
+- correct formula selection
+- unit discipline
+- sign-convention awareness
+- cross-checks / substitutions / validation
+- physical interpretation and explicit assumptions
+
+These strengths were concentrated most strongly in **5n**, then to a lesser extent in **41m**.
+
+### Common criticism themes
+Across weaker or lower-rated outputs, the same issues recur:
+- correct method but wrong final arithmetic
+- sign errors
+- unit conversion mistakes
+- rounding / formatting mismatches treated as wrong
+- incomplete final answer despite good setup
+- overcomplication that drifts from the requested quantity
+- wrong physical/modeling assumptions on subtle problems
+
+These were most common for **4om**, while **41m** more often suffered from \u201calmost right but marked wrong\u201d issues.
+
+### Basic vs Flexible trend
+A strong consensus appears here too:
+- For **5n**, both modes are strong; **B** is cleaner and more benchmark-aligned, while **F** adds useful depth, caveats, and ambiguity handling.
+- For **41m**, flexible mode gives mixed benefits: sometimes better structure, but also more opportunities for mismatch or stricter grading.
+- For **4om**, flexible mode usually **does not fix core numerical weaknesses**; it often adds verbosity without improving correctness.
+
+### Evaluator/reference consistency is a major meta-theme
+One of the strongest cross-summary conclusions is that the **evaluation process itself was not fully consistent**.
+
+Recurring issues include:
+- tiny rounding differences sometimes accepted, sometimes rejected
+- equivalent units or notation inconsistently treated
+- some comments appearing contradictory or overly literal
+- several reference answers seeming ambiguous, flawed, or physically questionable
+
+A particularly important pattern is that **5n was more often credited for substantive correctness**, including when it challenged flawed references, whereas **41m and 4om were more often judged by exact reference matching**, even when the reference itself may have been dubious.
+
+### Best overall synthesis
+- **Most reliable overall:** the **5n family**
+- **Best deep analytical performer:** **5n-F**
+- **Best concise answer-key-aligned performer:** **5n-B**
+- **Middle but evaluation-noisy:** **41m-F / 41m-B**
+- **Weakest due to execution fragility:** **4om-F / 4om-B**
+
+### Final conclusion
+Taken together, the summaries show that performance differences are driven by two things:
+1. **true model reliability**, where 5n > 41m > 4om
+2. **evaluation noise/strictness**, which especially distorted the apparent performance of **41m** and sometimes penalized scientifically valid non-reference-aligned answers
+
+So the clearest overall takeaway is: **5n is the most robust and trustworthy, 41m is often better than its evaluations suggest, and 4om most often looks reasonable while failing on final correctness.**"

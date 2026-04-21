@@ -1,162 +1,610 @@
-Summary of comment trends (part 1):
-Across the comments, a very strong overall pattern emerges: the gpt-5-nano variants (5-B and 5-F) are consistently evaluated as more accurate, more numerically reliable, and more critical of dubious reference answers than the gpt-4o-mini variants (4-B and 4-F). The 4-* systems often show a mixed profile: they usually get the setup or formula right and are frequently praised for clear structure, but they much more often fail in the final arithmetic, unit conversion, sign convention, or interpretation. By contrast, the 5-* systems are usually correct end-to-end, and even when they disagree with the provided “correct answer,” the comments often say their reasoning is actually physically or mathematically sound and that the reference may be flawed.
+Summary of comment trends:
+Summary 1:
+Across this very large set of comments, a few strong trends stand out.
 
-By model/solver pair:
+1. Overall ranking / consistency pattern
+- 5n-B and 5n-F generally received the strongest feedback overall.
+- 41m-B and 41m-F were usually also good, but more often penalized for tiny rounding mismatches, unit-format mismatches, or occasional sign issues.
+- 4om-B and especially 4om-F were much more uneven: sometimes perfectly fine on straightforward problems, but they accumulated many more outright wrong numerical answers, sign mistakes, bad assumptions, or incomplete solutions.
 
-• 4-B
-Recurring praise: explanations are usually clear, structured, and methodical. In many straightforward textbook problems it gets close numerically or exactly right, especially basic ideal-gas-law, simple mechanics, elementary thermodynamics, and some calculus/integration tasks.
-Recurring criticism: a very common failure mode is “right method, wrong number.” It repeatedly loses accuracy in the final arithmetic, rounding, exponent handling, or unit conversion. There are many cases where it lands near the target but is still marked wrong for not matching the expected rounding, and many other cases where it is substantially wrong. It also seems vulnerable to sign errors, using the wrong convention, or not carrying the setup through to the correct numerical conclusion.
-Typical pattern: moderate-to-good reasoning quality, weak numerical reliability.
+A useful high-level summary is:
+- 5n: strongest reasoning robustness, often flagged evaluator/reference inconsistencies.
+- 41m: usually methodologically correct, but judged more harshly on exact rounding / formatting.
+- 4om: more brittle; often good structure but weaker numerical reliability.
 
-• 4-F
-Recurring praise: often slightly more elaborate than 4-B, with clearer logic, more commentary, and sometimes stronger methodological framing. It is regularly credited for identifying the correct formulas and organizing the solution well.
-Recurring criticism: like 4-B, it often fails at the last mile. A striking pattern is that 4-F is frequently described as “mostly correct, but final result incorrect,” sometimes due to a code/output mismatch, execution mistake, or final-value discrepancy after otherwise good reasoning. It also gets marked wrong for tiny rounding differences more often than 5-* does, suggesting either stricter treatment by evaluators or less robust alignment to expected final formatting.
-Typical pattern: good reasoning narrative, but weak execution fidelity and many final-answer misses.
+2. Differences by model-solver pair
 
-• 5-B
-Recurring praise: highly reliable numerically, concise, and often exactly aligned with the reference answer. It regularly gives correct formulas, correct substitutions, and correct conclusions. Another major theme is that 5-B often detects inconsistencies in the provided “correct” answers and explicitly says so, while still giving a principled solution.
-Recurring criticism: usually minor. Common notes are editorial: could mention rounding more explicitly, show one more algebraic step, or clarify assumptions/sign conventions. In a handful of problems it gives a sound answer that conflicts with the official reference because the reference itself appears wrong or ambiguous.
-Typical pattern: strongest balance of correctness and brevity; very dependable.
+5n-B
+Recurring praise:
+- Usually concise, correct, and aligned with references.
+- Strong on standard textbook derivations and formula application.
+- Frequently identified when the provided reference answer itself looked wrong or ambiguous.
+- Good at distinguishing conceptual correctness from answer-key mismatch.
 
-• 5-F
-Recurring praise: usually the most detailed, thorough, and technically robust. It often includes caveats, alternative derivations, regime checks, validation by substitution, discussion of ambiguity, and explicit commentary on assumptions. It is repeatedly praised for unit consistency, cross-checks, and awareness of edge cases. In difficult problems, this pair most often identifies whether a discrepancy comes from the solver, the model assumptions, or the reference answer itself.
-Recurring criticism: mostly minor and stylistic. It can be overly long, sometimes includes extra discussion not needed for the question, and occasionally gives a correct result but in a form slightly different from the requested one. A few comments note that it explores multiple interpretations without committing quickly enough to the single expected answer. But compared with 4-* these are mild issues.
-Typical pattern: highest rigor and best error diagnosis; strongest on nuanced or ambiguous tasks.
+Recurring criticisms:
+- Sometimes a bit terse.
+- Occasionally left answers in a nearby but not fully aligned form unless explicitly rounded.
+- A few cases where it gave a physically/mathematically defensible result that disagreed with the reference, so comments became \u201ccorrect under one interpretation, but not reference-aligned.\u201d
 
-Major comparative trends:
+Pattern:
+- Best overall balance of correctness and restraint.
+- Particularly strong in problems where evaluator/reference quality was shaky.
 
-1. Numerical accuracy gap
-This is the clearest trend. 4-B and 4-F repeatedly receive comments of the form “method is correct, but final answer is wrong,” whereas 5-B and 5-F much more often receive “correct, clear, and matches the reference.” The 4-* pairs especially struggle with:
-- arithmetic slips,
-- exponent/sign errors,
-- wrong root selection,
-- incorrect unit conversions,
-- mishandled rounding.
-The 5-* pairs usually avoid these.
+5n-F
+Recurring praise:
+- Usually the most detailed and reflective.
+- Strongest at surfacing assumptions, caveats, model limitations, and alternative interpretations.
+- Often included cross-checks, regime checks, and discussion of why discrepancies occurred.
+- Frequently recovered correct answers even on harder multi-step problems.
 
-2. Handling of ambiguity and bad references
-A standout difference is that 5-B and especially 5-F repeatedly flag problems where the provided “correct answer” seems inconsistent with the physics/math. This happens in several comments involving thermodynamics, gas laws, osmotic pressure, molecular dimensions, pressure/escape-speed contexts, uncertainty principle values, and some applied mechanics. In those cases, the evaluator often sides with 5-* reasoning even while noting mismatch with the official target. The 4-* systems much less often surface that kind of meta-level diagnosis.
+Recurring criticisms:
+- Sometimes too much discussion, with multiple interpretations or extra caveats that could blur the final answer.
+- Occasionally final response drifted from the target by overcomplicating the problem or mixing \u201cidealized\u201d and \u201crealistic\u201d interpretations.
+- In a few cases, the richer reasoning exposed ambiguity but didn\u2019t cleanly commit to the expected target answer.
 
-3. Solver-style differences: B vs F
-The backbone/basic variants (B) tend to be more concise and often cleaner when the problem is straightforward. The flexible variants (F) tend to provide more assumptions, caveats, and side analysis. For 5-F, this is usually a strength. For 4-F, it sometimes means the reasoning looks good but the final answer still goes astray. So flexibility seems to help only when the underlying model is already strong enough to manage the extra complexity.
+Pattern:
+- Highest reasoning sophistication, but occasionally less \u201canswer-key obedient\u201d than 5n-B.
+- Best at diagnosing ambiguity, worst only when that ambiguity handling displaced the expected single-number answer.
 
-4. Sign-convention sensitivity
-Several mechanics and thermodynamics problems reveal a recurring evaluator theme: many disagreements are not conceptual but about whether work is defined as done by the system or on the system. The 5-* systems are much better at explicitly naming both conventions and reconciling them. The 4-* systems more often get marked wrong because they either choose the non-reference sign convention without clarifying, or fail to map their result back to the expected convention.
+41m-B
+Recurring praise:
+- Clear, methodical, and often correct.
+- Good at straightforward textbook calculations.
+- Explanations usually easy to follow.
 
-5. Unit awareness
-The 5-* systems repeatedly get praised for careful unit handling and for noticing equivalences (e.g., J vs Pa·m^3, L vs dm^3, bar·cm^3 to J, Hz vs rad/s, etc.). The 4-* systems much more often lose credit for not converting to the target units or for presenting an equivalent quantity in a form the evaluator still marks as incorrect.
+Recurring criticisms:
+- More often than 5n penalized for tiny numerical differences that should arguably have been accepted.
+- Sometimes missed the final synthesis step even after mostly correct work.
+- Occasionally had sign, unit-label, or arithmetic slips.
 
-6. Precision/rounding standards are not fully consistent
-There is strong evidence that the evaluations are not perfectly uniform in strictness. In many places, 4-B or 4-F are marked incorrect for tiny differences (e.g. 0.879 vs 0.88, 168.7 vs 169, 21.73 vs 22, 79.64 vs 80), while similar tiny discrepancies for 5-B and 5-F are often accepted as “within rounding.” That suggests either:
-- evaluators were somewhat harsher on 4-* outputs,
-- or 5-* explanations better preempted criticism by explicitly discussing rounding/significance.
-Likely both are true.
+Pattern:
+- Solid middle performer.
+- More vulnerable than 5n to \u201calmost correct but not exact enough\u201d evaluations.
 
-7. Reference-answer mismatch issues recur often
-A nontrivial number of comments suggest the benchmark/reference itself is dubious, ambiguous, or based on a different interpretation. The 5-* pairs get credit for noticing this; the 4-* pairs usually do not. This is especially visible in problems involving:
-- “typical” neutron wavelength definitions,
-- polymer molar mass from osmotic data,
-- ideal vs real gas interpretations,
-- some AgCl solution enthalpy data,
-- some uncertainty-principle numerical targets,
-- some orbital/halfway-interpretation questions,
-- several applied mechanics and drag-model problems.
-This means raw correctness counts may understate 5-* quality, because some “incorrect relative to reference” answers are actually better reasoned.
+41m-F
+Recurring praise:
+- Usually well-structured and readable.
+- Often correct or nearly correct, especially on routine problems.
+- Better than 4om-F at maintaining coherent methodology.
 
-High-level verdict:
-- Best overall pair: 5-F, for rigor, reliability, and ambiguity handling.
-- Most efficient strong pair: 5-B, for concise correctness with few mistakes.
-- 4-F is often better reasoned than 4-B, but not reliably more correct.
-- 4-B is often understandable and structured, but has the highest rate of final-answer failure through arithmetic/rounding/sign/unit issues.
+Recurring criticisms:
+- Very frequently marked wrong for minor rounding differences or equivalent-unit outputs.
+- Sometimes code/reasoning was praised while final numeric value was still judged incorrect for tiny mismatch.
+- A few notable failures on more difficult or ambiguous problems.
 
-In short: the biggest performance difference is not in recognizing the right formula, but in executing it correctly, handling units/signs precisely, and diagnosing ambiguity. That is where 5-B and especially 5-F clearly outperform 4-B and 4-F.
+Pattern:
+- Looks stronger than its scores/comments sometimes suggest.
+- Seems to suffer the most from strict evaluator exactness on formatting/rounding.
+
+4om-B
+Recurring praise:
+- Often clear and well structured when the problem was simple.
+- On easy ideal-gas / basic thermo / simple calculus / probability questions, it often landed close enough.
+
+Recurring criticisms:
+- Numerical brittleness: arithmetic mistakes, wrong constants, bad conversions, sign mistakes.
+- Frequent \u201cmethod mostly right, final number wrong.\u201d
+- Sometimes incomplete answers or omitted key steps.
+- Less reliable on multi-step physics/chemistry derivations.
+
+Pattern:
+- Capable on routine problems, but noticeably weaker reliability than 5n or 41m.
+
+4om-F
+Recurring praise:
+- Often produced polished, structured explanations.
+- On some easier problems, got correct or near-correct answers.
+
+Recurring criticisms:
+- Most failure-prone pair overall.
+- Repeated issues with wrong assumptions, wrong formulas, invented missing values, unjustified approximations, or bad execution despite seemingly good reasoning scaffolding.
+- Many comments say some version of \u201cstructure is logical, but final result is wrong.\u201d
+- Especially weak on numerically delicate, physically subtle, or multi-step modeling tasks.
+
+Pattern:
+- Flexible mode did not consistently help 4om; if anything, it sometimes seemed to encourage overextended reasoning without improving accuracy.
+
+3. Basic vs Flexible config trends
+- For 5n, both B and F are strong. B is usually cleaner and more directly aligned to the expected answer; F is more insightful, caveat-aware, and robust to ambiguity.
+- For 41m, B often feels slightly safer; F sometimes adds detail but also creates more chances for tiny mismatches or over-interpretation.
+- For 4om, F did not clearly outperform B. In many comments, F had better exposition but not better correctness, and sometimes worse.
+
+So the config effect seems model-dependent:
+- Strong model (5n): flexibility helps or at least doesn\u2019t hurt much.
+- Mid model (41m): flexibility is mixed.
+- Weaker model (4om): flexibility often adds verbosity without improving reliability.
+
+4. Common praise themes
+Across stronger systems, evaluators repeatedly praised:
+- Clear step-by-step derivations.
+- Correct unit handling.
+- Explicit formulas and substitutions.
+- Good sign convention awareness.
+- Cross-checks and physical interpretation.
+- Concision paired with correctness.
+
+These praises were concentrated most in 5n-B/F and secondarily 41m-B/F.
+
+5. Common criticism themes
+Across weaker outcomes, the same issues recur:
+- Rounding/format mismatch treated as wrong.
+- Sign convention errors, especially thermodynamics/work/Gibbs free energy.
+- Unit conversion mistakes.
+- Correct method but wrong arithmetic.
+- Wrong physical assumption (ideal vs nonideal, free expansion vs reversible adiabatic, incorrect statistical/kinetic interpretation).
+- Incomplete answer despite good setup.
+- Overcomplication causing drift from the requested quantity.
+
+4om had the most of these substantive errors; 41m had more \u201cminor but penalized\u201d versions; 5n mostly got these only in ambiguous-reference cases.
+
+6. Evaluator consistency / strictness
+The evaluations are not fully consistent.
+
+Evidence of strictness inconsistency:
+- Some answers were marked incorrect for tiny differences like 79.64 vs 80, 239.7 vs 240, 34.5 vs 35, 26.93 vs 26.9, etc.
+- In other places, nearly identical discrepancies were accepted as rounding.
+- Equivalent units were sometimes accepted and sometimes penalized.
+- Some references themselves appear wrong or ambiguous, and 5n comments often explicitly noticed this.
+
+Recurring reference/evaluator issues:
+- Several \u201ccorrect final answers\u201d seem dubious or inconsistent with standard physics/math (e.g. some uncertainty, escape-speed, barometric, adiabatic/free-expansion, and probability items).
+- 5n comments most often called out these inconsistencies directly.
+- 41m and 4om comments more often accepted the reference as ground truth and judged against it rigidly.
+
+This suggests the standard was not always uniform:
+- 5n outputs were sometimes evaluated more thoughtfully against physics/mathematics.
+- 41m and especially 4om were more often judged by exact match to the supplied reference, even when that reference was questionable.
+
+7. Best concise summary by pair
+- 5n-B: most reliable \u201canswer-key solver\u201d; concise, accurate, robust.
+- 5n-F: strongest analytical solver; excellent at ambiguity/caveats, occasionally too elaborate.
+- 41m-B: solid and readable, but less robust and sometimes over-penalized for small mismatches.
+- 41m-F: similar to 41m-B, with more detail but also more exposure to strict grading.
+- 4om-B: decent on simple tasks, unreliable on multi-step quantitative work.
+- 4om-F: polished but weakest numerically; many wrong finals despite decent-looking reasoning.
+
+8. Bottom line
+If you care about raw correctness and resilience, the feedback strongly favors 5n, especially 5n-B for clean benchmark alignment and 5n-F for deeper reasoning. 41m is generally competent but more fragile. 4om, particularly in flexible mode, appears most likely to produce attractive but numerically or conceptually faulty solutions.
+
+If you want, I can turn this into a compact comparison table by model-solver pair."
 
 ---
 
+Summary 2:
+Across the comments, the clearest overall trend is that **5n (especially 5n-F, but also 5n-B)** is the strongest and most consistently praised model-solver pair, while **4om** is the weakest overall, and **41m** sits in between but with much more evaluator inconsistency than 5n.
 
+## High-level ranking trend
+- **5n-F**: strongest overall; most comments say the solution is correct, clear, well-justified, and often includes good checks/substitutions/cross-checks.
+- **5n-B**: also very strong; usually correct, often a bit terser than 5n-F, sometimes with small clarity/unit/rounding comments.
+- **41m-F / 41m-B**: mixed-middle; many correct answers, but also many cases where correct-equivalent answers are marked wrong because of formatting, notation, scientific notation, unit presentation, or tiny rounding differences.
+- **4om-F / 4om-B**: weakest; many comments say the setup was partially right but the final numerical answer was wrong, often because of algebra, unit conversion, sign mistakes, or code/reasoning mismatch.
 
-Summary of comment trends (part 2):
-Overall trend: the 5-series solvers (both 5-B and 5-F) were dramatically stronger and more consistent than the 4-series solvers, with 5-F usually the most robust and 5-B a close second. Across the full set, 5-* comments are dominated by “correct,” “clear,” “well-reasoned,” and “matches the reference,” whereas 4-* comments much more often report arithmetic mistakes, sign/unit mistakes, incomplete execution, or incorrect final answers despite sometimes having the right method.
+## Per model-solver pair
 
-By model-solver pair:
+### 5n-B
+Recurring praise:
+- Usually **numerically correct**.
+- Good at **core physical/chemical/statistical setup**.
+- Frequently commended for **unit consistency**, **clear equations**, and **reasonable rounding**.
+- Often includes useful minor validation (pressure checks, substitution checks, exact-vs-approx remarks).
 
-• 4-B
-- Most error-prone pair overall.
-- Common pattern: starts with a plausible or even correct method, but fails in execution.
-- Frequent issues: arithmetic slips, wrong unit conversions, sign mistakes, missing final numeric answers, and occasional serious conceptual confusion.
-- Especially weak on multi-step quantitative physics/chemistry problems where a small setup error propagates into a clearly wrong result.
-- Sometimes got simple textbook or combinatorics/probability items right, but even there comments occasionally noted overly strict grading for tiny rounding differences.
-- Recurring evaluator language: “approach is correct, but execution contains critical errors,” “final answer incorrect,” “significant error in calculation,” “fails to provide numerical answer.”
+Recurring criticism:
+- Sometimes a bit concise or missing one intermediate algebra step.
+- Occasionally minor arithmetic slips in intermediate lines, though final answers are still correct.
+- In a few cases, it correctly challenged the reference answer when the reference itself seemed wrong.
 
-• 4-F
-- Generally better than 4-B in structure and explanation, but still frequently failed on final numerical accuracy.
-- A repeated pattern is that the reasoning is described as clear, well-structured, or detailed, yet the final result is marked wrong due to a bad calculation, wrong sign, unit mismatch, or flawed assumption.
-- More likely than 4-B to have coherent setup and polished presentation, but still unreliable in exact execution.
-- In some cases comments seem overly harsh: answers numerically equivalent to the reference after rounding were sometimes marked incorrect anyway.
-- Compared with 4-B, 4-F seems stronger in exposition and process, weaker mainly in final verification.
+Pattern:
+- **High reliability**. When 5n-B is criticized, it is usually for presentation or transparency, not conceptual failure.
 
-• 5-B
-- Strong performer overall.
-- Usually concise, correct, and efficient: many comments say the final answer matches the reference and the method is sound.
-- Relative weakness versus 5-F: sometimes too terse, occasionally omits full derivation, direction, or convention details; sometimes gives the right number without enough explanation.
-- Also more willing to challenge the reference answer when the reference seemed wrong, and in many cases that criticism appears justified.
-- A common comment pattern is “correct final result, minor clarification/formatting note.”
-- Among all pairs, 5-B looks like the best balance of brevity and correctness when the task is straightforward.
+### 5n-F
+Recurring praise:
+- Most consistently described as **correct, clear, well-structured, and thorough**.
+- Frequently praised for **cross-checks**, **error analysis**, **physical interpretation**, and **alternative derivations**.
+- Often explicitly noted to match the reference answer within rounding tolerance.
 
-• 5-F
-- Best overall on completeness, robustness, and nuance.
-- Frequently praised for correct derivations, consistency checks, alternative methods, discussion of assumptions, and interpreting ambiguity in the problem.
-- More likely than the others to catch when a reference answer was inconsistent, when there was a unit typo in the prompt, or when multiple interpretations existed.
-- Weakness: sometimes over-elaborate, occasionally presents multiple interpretations when the problem expects one, and sometimes drifts into caveats or extensions beyond what is needed.
-- Still, its comments are overwhelmingly positive; errors are rare and usually minor (rounding, verbosity, or not aligning exactly with a flawed reference).
+Recurring criticism:
+- Sometimes overly long or includes extra material not strictly needed.
+- Occasionally presents multiple conventions/branches/ranges instead of one crisp final answer.
+- A few comments note minor notation inconsistencies or overly verbose discussion.
 
-Cross-pair patterns:
+Pattern:
+- **Best overall performer**. Even when not ideal stylistically, it is usually mathematically and scientifically sound.
+- Also the pair most likely to identify that a **reference answer or evaluator premise is wrong**.
 
-1. Biggest separator was execution, not setup.
-- 4-B and 4-F often knew the relevant formula or principle but failed in arithmetic, sign, or substitution.
-- 5-B and especially 5-F were much better at carrying calculations through correctly.
+### 41m-B
+Recurring praise:
+- Often has a **reasonable method** and decent structure.
+- Many answers are close or correct.
+- Explanations are often described as clear.
 
-2. 5-F handled ambiguity best.
-- It often distinguished sign conventions, interpretation differences, or reference-answer typos.
-- This likely improved apparent performance on nuanced problems, though sometimes at the cost of being less concise.
+Recurring criticism:
+- Frequently judged incorrect for **tiny rounding differences**, equivalent notation, or formatting.
+- Sometimes makes genuine numerical errors, but not as severely as 4om.
+- Evaluations of 41m-B are notably inconsistent: equivalent answers in scientific notation or alternate units are sometimes marked wrong.
 
-3. 5-B was usually cleaner than 5-F when the problem was standard.
-- It often delivered the right result with minimal fuss.
-- But compared with 5-F, it less often documented assumptions or edge cases.
+Pattern:
+- **Capable but unstable in evaluation outcome**. The comments suggest 41m-B often performs better than the harshness of the evaluations implies.
+- More vulnerable than 5n to being penalized for non-substantive differences.
 
-4. 4-F improved presentation but not enough reliability.
-- Compared with 4-B, 4-F comments more often praise structure and clarity.
-- But both 4 variants still accumulated many wrong final answers.
+### 41m-F
+Recurring praise:
+- Generally better than 41m-B on structure and completeness.
+- Many comments say the reasoning is clear, code is structured, and the answer is close or correct.
+- Often lands within rounding tolerance of the reference.
 
-5. The 4-series had recurring numeric fragility.
-- Tiny algebraic or conversion mistakes repeatedly turned otherwise reasonable approaches into incorrect solutions.
-- This is the dominant explanation for the large gap between 4-* and 5-* feedback.
+Recurring criticism:
+- Like 41m-B, often penalized for **very small numerical deviations**, **unit-format differences**, or using scientific notation instead of decimal form.
+- Sometimes judged wrong even when the answer is obviously equivalent.
+- In some problems, it overcomplicates or introduces unnecessary code structure.
 
-About evaluation consistency:
+Pattern:
+- **Decent underlying performance, but evaluations are harsh/inconsistent**. Many 41m-F comments read stricter than the actual quality warrants.
 
-- There is noticeable inconsistency and occasional over-strictness, especially on the 4-series.
-- Many 4-F and some 4-B answers were marked incorrect for tiny rounding differences or equivalent unit conversions that would normally be acceptable.
-- In contrast, 5-B and 5-F often received more tolerant treatment for similar small deviations.
-- Several comments explicitly reveal reference-answer problems: typos, wrong units, or even incorrect “correct” answers. In those cases, 5-* solvers were more often credited for noticing the issue, while 4-* were more often simply marked wrong.
-- So the standard was not perfectly uniform: 5-series answers appear to have benefited somewhat from evaluators recognizing deeper correctness, while 4-series answers were more often judged rigidly by the stated reference.
+### 4om-B
+Recurring praise:
+- Often gets the **general method** or identifies the right governing equation/law.
+- Explanations are sometimes described as clear or logically structured.
 
-Most notable recurring praise/criticism by pair:
+Recurring criticism:
+- Very often ends with the **wrong final number**.
+- Common failure modes: **algebra mistakes, sign mistakes, unit conversion errors, wrong root, arithmetic slips**.
+- Sometimes gives near-correct setup but clearly incorrect execution.
 
-- 4-B praise: logical structure on simple problems; sometimes correct on straightforward formula application.
-- 4-B criticism: major arithmetic/sign/unit errors; incomplete answers; incorrect finals despite right method.
+Pattern:
+- **Method recognition without dependable execution**. 4om-B often seems to know what to do but fails in numerical follow-through.
 
-- 4-F praise: clearer explanations, better structure, sometimes solid coding/process discussion.
-- 4-F criticism: polished but numerically wrong; occasional flawed assumptions; often “almost right” but still incorrect.
+### 4om-F
+Recurring praise:
+- Sometimes has stronger structure than 4om-B and occasionally gets the right answer.
+- Can identify relevant equations and produce more elaborate reasoning.
 
-- 5-B praise: correct, concise, efficient, matches reference.
-- 5-B criticism: could show more steps, clarify conventions, or be more explicit about assumptions.
+Recurring criticism:
+- Still frequently wrong numerically.
+- Several comments mention **code/reasoning mismatch**: the prose is okay, but executed output is wrong.
+- Also prone to overcomplication, rearrangement errors, and bad final computations.
 
-- 5-F praise: most thorough, strongest reasoning, best at checks and ambiguity handling.
-- 5-F criticism: sometimes verbose, occasionally too expansive or interpretive for problems expecting a direct answer.
+Pattern:
+- Slightly more ambitious than 4om-B, but not reliably more accurate. In many cases it appears to reason more but still lands on the wrong result.
 
-Bottom line:
-- Ranking by feedback is clearly 5-F ≈ best, then 5-B, then 4-F, then 4-B.
-- The main gap is numerical reliability and self-checking.
-- 4-F improved style over 4-B but not enough correctness.
-- 5-B excelled at direct accuracy; 5-F excelled at accuracy plus robustness and nuance.
-- Evaluations were somewhat uneven, with stricter treatment of 4-* and occasional tolerance toward 5-* when references were flawed or ambiguous.
+## FlexibleChat vs BasicChat trends
+- For **5n**, both B and F are strong, but **F is usually more polished**, more explicit, and better at verification. The gain from F over B is mostly in clarity/completeness rather than raw correctness.
+- For **41m**, **F sometimes improves structure**, but not enough to eliminate inconsistency or evaluation penalties. Gains are modest.
+- For **4om**, **F does not reliably fix numerical weaknesses**. It may add more reasoning or code, but the end result is still often wrong.
+
+## Common praise themes
+Most frequent positive themes, especially for 5n:
+- Correct formula selection
+- Consistent unit handling
+- Clear step-by-step logic
+- Verification by substitution/checking
+- Reasonable treatment of rounding
+- Awareness of physical meaning and assumptions
+
+## Common criticism themes
+Most frequent negative themes, especially for 4om and some 41m:
+- Wrong final numerical answer despite decent setup
+- Unit conversion issues
+- Sign convention mistakes
+- Incorrect rounding or being judged too harshly for equivalent forms
+- Code output not matching the reasoning
+- Failing to select the physically meaningful root/branch
+
+## Evaluation consistency / strictness
+A major cross-cutting trend is that the evaluations are **not fully consistent**.
+
+### Evidence of stricter treatment for 41m (and sometimes 4om)
+Many comments mark answers wrong for:
+- 21.5 atm vs 22 atm
+- 2.26\u00d710^-5 vs 0.0000226
+- -0.00028 kJ/mol vs -0.28 J/mol
+- 11.4 \u03bcT vs 11 \u03bcT
+- 1.39 m vs 1.388 m
+
+These are often **equivalent or well within normal rounding tolerance**, yet some 41m comments mark them incorrect.
+
+### Evidence of more lenient treatment for 5n
+5n is often credited correctly when:
+- The answer is within rounding range
+- Different but equivalent units are used
+- The reference answer seems questionable
+- A more physically correct answer differs from the provided key
+
+So 5n comments seem more willing to judge on **substance over formatting**, while 41m (and occasionally 4om) gets judged more literally.
+
+### Reference-answer inconsistency
+Several comments explicitly note that the **reference answer itself may be wrong or inconsistent**. This appears in problems involving:
+- virial/compressibility calculations
+- barometric pressure
+- uncertainty principle numerics
+- geometry/volume estimates
+- pressure/work sign conventions
+- probability examples with an apparently incorrect listed decimal
+
+In those cases, 5n often gets credit for challenging the reference, while other model-solver pairs are sometimes judged against the flawed key more rigidly.
+
+## Best explanation for performance differences
+- **5n succeeds because it combines correct setup + careful arithmetic + unit discipline + validation.**
+- **41m often has decent reasoning but is less robust numerically and suffers from harsher grading on presentation/rounding.**
+- **4om often recognizes the right concept but fails in execution, especially numerical execution.**
+- **FlexibleChat helps most when the underlying model is already strong (5n), less so when the core weakness is arithmetic reliability (4om).**
+
+## Bottom line
+- **Most reliable pair:** 5n-F
+- **Next best:** 5n-B
+- **Middle but inconsistently judged:** 41m-F / 41m-B
+- **Weakest overall:** 4om-B / 4om-F
+
+And the most important meta-observation is: **the evaluator is not applying exactly the same standard across pairs**. Equivalent answers, harmless rounding differences, and alternate unit forms are often accepted for 5n but more often rejected for 41m and especially highlighted as failures for 4om."
+
+---
+
+Summary 3:
+Overall trends
+- 5n was the strongest and most consistently well-reviewed family. Both 5n-B and 5n-F were usually praised for correct setup, strong unit handling, explicit assumptions, and often for catching issues in the official/reference answers.
+- 41m was generally solid but more uneven than 5n. 41m-F often outperformed 41m-B, but both were frequently penalized for tiny rounding differences or for matching a value in a different but equivalent form. 41m comments also show several clear evaluator inconsistencies.
+- 4om was the weakest overall. 4om solutions were often described as logically structured and clear, but they much more frequently ended with incorrect arithmetic, wrong final values, unit mistakes, or incomplete final outputs. 4om-F was sometimes more detailed than 4om-B, but not reliably more accurate.
+
+Differences by model-solver pair
+
+5n-B
+- Recurring praise:
+  - Very strong numerical correctness.
+  - Clear, concise derivations.
+  - Good physical interpretation and unit tracking.
+  - Frequently identified when the reference answer itself seemed wrong.
+- Recurring criticisms:
+  - Occasionally too terse or missing one final explicit step.
+  - Sometimes small typographical/exponent slips.
+  - On a few problems, gave a physically correct answer that disagreed with the provided reference, so comments marked it as \u201cnot aligned\u201d despite endorsing the method.
+- Pattern:
+  - Most reliable pair overall on standard quantitative chemistry/physics/statistics problems.
+  - Particularly strong at diagnosing flawed prompts/reference keys.
+
+5n-F
+- Recurring praise:
+  - Usually the most thorough and robust reasoning.
+  - Stronger than 5n-B on caveats, assumptions, edge cases, and alternative derivations.
+  - Frequently praised for explicit validation, cross-checks, and code reasoning.
+- Recurring criticisms:
+  - Sometimes over-explained relative to the task.
+  - Occasionally gave a correct physics-based answer that did not match the official key, producing \u201cincorrect against reference\u201d evaluations.
+  - A few answers were slightly numerically off because of modeling choices or extra sophistication beyond the intended simple method.
+- Pattern:
+  - Best analytical depth overall.
+  - More likely than 5n-B to challenge bad answer keys or expose ambiguity.
+  - If judged by ground truth rather than reference matching, likely strongest pair overall.
+
+41m-B
+- Recurring praise:
+  - Usually clear and orderly.
+  - Often got the right method and near-correct number.
+  - Good on straightforward textbook calculations.
+- Recurring criticisms:
+  - Frequently marked wrong for tiny rounding differences, equivalent units, or not matching the exact requested format.
+  - Sometimes stopped one step short or gave the right quantity in the wrong form.
+  - Less robust than 5n at catching ambiguities or defending correct alternatives.
+- Pattern:
+  - Competent but conservative.
+  - Many \u201calmost right\u201d evaluations.
+  - Appears hurt disproportionately by strict grading on formatting/precision.
+
+41m-F
+- Recurring praise:
+  - Typically clearer and more complete than 41m-B.
+  - Often included better code and explanation structure.
+  - Frequently numerically very close to the target.
+- Recurring criticisms:
+  - Still often penalized for small rounding gaps, decimal-vs-fraction presentation, or exact-match expectations.
+  - Sometimes produced a correct derivation but failed to land on the expected final numeral.
+  - In a few cases, overcomplicated the solution and drifted from the keyed answer.
+- Pattern:
+  - Usually the strongest 41m variant.
+  - Good generalist, but less dependable than 5n and more exposed to evaluation harshness.
+
+4om-B
+- Recurring praise:
+  - Explanations often described as clear, logical, and well-structured.
+  - Frequently had the right formula or plan.
+- Recurring criticisms:
+  - Arithmetic mistakes at the end were very common.
+  - Unit conversion errors, sign mistakes, wrong rounding, or missing final answers appeared repeatedly.
+  - Often \u201cmostly right process, wrong final number.\u201d
+- Pattern:
+  - The biggest gap between reasoning style and actual correctness.
+  - Evaluators often liked the exposition but still marked it wrong due to final-answer failure.
+
+4om-F
+- Recurring praise:
+  - Usually more detailed than 4om-B.
+  - Often had strong structure and decent conceptual setup.
+- Recurring criticisms:
+  - Still suffered many wrong final values.
+  - Some answers were verbose but not numerically reliable.
+  - Occasionally code or extra detail did not help accuracy and may have introduced errors.
+- Pattern:
+  - Better presentation than 4om-B, but not a clear accuracy improvement.
+  - Tended to be judged harshly when detailed reasoning still ended with a wrong number.
+
+Common themes across problems
+- Final-answer fidelity mattered enormously. Many comments explicitly say the method was correct but the answer was marked wrong because the last number, sign, unit, or rounding did not match the reference.
+- 5n stood out for handling physics/chemistry nuance better, especially when the prompt or reference was flawed.
+- 41m often landed in the \u201cclose but not exact\u201d category.
+- 4om frequently had \u201cgood setup, bad finish.\u201d
+
+Patterns explaining performance differences
+- 5n\u2019s advantage seems to come from:
+  - Better numerical discipline.
+  - Better awareness of assumptions and model validity.
+  - More willingness to challenge incorrect references.
+  - Stronger cross-checking.
+- 41m\u2019s middling performance seems driven by:
+  - Solid core reasoning but weaker final precision/format discipline.
+  - Less aggressive handling of ambiguous or wrong reference answers.
+- 4om\u2019s weaker performance seems driven by:
+  - Higher rate of arithmetic and unit errors after otherwise acceptable setup.
+  - More incomplete or misformatted final outputs.
+  - Detail that did not consistently translate into correctness.
+
+Recurring praise/criticism by pair
+- 5n-B: \u201cclear and concise,\u201d \u201cmatches reference,\u201d \u201cgood unit handling,\u201d but sometimes \u201creference appears wrong.\u201d
+- 5n-F: \u201ccorrect and complete,\u201d \u201cgood caveats,\u201d \u201cstrong methodology,\u201d but occasionally \u201cdoes not match stated reference\u201d due to better physics than the key.
+- 41m-B: \u201cclear and logical,\u201d but often \u201cslightly off,\u201d \u201cnot exact enough,\u201d or \u201cwrong format/unit.\u201d
+- 41m-F: \u201cwell-structured and robust,\u201d but frequently \u201cminor discrepancy significant enough to mark incorrect.\u201d
+- 4om-B: \u201clogical structure\u201d plus \u201cincorrect final answer\u201d is the dominant pattern.
+- 4om-F: \u201cdetailed reasoning/code\u201d but often \u201ccritical flaw in final output.\u201d
+
+Evaluation consistency / strictness
+There are clear signs of inconsistent grading standards.
+- Tiny rounding differences were sometimes accepted and sometimes treated as fatal, especially for 41m and 4om.
+  - Example pattern: values like 0.879 vs 0.88, 36.8 vs 37, or 130.8 vs 131 were sometimes accepted for 5n but marked incorrect for others.
+- Equivalent forms were inconsistently treated.
+  - Fractions vs decimals, J vs eV, pm vs m, Hz vs cm^-1 conversion context, and exact expressions like 2\u03c0/15 vs decimal were sometimes accepted and sometimes rejected.
+- Several comments explicitly reveal faulty answer keys or flawed references.
+  - In those cases, 5n often got credit in spirit but sometimes was still labeled \u201cincorrect against reference.\u201d
+- 41m appears most harmed by strict exact-match grading on near-equivalent answers.
+- 5n appears to benefit from evaluators being more willing to credit method and physical correctness even when references were suspect.
+
+Notable reference/evaluator issues
+A number of problem comments suggest the \u201ccorrect final answer\u201d was itself wrong, ambiguous, or inconsistent. 5n in particular repeatedly exposed this. Examples of issue types:
+- Reference answers off by rounding convention only.
+- Reference answers apparently using a different model than the stated assumptions.
+- Reference answers numerically inconsistent with the provided data.
+- Evaluations penalizing exact equivalent answers because they were not in the preferred format.
+
+Bottom line
+- Best overall: 5n-F, with 5n-B very close and often more concise.
+- Most stable accuracy: 5n family.
+- Middle tier: 41m-F, then 41m-B.
+- Weakest overall: 4om family, especially due to frequent final-number errors despite decent exposition.
+- The evaluation process itself was not fully consistent: some pairs, especially 41m and 4om, were penalized more harshly for tiny deviations, while 5n was more often credited for substantive correctness even when reference keys were questionable."
+
+---
+
+Summary 4:
+Across this very large set of comments, a few strong patterns stand out.
+
+1. Overall ranking/trend
+- 5n-B and 5n-F received the most consistently strong feedback.
+- 4om-B and 4om-F were mixed: often correct on standard textbook problems, but with a noticeable number of arithmetic/sign/unit failures.
+- 41m-B and especially 41m-F showed the most evaluator inconsistency: many comments marked tiny rounding differences as \u201cincorrect,\u201d and some comments were plainly self-contradictory or confused.
+
+2. By model-solver pair
+
+5n-B
+- Most common praise:
+  - Correct formulas and physical principles.
+  - Good numerical execution.
+  - Often flagged when the reference answer itself seemed wrong or dubious.
+  - Frequently concise and internally consistent.
+- Typical criticisms:
+  - Sometimes extraneous discussion.
+  - Occasionally wrong sign/interpretation on convention-sensitive questions.
+  - Sometimes gave a result that disagreed with the official answer because it followed a more physically defensible method.
+- Distinctive pattern:
+  - This pair was the most willing to challenge bad references, especially in thermo/chemistry/stat mech problems.
+  - Evaluations of 5n-B were generally fair and often detailed.
+
+5n-F
+- Most common praise:
+  - Usually the strongest overall: correct setup, careful units, clear caveats, cross-checks, awareness of assumptions.
+  - Frequently provided context, alternative derivations, and validation.
+- Typical criticisms:
+  - Sometimes over-extended answers with unnecessary discussion.
+  - A few failures came from overcomplication, wrong interpretation, or not aligning with the exact requested quantity.
+  - Occasionally produced a methodologically sound answer that still didn\u2019t match the official key.
+- Distinctive pattern:
+  - Best at nuanced scientific reasoning and identifying ambiguity.
+  - More likely than others to note when the \u201ccorrect final answer\u201d looked inconsistent.
+  - In several cases the evaluator still marked it wrong simply for mismatch with the reference, even when its criticism of the reference seemed justified.
+
+4om-B
+- Most common praise:
+  - Clear, logical, straightforward textbook-style solutions.
+  - Often correct on direct formula/substitution problems.
+- Typical criticisms:
+  - Arithmetic slips, unit conversion errors, sign mistakes, and occasional major numerical failures.
+  - Sometimes incomplete or failed to reach final numeric answer.
+- Distinctive pattern:
+  - Performance looked decent on routine problems but brittle on multi-step numeric tasks.
+  - Less likely than 5n to catch flawed references or challenge assumptions.
+
+4om-F
+- Most common praise:
+  - Often well-structured and polished.
+  - Strong on standard derivations and explanatory flow.
+- Typical criticisms:
+  - Similar to 4om-B: sign errors, interpretation mistakes, and occasional severe numerical misses.
+  - Sometimes verbose critique/improvement framing without actually fixing the core result.
+- Distinctive pattern:
+  - FlexibleChat did not consistently improve correctness over basicChat for 4om; sometimes it added commentary but still missed the key calculation.
+
+41m-B
+- Most common praise:
+  - When correct, comments often praised clarity and structure.
+- Typical criticisms:
+  - Many evaluations showed over-strictness on rounding: answers essentially equal to the reference were called incorrect.
+  - Some comments contained obvious evaluator errors or contradictions.
+- Distinctive pattern:
+  - Hard to separate model quality from evaluation noise because this pair was judged inconsistently.
+  - Seemed weaker than 5n, but the comment quality itself was also notably worse.
+
+41m-F
+- Most common praise:
+  - Sometimes strong, organized, code-aware explanations.
+- Typical criticisms:
+  - Most harshly and inconsistently judged pair.
+  - Repeatedly marked wrong for negligible rounding differences, equivalent units, or formatting differences.
+  - Some comments were internally inconsistent or factually wrong.
+- Distinctive pattern:
+  - This pair looks worst partly because evaluator standards were especially erratic here.
+  - There are many examples where 41m-F produced an answer numerically equivalent to the reference but was still criticized.
+
+3. Common differences between basicChat and flexibleChat
+- For 5n:
+  - F usually added richer reasoning, caveats, assumptions, and checks.
+  - B was often more concise and still correct.
+  - F sometimes overcomplicated things, but overall both were strong.
+- For 4om:
+  - F often improved presentation more than correctness.
+  - B and F had similar failure modes: arithmetic, sign, units.
+- For 41m:
+  - F often produced more elaborate responses, but evaluator treatment was harsher and more inconsistent than for B.
+
+4. Recurring praise themes
+- Correct use of standard formulas.
+- Good unit handling.
+- Clear step-by-step reasoning.
+- Appropriate rounding/significant figures.
+- Useful caveats or physical interpretation.
+
+5. Recurring criticism themes
+- Sign errors.
+- Unit conversion mistakes.
+- Rounding treated too harshly by evaluators.
+- Correct method but wrong final arithmetic.
+- Correct answer but judged wrong because it didn\u2019t match reference formatting or exact rounding.
+- In some thermo/chemistry problems, disagreement with suspect reference answers.
+
+6. Evaluation consistency
+This is a major theme.
+- 5n comments were generally the most consistent and analytically careful.
+- 4om comments were fairly standard, though sometimes strict.
+- 41m comments were the least consistent by far.
+  - Equivalent answers were often called incorrect.
+  - Some comments contradicted themselves.
+  - Some evaluators confused unit equivalence, rounding, or even the reference answer.
+- There are also several cases where the official \u201ccorrect final answer\u201d itself appears questionable, and 5n in particular was praised for noticing that.
+
+7. Biggest meta-observation
+- 5n appears best not only at solving but at robust scientific reasoning under ambiguity.
+- 4om appears decent but less reliable numerically.
+- 41m performance is difficult to judge cleanly because the evaluations are much noisier and often stricter or mistaken.
+- FlexibleChat helps most when the underlying model is already strong (especially 5n); otherwise it often adds verbosity more than accuracy.
+
+In short:
+- Best overall: 5n-F, then 5n-B.
+- Middle: 4om-F / 4om-B.
+- Noisiest/least reliable judged pair: 41m-F, with 41m-B also affected by inconsistent evaluation."
+
+---
+

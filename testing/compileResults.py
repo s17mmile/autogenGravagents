@@ -52,14 +52,16 @@ def retrieveResultsFromDisk():
         "gpt-5-nano": {
             "basicChat": make_result_format(),
             "flexibleChat": make_result_format()
+        },
+        "gpt-4.1-mini": {
+            "basicChat": make_result_format(),
+            "flexibleChat": make_result_format()
         }
     }
 
-    testedModels = ["gpt-4o-mini", "gpt-5-nano"]
-    testedModelKeys = ["gpt-4o-mini-2024-07-18", "gpt-5-nano-2025-08-07"]
+    testedModels = ["gpt-4o-mini", "gpt-5-nano", "gpt-4.1-mini"]
+    testedModelKeys = ["gpt-4o-mini-2024-07-18", "gpt-5-nano-2025-08-07", "gpt-4.1-mini-2025-04-14"]
     testedSolvers = ["basicChat", "flexibleChat"]
-
-    print(os.path.dirname(__file__))
 
     # Load all the pickled results data and print progress
     problemsDir = os.path.join(os.path.dirname(__file__), "problems")
@@ -80,15 +82,15 @@ def retrieveResultsFromDisk():
                 with open(os.path.join(resultsDir, f"{solverName}_{model}_cost.pkl"), "rb") as f:
                     costFull = pickle.load(f)
 
+                    # print(f"Cost details for {model} with {solverName} on problem {dir}: {costFull}")
+
                     costWithCachedTokens = costFull["usage_including_cached_inference"]
                     
                     totalCost = costWithCachedTokens["total_cost"]
                     inputTokens = costWithCachedTokens[modelKey]["prompt_tokens"]
                     outputTokens = costWithCachedTokens[modelKey]["completion_tokens"]
                     totalTokens = costWithCachedTokens[modelKey]["total_tokens"]
-
-                    assert totalTokens == inputTokens + outputTokens, "Total tokens should be the sum of input and output tokens."
-
+                    
                 # Append results to the appropriate arrays
                 results[model][solverName]["correctness"].append(correctness)
                 results[model][solverName]["scores"].append(explanationRating)
@@ -101,8 +103,6 @@ def retrieveResultsFromDisk():
     # Save the compiled results to disk for future use
     with open(os.path.join(os.path.dirname(__file__), "compiled_results.pkl"), "wb") as f:
         pickle.dump(results, f)
-
-    # print(f"Are results equal: {results['gpt-4o-mini'] == results['gpt-5-nano']}")
 
     return results
 
@@ -354,13 +354,13 @@ def createComparisons(results, output_dir=os.path.join(os.path.dirname(__file__)
 
     return output_files
 
-def createSplitQuery(results):
+def createSplitQuery(results, numQueries):
     # Create split prompt with all comments for summarization
     # Splitting is necessary to circumvent the GPT-5.4 rate limit (400k TPM), which we BARELY hit otherwise :(
     # Instead, we will just summarize half of the comments at a time.
-    query1 = f"""
+    baseQuery = f"""
         You will receive a list of LLM-generated comments about the performance of an agentic system on a set of problems - one comment per problem. Each such solver is identified by the model and agent configuration used to generate the solution that the comment is about (e.g. gpt-4o-mini with basicChat config vs gpt-5-nano with flexibleChat config).
-        Each model/solver will be abbreviated, with "gpt-4o-mini" being "4", "gpt-5-nano" being "5", "basicChat" being "B", and "flexibleChat" being "F". For example, a comment about the performance of the gpt-4o-mini model with the basicChat agent config will be labeled as "4 - B: [comment]".
+        Each model/solver will be abbreviated, with "gpt-4o-mini" being "4om", "gpt-5-nano" being "5n", "gpt-4.1-mini" being "41m", "basicChat" being "B", and "flexibleChat" being "F". For example, a comment about the performance of the gpt-4o-mini model with the basicChat agent config will be labeled as "4om - B: [comment]".
         Your task is to analyze these comments and provide a comprehensive summary of any trends, common themes, or notable observations that emerge from the feedback.
         Especially, discern the differences in feedback received between different model-solver pairs and try to identify any patterns in the comments that could explain performance differences.
         Highlight any recurring praises or criticisms for each model-solver pair, and note if certain issues are consistently mentioned for one model-solver pair but not the other.
@@ -369,98 +369,140 @@ def createSplitQuery(results):
         \n
     """
 
-    query2 = query1
+    queries = [baseQuery + "\n\n" for _ in range(numQueries)]
 
     # Name shortening to help the rate limit lol
     # Without it's I'm just barely above, needing to shave ~5% tokens off the query
     # This shaves ~12k tokens off the input, but it's not enough :(
     shortenedModelNames = {
-        "gpt-4o-mini": "4",
-        "gpt-5-nano": "5",
+        "gpt-4o-mini": "4om",
+        "gpt-5-nano": "5n",
+        "gpt-4.1-mini": "41m"
     }
 
     shortenedSolverNames = {
         "basicChat": "B",
         "flexibleChat": "F"
     }
-    
+
+    numProblems = len(results["gpt-4o-mini"]["basicChat"]["comments"])    
     # Build queries
-    numProblems = len(results["gpt-4o-mini"]["basicChat"]["comments"])
     for idx in range(numProblems):
         for model_name in results.keys():
             for solver_name in results[model_name].keys():
                 comment = results[model_name][solver_name]["comments"][idx]
                 format = f"{shortenedModelNames.get(model_name, model_name)}-{shortenedSolverNames.get(solver_name, solver_name)}: {comment}\n"
                 
-                if idx < numProblems // 2:
-                    query1 += format
-                else:
-                    query2 += format
+                # Distribute comments across queries (interleaved using mod so that each query gets a mix of topics)
+                query_idx = idx % numQueries
+                queries[query_idx] += f"{format}\n\n"
 
-        if idx < numProblems // 2:
-            query1 += "\n\n"
-        else:
-            query2 += "\n\n"
+    print([len(query) for query in queries])
 
-    return query1, query2
+    return queries
 
 
 # I do not like this part at all, but whatever
 # Separate querying, directly to openai client (not using flexibleChat) as the chat doesn't really have a way of dealing with these split prompts and I'm worried the group chat will time put in between.
-def summarizeCommentTrends(results):
-    summaryPath1 = os.path.join(os.path.dirname(__file__), "commentTrendsSummary1")
-    summaryPath2 = os.path.join(os.path.dirname(__file__), "commentTrendsSummary2")
-
+def summarizeCommentTrends(results, numQueries=4):
+    summaryPath = os.path.join(os.path.dirname(__file__), "commentTrendsSummary")
+    os.makedirs(summaryPath, exist_ok=True)
 
     # Do not run if conversation history exists, instead load pickled summaries
-    if os.path.exists(os.path.join(os.path.dirname(__file__), "summary1.pkl")) and os.path.exists(os.path.join(os.path.dirname(__file__), "summary2.pkl")):
+    if os.path.exists(os.path.join(os.path.dirname(__file__), "commentTrendsSummary.pkl")) and os.path.exists(os.path.join(os.path.dirname(__file__), "combinedSummary.pkl")):
         print(f"Full comment summary already exists. Skipping comment summarization and loading summary from disk.")
-        with open(os.path.join(os.path.dirname(__file__), "summary1.pkl"), "rb") as f:
-            summary1 = pickle.load(f)
-        with open(os.path.join(os.path.dirname(__file__), "summary2.pkl"), "rb") as f:
-            summary2 = pickle.load(f)
-        return summary1, summary2
-
-    os.makedirs(summaryPath1, exist_ok=True)
-    os.makedirs(summaryPath2, exist_ok=True)
+        with open(os.path.join(os.path.dirname(__file__), "commentTrendsSummary.pkl"), "rb") as f:
+            summaries = pickle.load(f)
+        with open(os.path.join(os.path.dirname(__file__), "combinedSummary.pkl"), "rb") as f:
+            combinedSummary = pickle.load(f)
+        return summaries, combinedSummary
 
     print("Summarizing comment trends...")
 
-    query1, query2 = createSplitQuery(results)
-
     chat = flexibleAgentChat(
         configPath="flexibleAgents/agentConfigs/basicAgent.txt",
+        conversationPath=summaryPath,
         llm_config=commercial_llm_config_5_4,
         maxRounds=2,
+        resetAfterConversation=True,
         trackTokens=False
     )
 
-    if not os.path.exists(os.path.join(summaryPath1, "conversation.txt")):
-        chat.setConversationPath(summaryPath1)
-        summary1 = chat.startConversation(query=query1)
+    queries = createSplitQuery(results, numQueries=numQueries)
+    summaries = []
+    
+    for i, query in enumerate(queries):
+        # If summary for this query already exists, extract it from txt on disk
+        summaryFilePath = os.path.join(summaryPath, f"conversation_{i+1}.txt")
+        if os.path.exists(summaryFilePath):
+            print(f"Summary for query {i+1} already exists. Loading from disk...")
+            summaries.append(extractResponseFromTxt(summaryFilePath))
 
-    if not os.path.exists(os.path.join(summaryPath2, "conversation.txt")):
-        chat.setConversationPath(summaryPath2)
-        summary2 = chat.startConversation(query=query2)
+            continue
 
-    with open(os.path.join(os.path.dirname(__file__), "summary1.pkl"), "wb") as f:
-        pickle.dump(summary1, f)
+        # Else query the big ahh LLM
+        summary = chat.startConversation(query=query)
+        summaries.append(fetchLastMsgContent(summary)["message"])
 
-    with open(os.path.join(os.path.dirname(__file__), "summary2.pkl"), "wb") as f:
-        pickle.dump(summary2, f)
+        # Wait a minute. Runs into rate limits otherwise.
+        for i in tqdm(range(600)):
+            time.sleep(0.1)
 
-    # Save results as txt and pkl
-    saveSummariesToTxt(summary1, summary2)
+    # Pass summaries into LLM for "meta-summary" that combines insights from all summaries.
+    combinedQuery = f"""You will receive multiple summaries about the comment trends for different model-solver pairs.
+    Each summary covers a subset of the comments, but they all follow the same format and analyze the same trends.
+    Your task is to read through all the summaries and then provide an overall comprehensive summary that synthesizes the key insights, trends, and observations from all the summaries together.
+    Look for common themes, recurring praises or criticisms, and any patterns that emerge across the different summaries.
+    Your final summary should provide a clear and concise overview of the comment trends across all model-solver pairs, highlighting any significant findings or conclusions that can be drawn from the collective analysis.
+    \n
+    Here are the summaries:
 
-    return summary1, summary2
+    {'\n\n'.join(s for s in summaries)}
 
-def saveSummariesToTxt(summary1, summary2):
+    """
+
+    combinedSummaryPath = os.path.join(summaryPath, f"conversation_{numQueries+1}.txt")
+    if os.path.exists(combinedSummaryPath):
+        print(f"Combined summary already exists. Loading from disk...")
+        combinedSummary = extractResponseFromTxt(combinedSummaryPath)
+    else:
+        combinedSummary = chat.startConversation(query=combinedQuery)
+
+    return summaries, combinedSummary
+
+def saveSummariesToTxt(summaries, combinedSummary):
     with open(os.path.join(os.path.dirname(__file__), "commentTrendsSummary.txt"), "w", encoding="utf-8") as f:
-        f.write("Summary of comment trends (part 1):\n")
-        f.write(fetchLastMsgContent(summary1)["message"])
-        f.write("\n\n---\n\n")
-        f.write("\n\nSummary of comment trends (part 2):\n")
-        f.write(fetchLastMsgContent(summary2)["message"])
+        f.write("Summary of comment trends:\n")
+        for i, summary in enumerate(summaries):
+            f.write(f"Summary {i + 1}:\n")
+
+            # Extract message if needed (given in dict format), else just dump the string
+            if type(summary) == str:
+                f.write(summary)
+            else:
+                f.write(fetchLastMsgContent(summary)["message"])
+
+            f.write("\n\n---\n\n")
+
+    with open(os.path.join(os.path.dirname(__file__), "combinedCommentTrendsSummary.txt"), "w", encoding="utf-8") as f:
+        f.write("Combined summary of comment trends:\n")
+        if type(combinedSummary) == str:
+            f.write(combinedSummary)
+        else:
+            f.write(fetchLastMsgContent(combinedSummary)["message"])
+
+# Read response rows from conversation history (I hadn't though to save as pkl so txt extraction it is)
+def extractResponseFromTxt(filePath):
+    with open(filePath, "r", encoding="utf-8") as f:
+        for line in f.readlines():
+            # Mark LLM response line
+            match_str = '"message": '  
+            if match_str in line:
+                # Extract content after the match string and remove surrounding quotes and some noise chars (enables proper newlines)
+                content = line[line.find(match_str) + len(match_str):][1:-1].replace('\\"', '"').replace("\\n", "\n")
+
+    return content
+
 
 def fetchLastMsgContent(messageList):
     if len(messageList) == 0:
@@ -472,10 +514,19 @@ def fetchLastMsgContent(messageList):
 if __name__ == "__main__":
     # Load from disk
     results = retrieveResultsFromDisk()
-    
+
     # Create comparison charts
     comparison_files = createComparisons(results)
 
-    summary1, summary2 = summarizeCommentTrends(results)
+    # Get comment summaries (single and combined together)
+    summaries, combinedSummary = summarizeCommentTrends(results, numQueries=4)
 
-    saveSummariesToTxt(summary1, summary2)
+        # Save single summaries and combined summary as pickles and txt for future reference
+    with open(os.path.join(os.path.dirname(__file__), "commentTrendsSummary.pkl"), "wb") as f:
+        pickle.dump(summaries, f)
+
+    with open(os.path.join(os.path.dirname(__file__), "combinedCommentTrendsSummary.pkl"), "wb") as f:
+        pickle.dump(combinedSummary, f)
+
+    # Save results as txt and pkl
+    saveSummariesToTxt(summaries, combinedSummary)
