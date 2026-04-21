@@ -1,0 +1,18 @@
+Conversation Log for query: Consider the initial value problem
+
+y^{prime prime}+2 a y^{prime}+left(a^2+1right) y=0, quad y(0)=1, quad y^{prime}(0)=0 .
+
+For a=1 find the smallest T such that |y(t)|<0.1 for t>T.
+
+Proxy:
+Consider the initial value problem
+
+y^{prime prime}+2 a y^{prime}+left(a^2+1right) y=0, quad y(0)=1, quad y^{prime}(0)=0 .
+
+For a=1 find the smallest T such that |y(t)|<0.1 for t>T.
+
+Backbone:
+{
+    "message": "Given the differential equation:\n\n\\[ y'' + 2a y' + (a^2 + 1) y = 0, \\quad y(0) = 1, \\quad y'(0) = 0, \\]\n\nwith \\( a = 1 \\), the equation becomes:\n\n\\[ y'' + 2 y' + 2 y = 0. \\]\n\nThe characteristic equation is:\n\n\\[ r^2 + 2r + 2 = 0. \\]\n\nSolving for \\( r \\):\n\n\\[ r = \\frac{-2 \\pm \\sqrt{4 - 8}}{2} = -1 \\pm i. \\]\n\nThe general solution is:\n\n\\[ y(t) = e^{-t} (C_1 \\cos t + C_2 \\sin t). \\]\n\nUsing initial conditions:\n\n\\[ y(0) = 1 = C_1, \\]\n\\[ y'(t) = e^{-t}(-C_1 \\cos t - C_2 \\sin t) + e^{-t}(-C_1 \\sin t + C_2 \\cos t) = e^{-t} [(-C_1 \\cos t - C_2 \\sin t) + (-C_1 \\sin t + C_2 \\cos t)]. \\]\n\nAt \\( t=0 \\):\n\n\\[ y'(0) = 0 = (-C_1) + C_2 = -1 + C_2 \\implies C_2 = 1. \\]\n\nSo,\n\n\\[ y(t) = e^{-t} (\\cos t + \\sin t). \\]\n\nWe want to find the smallest \\( T \\) such that \\( |y(t)| < 0.1 \\) for all \\( t > T \\).\n\nNote that:\n\n\\[ |y(t)| = e^{-t} |\\cos t + \\sin t| = e^{-t} \\sqrt{\\cos^2 t + 2 \\sin t \\cos t + \\sin^2 t} = e^{-t} \\sqrt{1 + \\sin 2t}. \\]\n\nSince \\( \\sin 2t \\) oscillates between -1 and 1, the maximum of \\( |\\cos t + \\sin t| \\) is \\( \\sqrt{2} \\) (when \\( \\sin 2t = 1 \\)).\n\nTherefore, the maximum envelope is:\n\n\\[ |y(t)| \\leq e^{-t} \\sqrt{2}. \\]\n\nWe want:\n\n\\[ e^{-t} \\sqrt{2} < 0.1 \\implies e^{-t} < \\frac{0.1}{\\sqrt{2}} \\implies -t < \\ln \\left( \\frac{0.1}{\\sqrt{2}} \\right) \\implies t > -\\ln \\left( \\frac{0.1}{\\sqrt{2}} \\right). \\]\n\nCalculate:\n\n\\[ \\ln \\left( \\frac{0.1}{\\sqrt{2}} \\right) = \\ln(0.1) - \\frac{1}{2} \\ln 2 \\approx -2.302585 - 0.346574 = -2.649159. \\]\n\nSo,\n\n\\[ t > 2.649159. \\]\n\nThus, the smallest \\( T \\approx 2.65 \\) such that \\( |y(t)| < 0.1 \\) for all \\( t > T \\).\n\n**Answer:** \\( T \\approx 2.65 \\)."
+}
+

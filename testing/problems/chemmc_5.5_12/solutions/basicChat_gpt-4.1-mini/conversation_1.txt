@@ -1,0 +1,22 @@
+Conversation Log for query: Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below 
+begin{array}{ll}
+H_0(xi)=1 & H_1(xi)=2 xi 
+H_2(xi)=4 xi^2-2 & H_3(xi)=8 xi^3-12 xi 
+H_4(xi)=16 xi^4-48 xi^2+12 & H_5(xi)=32 xi^5-160 xi^3+120 xi
+end{array}
+, show that a 0 rightarrow 1 vibrational transition is allowed and that a 0 rightarrow 2 transition is forbidden.
+
+Proxy:
+Using the explicit formulas for the Hermite polynomials given in Table 5.3 as below 
+begin{array}{ll}
+H_0(xi)=1 & H_1(xi)=2 xi 
+H_2(xi)=4 xi^2-2 & H_3(xi)=8 xi^3-12 xi 
+H_4(xi)=16 xi^4-48 xi^2+12 & H_5(xi)=32 xi^5-160 xi^3+120 xi
+end{array}
+, show that a 0 rightarrow 1 vibrational transition is allowed and that a 0 rightarrow 2 transition is forbidden.
+
+Backbone:
+{
+    "message": "To determine whether a vibrational transition is allowed or forbidden, we need to evaluate the transition dipole moment integral between the initial and final vibrational states. For the harmonic oscillator, the vibrational wavefunctions are proportional to Hermite polynomials multiplied by a Gaussian factor.\n\nThe transition dipole moment integral involves integrals of the form:\n\n\\[ \\int_{-\\infty}^{\\infty} \\psi_m(x) \\hat{\\mu} \\psi_n(x) dx \\]\n\nwhere \\( \\psi_n(x) \\) are the vibrational wavefunctions involving Hermite polynomials \\( H_n(\\xi) \\).\n\nAssuming the dipole moment operator \\( \\hat{\\mu} \\) is proportional to the coordinate \\( \\xi \\) (i.e., \\( \\hat{\\mu} = \\mu_0 \\xi \\)), the integral reduces to:\n\n\\[ \\int_{-\\infty}^{\\infty} H_m(\\xi) \\xi H_n(\\xi) e^{-\\xi^2} d\\xi \\]\n\nUsing the explicit Hermite polynomials given:\n\n- For the 0 \\( \\rightarrow \\) 1 transition:\n\n\\[ H_0(\\xi) = 1, \\quad H_1(\\xi) = 2 \\xi \\]\n\nThe integral becomes:\n\n\\[ \\int_{-\\infty}^{\\infty} 1 \\cdot \\xi \\cdot 2 \\xi \\cdot e^{-\\xi^2} d\\xi = 2 \\int_{-\\infty}^{\\infty} \\xi^2 e^{-\\xi^2} d\\xi \\]\n\nThis integral is non-zero (since \\( \\xi^2 e^{-\\xi^2} \\) is an even function), so the 0 \\( \\rightarrow \\) 1 transition is allowed.\n\n- For the 0 \\( \\rightarrow \\) 2 transition:\n\n\\[ H_0(\\xi) = 1, \\quad H_2(\\xi) = 4 \\xi^2 - 2 \\]\n\nThe integral becomes:\n\n\\[ \\int_{-\\infty}^{\\infty} 1 \\cdot \\xi \\cdot (4 \\xi^2 - 2) e^{-\\xi^2} d\\xi = \\int_{-\\infty}^{\\infty} (4 \\xi^3 - 2 \\xi) e^{-\\xi^2} d\\xi \\]\n\nBoth \\( \\xi^3 e^{-\\xi^2} \\) and \\( \\xi e^{-\\xi^2} \\) are odd functions, so their integrals over symmetric limits are zero. Therefore, the 0 \\( \\rightarrow \\) 2 transition dipole moment integral is zero, making this transition forbidden.\n\nIn summary:\n- The 0 \\( \\rightarrow \\) 1 transition integral is non-zero \\( \\Rightarrow \\) allowed.\n- The 0 \\( \\rightarrow \\) 2 transition integral is zero \\( \\Rightarrow \\) forbidden."
+}
+

@@ -1,0 +1,10 @@
+Conversation Log for query: A rocket starts from rest in free space by emitting mass. At what fraction of the initial mass is the momentum a maximum?
+
+Proxy:
+A rocket starts from rest in free space by emitting mass. At what fraction of the initial mass is the momentum a maximum?
+
+Backbone:
+{
+    "message": "For a rocket starting from rest in free space and emitting mass at a constant exhaust velocity, the momentum p as a function of the remaining mass m is given by:\n\np = (m_0 - m) * v_e\n\nwhere m_0 is the initial mass, m is the current mass, and v_e is the exhaust velocity.\n\nHowever, the rocket's velocity v is given by the Tsiolkovsky rocket equation:\n\nv = v_e * ln(m_0 / m)\n\nThe momentum p of the rocket is:\n\np = m * v = m * v_e * ln(m_0 / m)\n\nTo find the fraction of the initial mass at which momentum is maximum, define x = m / m_0 (the fraction of initial mass remaining). Then:\n\np(x) = m_0 * v_e * x * ln(1 / x) = m_0 * v_e * x * (-ln x)\n\nWe want to maximize p(x) with respect to x in (0,1):\n\nLet f(x) = x * (-ln x) = -x ln x\n\nTake derivative:\n\nf'(x) = -ln x - 1\n\nSet f'(x) = 0:\n\n-ln x - 1 = 0 => ln x = -1 => x = e^{-1} = 1/e \u2248 0.3679\n\nTherefore, the momentum is maximum when the rocket's mass is about 1/e (approximately 36.8%) of its initial mass."
+}
+

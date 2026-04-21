@@ -1,0 +1,16 @@
+Conversation Log for query: Evaluate
+
+int_0^{0.4} frac{Gamma(7)}{Gamma(4) Gamma(3)} y^3(1-y)^2 d y
+ Using integration.
+
+Proxy:
+Evaluate
+
+int_0^{0.4} frac{Gamma(7)}{Gamma(4) Gamma(3)} y^3(1-y)^2 d y
+ Using integration.
+
+Backbone:
+{
+    "message": "We need to evaluate the integral:\n\n\\[\n\\int_0^{0.4} \\frac{\\Gamma(7)}{\\Gamma(4) \\Gamma(3)} y^3 (1 - y)^2 \\, dy\n\\]\n\nFirst, recall that \\( \\Gamma(n) = (n-1)! \\) for positive integers \\( n \\). So:\n\n- \\( \\Gamma(7) = 6! = 720 \\)\n- \\( \\Gamma(4) = 3! = 6 \\)\n- \\( \\Gamma(3) = 2! = 2 \\)\n\nTherefore, the coefficient is:\n\n\\[\n\\frac{\\Gamma(7)}{\\Gamma(4) \\Gamma(3)} = \\frac{720}{6 \\times 2} = \\frac{720}{12} = 60\n\\]\n\nThe integral becomes:\n\n\\[\n60 \\int_0^{0.4} y^3 (1 - y)^2 \\, dy\n\\]\n\nLet's expand \\( (1 - y)^2 = 1 - 2y + y^2 \\), so:\n\n\\[\ny^3 (1 - y)^2 = y^3 - 2 y^4 + y^5\n\\]\n\nThus, the integral is:\n\n\\[\n60 \\int_0^{0.4} (y^3 - 2 y^4 + y^5) \\, dy = 60 \\left[ \\frac{y^4}{4} - 2 \\frac{y^5}{5} + \\frac{y^6}{6} \\right]_0^{0.4}\n\\]\n\nCalculate each term at \\( y = 0.4 \\):\n\n- \\( \\frac{(0.4)^4}{4} = \\frac{0.0256}{4} = 0.0064 \\)\n- \\( 2 \\times \\frac{(0.4)^5}{5} = 2 \\times \\frac{0.01024}{5} = 2 \\times 0.002048 = 0.004096 \\)\n- \\( \\frac{(0.4)^6}{6} = \\frac{0.004096}{6} \\approx 0.0006827 \\)\n\nPutting it all together:\n\n\\[\n60 \\times (0.0064 - 0.004096 + 0.0006827) = 60 \\times 0.0029867 = 0.1792\n\\]\n\nTherefore, the value of the integral is approximately \\( \\boxed{0.1792} \\)."
+}
+

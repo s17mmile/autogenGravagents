@@ -89,6 +89,13 @@ commercial_llm_config_4_1_nano = {
                     "temperature": 0.01
                     }
 
+commercial_llm_config_4_1_mini = {
+                    "api_type": "openai", 
+                    "model": "gpt-4.1-mini",
+                    "api_key":os.getenv("OPENAI_API_KEY"),
+                    "temperature": 0.01
+                    }
+
 commercial_llm_config_mistral_small = {
                     "api_type": "mistral",
                     "model": "mistral/mistral-small-latest",

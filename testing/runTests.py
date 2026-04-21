@@ -113,26 +113,7 @@ class Tester:
 		os.makedirs(paths.solution_dir, exist_ok=True)
 		os.makedirs(paths.evaluation_dir, exist_ok=True)
 
-	# Run agent system and critic evaluation, saving results as they go
-	def runAndEvaluateProblem(self, agentChatInstance, problem, paths: PathConfig):
-		# Set agent system output path for this run and save token usage
-		agentChatInstance.setConversationPath(paths.solution_dir)
-		response, tokenUsage = agentChatInstance.startConversation(problem["problem_text"])
-		self.saveTokenUsageToFile(tokenUsage, paths.solution_cost_pkl)
 
-		# Set eval dir and run solution by the critic agent to evaluate against reference solution
-		self.criticAgentChat.setConversationPath(paths.evaluation_dir)
-		criticEvaluation, criticTokenUsage = self.criticAgentChat.startConversation(query=f"""
-			Evaluate the following proposed solution to the given problem:
-			Problem Description: {problem["problem_text"]}
-			Reference Explanation: {problem["solution"]}
-			Correct Final Answer: {problem["answer_number"]} {problem["unit"]}	
-			Proposed Solution: {json.dumps(response)}										
-		""")
-
-		# Save correctness results, critic agent ratings, and critic agent comments for each proposed solution in the problem directory
-		self.saveCriticResponseToFile(criticEvaluation, paths.evaluation_pkl)
-		self.saveTokenUsageToFile(criticTokenUsage, paths.evaluation_cost_pkl)
 
 	def setupPathsForProblem(self, problem):
 		self.problemname = f"{problem["source"]}_{problem["problemid"]}".strip().replace(" ", "_").replace("__", "_")
@@ -218,6 +199,30 @@ class Tester:
 
 		print("\n\n")
 
+	# Run agent system and critic evaluation, saving results as they go
+	def runAndEvaluateProblem(self, agentChatInstance, problem, paths: PathConfig):
+		# Small prompt sanitization to remove some LaTex stuff. Testing to see if this  leads to less silent failures/stalls of the API.
+		problemTextSanitized = problem["problem_text"].replace("$", "").replace("\\", "")
+
+		# Set agent system output path for this run and save token usage
+		agentChatInstance.setConversationPath(paths.solution_dir)
+		response, tokenUsage = agentChatInstance.startConversation(problemTextSanitized)
+		self.saveTokenUsageToFile(tokenUsage, paths.solution_cost_pkl)
+
+		# Set eval dir and run solution by the critic agent to evaluate against reference solution
+		self.criticAgentChat.setConversationPath(paths.evaluation_dir)
+		criticEvaluation, criticTokenUsage = self.criticAgentChat.startConversation(query=f"""
+			Evaluate the following proposed solution to the given problem:
+			Problem Description: {problemTextSanitized}
+			Reference Explanation: {problem["solution"]}
+			Correct Final Answer: {problem["answer_number"]} {problem["unit"]}	
+			Proposed Solution: {json.dumps(response)}										
+		""")
+
+		# Save correctness results, critic agent ratings, and critic agent comments for each proposed solution in the problem directory
+		self.saveCriticResponseToFile(criticEvaluation, paths.evaluation_pkl)
+		self.saveTokenUsageToFile(criticTokenUsage, paths.evaluation_cost_pkl)
+
 	# Purely count which tests have already been completed
 	# This might even work with just map() but there were some issues with hashing the function.
 	def checkTestProgress(self, problem):
@@ -258,16 +263,14 @@ if __name__ == "__main__":
 		problems = load_from_disk(os.path.join(os.path.dirname(__file__), "dataset"))
 
 	# Reset (used if debugging model-specific issues)
-	configsToReset = [local_llm_config_gemma, local_llm_config_4_1_mini, local_llm_config_4_1_nano, local_llm_config_codestral, local_llm_config_mistral_small]
-	# configsToReset = []
-	for config in configsToReset:
-		tester = Tester(config)
-		tester.hardResetResultsForCurrentModel()
-
-	quit()
+	# configsToReset = [local_llm_config_gemma, local_llm_config_4_1_mini, local_llm_config_4_1_nano, local_llm_config_codestral, local_llm_config_mistral_small]
+	# for config in configsToReset:
+	# 	tester = Tester(config)
+	# 	tester.hardResetResultsForCurrentModel()
+	# quit()
 
 	# Check completion and reset tester afterwards
-	for llmconfig in [local_llm_config_4o_mini, local_llm_config_5_nano, commercial_llm_config_4_1_nano]:
+	for llmconfig in [local_llm_config_4o_mini, local_llm_config_5_nano, commercial_llm_config_4_1_mini]:
 		# Reset tester globally! This is needed for multiprocessing to work properly as each thread needs an own tester instance.
 		tester = None
 		problems.map(
