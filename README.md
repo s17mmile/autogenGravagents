@@ -1,31 +1,20 @@
-The following describes the intended system behaviour:
+FlexibleAgents: A framework for easy and customizable Multi-Agent Orchestration
 
-1. GUI opens.
-    Elements:
-        Conversation Agent Graph (generally unconstrained, except: one (!) humanAgent must exist.)
-        Chat window with message box (disabled until a config is loaded)
-        Button to load/save conversation (with chat config)
-        Button to save/load chat config
-        Interrupt/Terminate/Clear Chat buttons
+FlexibbleAgents is the Bachelor's Thesis Project of Maximilian Miles, aimed at building and benchmarking a multi-agent conversation framework. Originally built as an autogen-/ag2-based reimplementation of the GravAgents project (https://github.com/ultor1996/gravagents), the project morphed to expand upon the original idea to bridge the gap between highly performant, specialized LLM Agent systems and the more general applicability of regular LLM chatbots/completions.
 
-A config must consist of:
-    - A list of agentTypes followed by the agent's respective (unique) name.
-    - A transition list, formatted as <agent>: <agent1>, <agent2>, ...
-    - A list of the tools agents are allowed to use (callables that are reachable from the main namespace): <agent>: <callable1>, <callable2>, ...
+Noteable required package versions:
+    autogen/ag2: 0.11.0
+    langchain: 1.2.15
+    beautifulsoup4: 4.14.3
+    docling: 2.90.0
+    llama-index: 0.13.6
+    browser-use: 0.1.37
+    pydantic: 2.13.3
 
-2. User types query or loads conversation and then types query.
-    Handling is mostly the same, in case of loaded conversation the groupChat messages must be filled. Otherwise empty.
+Most of these dependencies are auto-versioned and properly installed by "pip install ag2[openai, rag, docling]" as of 04/2026.
 
-4. The human's message is passed on to whichever agent was requested.
-
-At this point, the chat enters its usual processing loop:
-    - Agent receives a message to be processed. (TODO --> when should the whole chat history be passed?)
-    - Agent also receives the list of agents that they may pass a message on to.
-
-    - Agent generates a response, which always contains the fields "message" and "nextAgentName".
-    - TODO how does this properly terminate? Maybe hard-code one agent with termination capability?
-    - Other fields may also be included, depending on the agent type. This may include a code field or sources field.
-
-5. There are two scenarios in which the human receives control:
-    - the humanAgent is called as next agent (requires another agent to be allowed to converse with humanAgent!)
-    - the human interrupts the conversation. In this case, whatever agent is currently talking immediately stops (this will be annoying with async ugh).
+Further libraries (used for implementation of more task-specific chats):
+    pycbc: 2.11.0
+    lalsuite: 7.26.7
+    gwpy: 4.0.1
+    bilby: 2.8.0

@@ -86,6 +86,4 @@ query4 = f"""
 
 query5 = "What can you tell me about the functions provided by PyCBC for Gravitational Wave Data pre-processing? What about the function signatures and syntax needed to use them?"
 
-query6 = r"""Assume that all gases are perfect and that data refer to 298.15 K unless otherwise stated. Calculate the change in chemical potential of a perfect gas when its pressure is increased isothermally from $1.8 \mathrm{~atm}$ to $29.5 \mathrm{~atm}$ at $40^{\circ} \mathrm{C}$."""
-
 flexibleChat.startConversation(query6)
