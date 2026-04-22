@@ -26,7 +26,8 @@ local_llm_config_4o_mini = {
                     "model": "gpt-4o-mini",
                     "api_key":os.getenv("IZ_API_KEY"),
                     "base_url":os.getenv("IZ_BASE_URL"),
-                    "temperature": 0.01
+                    "temperature": 0.01,
+                    "timeout": 60
                     }
 
 local_llm_config_5_nano = {

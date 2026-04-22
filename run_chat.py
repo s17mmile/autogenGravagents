@@ -7,24 +7,15 @@ from llmconfig import *
 os.system("clear")
 
 # Set parameters for conversation execution
-maxRounds = 50
+maxRounds = 100
 
 basePath = os.path.join(os.path.dirname(__file__), "GW_Conversations")
 
-counter = 1
-while True:
-	dirname = f"conversation_{counter}"
-	if not os.path.exists(os.path.join(basePath, dirname)):
-		break
-	counter += 1
-conversationPath = os.path.join(basePath, dirname)
-
 # Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-	# configPath="flexibleAgents/agentConfigs/defaultConfigMinusSurfer.txt",
-	configPath="flexibleAgents/agentConfigs/basicAgent.txt",
+	configPath="flexibleAgents/agentConfigs/defaultConfig.txt",
     conversationPath=basePath,
-	llm_config=commercial_llm_config_4_1_nano,
+	llm_config=commercial_llm_config_4o_mini,
 	maxRounds=maxRounds,
 	trackTokens=False
 )
@@ -86,4 +77,71 @@ query4 = f"""
 
 query5 = "What can you tell me about the functions provided by PyCBC for Gravitational Wave Data pre-processing? What about the function signatures and syntax needed to use them?"
 
-flexibleChat.startConversation(query6)
+query6 = f"""
+	Use the web surfing agent to go to https://gwpy.github.io/docs/2.1.2/ and click through every entry in the left sidebar for a proper overview of GWpy documentation.
+	Keep track of the URL of each documentation page. Include any sub-pages if they come up!
+	Then, ingest each web page with the RAG Agent for use as future reference.
+	Once that is done, pass control back to the Human Agent.
+	"""
+
+# Whoopsies, had a compatibility failure with RAG agent on WSL. Not gonna re-run the websurfer, so just pasting in the retrieved URLs :)
+query7 = r"""
+	RAG Agent! Ingest the webpages of all following URLs (found by webusrfer in previous run):
+
+	Websurfer:
+	{
+    "extracted_content": [
+        {
+            "content": "\ud83d\udd17  Navigated to https://gwpy.github.io/docs/2.1.2/",
+            "url": null
+        },
+        {
+            "content": "\ud83d\udcc4  Extracted from page\n: ```json\n{\n  \"urls\": [\n    \"overview/\",\n    \"install/\",\n    \"citing/\",\n    \"timeseries/\",\n    \"spectrum/\",\n    \"spectrogram/\",\n    \"timeseries/statevector/\",\n    \"segments/\",\n    \"table/\",\n    \"signal/\",\n    \"plot/\",\n    \"cli/\",\n    \"detector/channel/\",\n    \"time/\",\n    \"astro/\",\n    \"env/\",\n    \"examples/timeseries/\",\n    \"examples/signal/\",\n    \"examples/frequencyseries/\",\n    \"examples/spectrogram/\",\n    \"examples/segments/\",\n    \"examples/table/\",\n    \"examples/miscellaneous/\",\n    \"dev/release/\",\n    \"genindex/\"\n  ]\n}\n```\n",
+            "url": "https://gwpy.github.io/docs/2.1.2/"
+        },
+        {
+            "content": "\ud83d\udd17  Opened new tab with https://gwpy.github.io/docs/2.1.2/overview/",
+            "url": "https://gwpy.github.io/docs/2.1.2/"
+        },
+        {
+            "content": "\ud83d\udd17  Opened new tab with https://gwpy.github.io/docs/2.1.2/install/",
+            "url": "https://gwpy.github.io/docs/2.1.2/signal/"
+        },
+        {
+            "content": "\ud83d\udd17  Opened new tab with https://gwpy.github.io/docs/2.1.2/citing/",
+            "url": "https://gwpy.github.io/docs/2.1.2/signal/"
+        },
+        {
+            "content": "\ud83d\udd17  Opened new tab with https://gwpy.github.io/docs/2.1.2/timeseries/",
+            "url": "https://gwpy.github.io/docs/2.1.2/timeseries/"
+        },
+        {
+            "content": "\ud83d\udd17  Opened new tab with https://gwpy.github.io/docs/2.1.2/spectrum/",
+            "url": "https://gwpy.github.io/docs/2.1.2/table/"
+        }
+    ],}
+
+	"""
+
+query8 = """
+	Using the knowledge about pycbc and gwpy gained from previous queries (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. All plots should be saved to disk in the working directory with appropriate names. Any code written should include occasional print statements and GWpy logging to indicate task progress.
+
+	If the coding agent ever gets stuck on pycbc or GWpy syntax, call the RAG Agent to retrieve documentation or code examples from ingested documents. Only call web search if this fails and the user explicitly authorizes it.
+    
+    Make sure to properly indent your code, especially in try/except blocks! This failed previously as the h1 data fetching line was improperly indented.
+    
+	Task 1: Data fetching
+		- Determine the start and end time of the GW150914 event using gwosc event_gps().
+        - If the appropriate file (GW150914_L1.txt) already exists, load it using TimeSeries.read(filename).
+		- Else, Download the L1 and H1 strain data for GW150914 using TimeSeries.fetch_open_data() over a 12-second window centered on the merger (8s before, 4s after). Plot the strain vs time, save the plot and write the original data to disk using TimeSeries.write('data.txt').
+	Task 2: Data filtering
+		- Whiten the data using the built-in GWpy function. Plot and save the results.
+		- Apply a band-pass filter between 30 and 250 Hz to the whitened data.
+	Task 3: Q-Transform
+		- Create the q_transform spectroscopy plot for both detectors' filtered data. make sure there is normalised energy bar in the plot.
+	Task 4: Template creation
+		- Use only the H1 data for this.
+		- Generate PyCBC waveform templates for component masses 10-30 solar masses, zero spins, and specify a valid approximant (e.g., "SEOBNRv4_opt" or "IMRPhenomD") to avoid NoneType errors. Keep only templates longer than 0.2s, and pad or truncate them to match the data length. Convert both the strain data and templates to PyCBC TimeSeries with identical delta_t. Important: Before plotting, scale each template so that its maximum absolute amplitude matches the maximum absolute amplitude of the processed H1 strain. This ensures that the template is clearly visible when overlaid on the detector signal. For each template, create a separate plot overlaying the scaled template on top of the H1 strain signal, so the alignment is clearly visible. Additionally, produce a plot showing the combined H1 strain data for reference. Save all individual template overlay plots, the combined H1 strain plot, and the template arrays to disk for later analysis. Skip PSD estimation and matched filtering for now, but ensure all valid templates are included in the overlay plots.
+"""
+
+flexibleChat.startConversation(query8)

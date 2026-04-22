@@ -80,8 +80,8 @@ def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 	execution_llm_config["response_format"] = executionAgentResponse
 
 	executor = LocalCommandLineCodeExecutor(
-		timeout=60,							   	# Timeout for each code execution in seconds.
-		work_dir=chat.getConversationPath(),	# Use the temporary conversation directory as the working directory.
+		timeout=600,							# Timeout for each code execution in seconds.
+		work_dir=chat.getConversationPath(),	# Use the set conversation path as working directory.
 	)
 
 	agent = ConversableAgent(
@@ -93,8 +93,8 @@ def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 		human_input_mode="NEVER"
 	)
 
-	# Registering a new attribut to this agent to keep track of the chat instance.
-	# THis is necessary for the code executor to have access to the conversation path for code execution, as it can be changed and needs to be re-fetched.
+	# Registering a new attribute to this agent to keep track of the chat instance.
+	# This is necessary for the code executor to have access to the conversation path for code execution, as it can be changed and needs to be re-fetched.
 	agent.chat = chat
 
 	# To enable code execution from pydantic response formats, we need to pull code snippets from their field and inject them into message history. 

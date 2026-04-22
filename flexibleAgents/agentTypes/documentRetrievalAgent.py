@@ -13,6 +13,8 @@ print("Importing VectorChromaQueryEngine and related...")
 from llama_index.llms.openai_like import OpenAILike
 from autogen.agents.experimental import VectorChromaQueryEngine
 from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
+
+print("Importing AG2 DocAgent...")
 from autogen.agents.experimental import DocAgent
 
 # Docling imports for fine-grained document parsing control before ingestion
@@ -30,7 +32,7 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 # I believe this occurs because ag2 requires on old version of the browser-use tool (0.1.37). I will try updating it to see if it fixes warnings, but no promises.
 
 def buildQueryEngine(llmconfig, chromaDbPath, collection_name):
-	# Define LLM instance for query engine
+	# Define LLM instance for query engine (doesn't just use llmconfig dict, client must be instantiated manually)
 	queryEngineLLM = OpenAILike(
 		model=llmconfig.get("model"),
 		api_base=llmconfig.get("base_url", None),
@@ -164,6 +166,12 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 			--> If you do not have the answer to a query, explicitly state that you should not be req-queried for the same information.
 		- The retrievedDocumentNames field should list the names of the documents you retrieved to support your answer.
 	
+		If any agent asks for clarification on how to use a specific library function or API, you should search for or create code examples of that function or API as a reference.
+		This should always include a properly formatted import statement and example for how a function can be used.
+		If you do not have any documentation about a specific library function or API in your current knowledge base, simply state that these documents are missing.
+		Do not attempt to fill in the gaps yourself, as you may provide inaccurate information.
+		Instead, suggest that the agent asking for this information should query you for relevant code examples or documentation on that function or API.
+
 		You already have access to all the following documents - do not try to re-ingest them:
 		{os.listdir(corpusPath)}
 	"""
@@ -175,15 +183,7 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 		You may aks this agent for code examples to be used as a reference for implementation of library-specific functions or APIs. 
 	"""
 
-	# Overwriting the llmconfig's model because the Query Engine's internals have massive issues routing queries with non-openAI models.
-	# Using 4o-mini on litellm also changes the price, so for tracking purposes that's coded in here (per 1k tokens)
-	documentRetrieval_llm_config = {
-                    "api_type": "openai", 
-                    "model": "gpt-4o-mini",
-                    "api_key":os.getenv("IZ_API_KEY"),
-                    "base_url":os.getenv("IZ_BASE_URL"),
-                    "temperature": 0.01
-                    }
+	documentRetrieval_llm_config = chat.llm_config.copy()
 
 	# Build query engine for the DocAgent to use (also uses gpt-4o-mini)
 	query_engine = buildQueryEngine(llmconfig=documentRetrieval_llm_config, chromaDbPath=chromaDbPath, collection_name=collection_name)

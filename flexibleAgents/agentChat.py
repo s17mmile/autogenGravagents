@@ -319,8 +319,8 @@ class flexibleAgentChat(QObject):
 				content = json.loads(message["content"])
 				# Check for termination signal (False if field is nonexistent)
 				termination = content.get("terminateChat", False)
-				if termination == True:
-					print("Termination signal received from agent message content.")
+				if termination == True and self.noHumanInput:
+					print("Termination signal received from agent message content in noHumanInput mode.")
 					if self.GUI:
 						self.signals.outgoingMessage.emit({"name": "System", "content": {"message": "Termination signal received. Ending conversation..."}})
 					return True
@@ -397,9 +397,9 @@ class flexibleAgentChat(QObject):
 			tokenUsage = gather_usage_summary(self.groupchat.agents + [self.manager])
 			messageHistory = self.groupchat.messages.copy()
 
-			print(f"Cost including cached inference: {tokenUsage["usage_including_cached_inference"]["total_cost"]}")
-			print(f"Cost excluding cached inference: {tokenUsage["usage_excluding_cached_inference"]["total_cost"]}")
-			
+			print(f"Cost including cached inference: {tokenUsage['usage_including_cached_inference']['total_cost']}")
+			print(f"Cost excluding cached inference: {tokenUsage['usage_excluding_cached_inference']['total_cost']}")
+
 			# Reset token usage for re-use of FlexibleAgents instance
 			if self.resetAfterConversation:
 				for agent in self.groupchat.agents + [self.manager]:

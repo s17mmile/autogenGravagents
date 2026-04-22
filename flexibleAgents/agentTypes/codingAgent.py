@@ -24,7 +24,8 @@ def codingAgent(chat, name = "CodingAgent") -> ConversableAgent:
 		If the task is fully complete (including both code generation and code execution), advise a chat manager to hand off to a Query Agent or similar to check for proper completion and allow chat termination.
 		You do not generally have necessary data files within the execution environment, so avoid generating code that relies on data files unless explicitly asked to do so by the user (e.g. human agent) - not on the whim of other agents.
 		Only ever use symbols that can be UTF-8 encoded! This means no special characters, use written-out replacements if needed.
-		
+		If you are not entirely sure about syntactic requirements, refrain from guessing at it yourself and instead ask RAG or Web Surfing agents to retrieve code examples or documentation information.
+
 		Your output includes a message field and a codeSnippet field:
 		- The message field should give a quick overview of the code generated and its purpose. Include relevant information about how it addresses the given instructions and - if any - what libraries are used and how.
 		- The codeSnippet field should contain the generated code snippet as a single string representing a valid piece of python code that can be executed. Always include this snippet, as it cannot be retrieved from older messages for execution.
