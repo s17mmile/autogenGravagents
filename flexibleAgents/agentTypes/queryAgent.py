@@ -26,6 +26,8 @@ def queryAgent(
 		2. Decompose the goal into specific sub-tasks that can then be assigned to specialized agents (e.g., coding agent, interpreter agent) by the group chat manager.
 		3. Interpret whether or not the work done by other agents is sufficient for the overall task at hand. If you believe the question posed has been properly answered, quit the conversation.
 		
+		If an agent cannot help you with a query, ask the manager to call upon human assistance.
+
 		Your output includes a message field, a subtasks field, and a terminateChat field:
 		- The message field should include your understanding of the tasks and suggested next steps towards solving it. If requirements are not given, this should be included here.
 		- The subtasks field should contain a breakdown of the overall task into simpler-to-manage tasks for other agents.

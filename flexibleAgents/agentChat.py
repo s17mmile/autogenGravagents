@@ -302,10 +302,15 @@ class flexibleAgentChat(QObject):
 		
 		self.conversationPath = path
 		self.isConversationPathRandom = False
+
+		# Set up path for conversation history text file within the new conversation directory
+		self.setupConversationHistoryPath()
+		
 		return
 
 	def checkTermination(self, message) -> bool:
-		# print(f"Checking for termination signal in message {message}...")
+		# Add message to history text file
+		self.saveLastMessageToConversationHistory(message)
 
 		# Check if the message contains a termination signal (this is a very basic implementation and can be expanded based on how exactly the termination signal is structured)
 		if self.interruptRequested:
@@ -334,8 +339,7 @@ class flexibleAgentChat(QObject):
 		else:
 			return False
 
-	# Save conversation history as text file in conversation directory
-	def saveConversationHistory(self, groupchat: GroupChat, query: str = None):
+	def setupConversationHistoryPath(self):
 		# Find non-duplicate conversation name for text file
 		counter = 1
 		while True:
@@ -344,28 +348,33 @@ class flexibleAgentChat(QObject):
 				break
 			counter += 1
 
-		path = os.path.join(self.conversationPath, filename)
+		self.conversationHistoryPath = os.path.join(self.conversationPath, filename)
 
-		# Save conversation history to new text file
-		with open(path, "w", encoding="utf-8") as f:
+	def initializeConversationHistory(self, query: str = None):
+		# Ensure conversation history file exists and is empty at the start of the conversation
+		with open(self.conversationHistoryPath, "w", encoding="utf-8") as f:
 			f.write(f"Conversation Log for query: {query}\n\n")
-			for msg in groupchat.messages:
-				name = msg.get("name", "unknown")
-				content = msg.get("content", "")
 
-				# Try to pretty-print JSON content when possible, otherwise write raw content
-				formatted = None
-				if isinstance(content, (dict, list)):
-					formatted = json.dumps(content, indent=4)
-				else:
-					try:
-						parsed = json.loads(content)
-						formatted = json.dumps(parsed, indent=4)
-					except Exception:
-						formatted = str(content)
+	# Save last msg in conversation history into text file
+	def saveLastMessageToConversationHistory(self, msg):
+		# Append last msg in conversation history to text file
+		with open(self.conversationHistoryPath, "a", encoding="utf-8") as f:
+			name = msg.get("name", "unknown")
+			content = msg.get("content", "")
 
-				# Write to file and also print so manager/summary messages are visible in the terminal
-				f.write(f"{name}:\n{formatted}\n\n")
+			# Try to pretty-print JSON content when possible, otherwise write raw content
+			formatted = None
+			if isinstance(content, (dict, list)):
+				formatted = json.dumps(content, indent=4)
+			else:
+				try:
+					parsed = json.loads(content)
+					formatted = json.dumps(parsed, indent=4).replace("\\n", "\n")
+				except Exception:
+					formatted = str(content)
+
+			# Write to file and also print so manager/summary messages are visible in the terminal
+			f.write(f"{name}:\n{formatted}\n\n")
 
 
 
@@ -380,6 +389,10 @@ class flexibleAgentChat(QObject):
 		# Clear interruption request state at the beginning of the conversation
 		self.interruptRequested = False
 
+		# Init convo history file
+		self.setupConversationHistoryPath()
+		self.initializeConversationHistory(query)
+
 		# Start the conversation with the prompt coming from the human and being passed to the manager.
 		# We have to pass to the manager to make the GroupChat work properly - else we will just get replies from the one agent.
 		# I'm unsure if clearing the history here equates to a full agent reset, so I've opted to do it separately if required.
@@ -388,8 +401,6 @@ class flexibleAgentChat(QObject):
 			message=query,
 			clear_history=False
 		)
-
-		self.saveConversationHistory(self.groupchat, query)
 
 		# Return all messages for potential further processing, including agent usage summary if asked
 		# Calculate total tokens used if tracking enabled

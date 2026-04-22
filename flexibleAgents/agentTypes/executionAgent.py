@@ -14,10 +14,12 @@ class executionAgentResponse(BaseModel):
 	requiredDependencies: List[str]		# List of any required, but not yet dependencies for the executed code
 
 def injectSnippets(agent, messages, sender, config):
-	# Extract code snippets as single strings from incoming message
-	# Execution requires the CodeSnippet Field - I might want to find a way around this...
-	# Problem I ran into was proper formatting and the "python" header missing or being incorrectly placed.
-	lastMessage = messages[-1].get("content") if "content" in messages[-1] else {}
+	# Extract last available code snippet from msg history 
+	lastSnippetMsgIndex = -1
+	while lastSnippetMsgIndex >= -len(messages) and "content" in messages[lastSnippetMsgIndex] and "codeSnippet" not in messages[lastSnippetMsgIndex]["content"]:
+		lastSnippetMsgIndex -= 1
+
+	lastMessage = messages[lastSnippetMsgIndex].get("content") if "content" in messages[lastSnippetMsgIndex] else {}
 	try:
 		snippet = json.loads(lastMessage)["codeSnippet"]
 	except (json.JSONDecodeError, KeyError, TypeError):

@@ -166,14 +166,11 @@ def documentRetrievalAgent(chat, name = "DocumentRetrievalAgent") -> DocAgent:
 			--> If you do not have the answer to a query, explicitly state that you should not be req-queried for the same information.
 		- The retrievedDocumentNames field should list the names of the documents you retrieved to support your answer.
 	
-		If any agent asks for clarification on how to use a specific library function or API, you should search for or create code examples of that function or API as a reference.
-		This should always include a properly formatted import statement and example for how a function can be used.
-		If you do not have any documentation about a specific library function or API in your current knowledge base, simply state that these documents are missing.
-		Do not attempt to fill in the gaps yourself, as you may provide inaccurate information.
-		Instead, suggest that the agent asking for this information should query you for relevant code examples or documentation on that function or API.
-
-		You already have access to all the following documents - do not try to re-ingest them:
-		{os.listdir(corpusPath)}
+		If any agent asks for clarification on how to use a specific library function or API, you should answer as comprehensively as possible:
+		- search for or create code examples of that function or API as a reference.
+		- Include information about import statements, function signatures and syntax, argument formats, and example code snippets as needed.
+		- Comment on any known pitfalls or other things to watch out for when using that function or API, based on the information in the documents you have ingested.
+			--> If you do not have any documentation about a specific library function or API in your current knowledge base, simply state that these documents are missing and ask for human input. Do not attempt to fill in the gaps yourself, as you may provide inaccurate information. Instead, suggest that the agent asking for this information should query you for relevant code examples or documentation on that function or API.
 	"""
 
 	description = f"""
