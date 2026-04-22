@@ -135,7 +135,7 @@ query6 = f"""
 	"""
 
 query7 = """
-	Using the GW Coding Agent's knowledge about pycbc and gwpy gained from previous queries (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way.
+	Using the GW Coding Agent's knowledge about pycbc and gwpy gained from previous queries (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. Plots should be saved in the parent directory of the current working dir with appropriate names.
     
 	Task 1: Data fetching
 		- Determine the start and end time of the GW150914 event. This gives you a single GPS time, so add the offsets yourself.
@@ -148,4 +148,4 @@ query7 = """
 		- Create the q_transform spectroscopy plot for both detectors' filtered data. Make sure there is normalised energy bar in the plot.
 """
 
-flexibleChat.startConversation(query6)
+flexibleChat.startConversation(query7)

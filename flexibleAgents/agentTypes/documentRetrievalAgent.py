@@ -12,7 +12,7 @@ import PyPDF2
 print("Importing VectorChromaQueryEngine and related...")
 from llama_index.llms.openai_like import OpenAILike
 from autogen.agents.experimental import VectorChromaQueryEngine
-from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
+# from autogen.agents.experimental.document_agent.chroma_query_engine import VectorChromaCitationQueryEngine
 
 print("Importing AG2 DocAgent...")
 from autogen.agents.experimental import DocAgent
