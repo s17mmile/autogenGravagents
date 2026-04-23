@@ -138,7 +138,7 @@ query7 = """
 	Using the GW Coding Agent's knowledge about pycbc and gwpy gained from previous queries (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. Plots should be saved in the parent directory of the current working dir with appropriate names.
     
 	Task 1: Data fetching
-		- Determine the start and end time of the GW150914 event. This gives you a single GPS time, so add the offsets yourself.
+		- Determine the start and end time of the GW150914 event. Fetching the event time gives you a single GPS time, so add the offsets yourself.
         - If the appropriate files (gwosc_gw150914_h1.hdf5 and gwosc_gw150914_l1.hdf5) already exist (they should be located in the parent folder of the current working directory), load the TimeSeries objects from disk.
 		- Else, Download the L1 and H1 strain data for GW150914 over a 12-second window centered on the merger (8s before, 4s after). Plot the strain vs time, save the plot and write the original time series data to disk as HDF5 in the parent directory.
 	Task 2: Data filtering
