@@ -148,4 +148,10 @@ query7 = """
 		- Create the q_transform spectroscopy plot for both detectors' filtered data. Make sure there is normalised energy bar in the plot.
 """
 
-flexibleChat.startConversation(query7)
+query8 = f"""
+	Web surfer: Find information and tutorials about PyCBC on how to implement template creation and matched filtering for gravitational wave data analysis. Also, research what functions are provided by PyCBC/GWpy to convert between their respective data types (e.g. TimeSeries)! If you find any relevant documentation or code examples, pass the URLs to the RAG agent for ingestion.
+
+	Do not generate or execute any code yet! Only use the web surfer agent to gather comprehensive tutorials for PyCBC use, and then use the RAG agent for ingestion. After that, pass control to the user.
+	"""
+
+flexibleChat.startConversation(query8)
