@@ -1,0 +1,20 @@
+Consistency test notes, written during system execution:
+
+Q-transform tries to use specgram again even though the prompt explicitly says to use GWpy... 4o-mini genuinely seems dumb like this damn.
+Again attempts to use a FD waveform, even though the prompt explicitly mentions time domain. Wild.
+--> I think in this case it might be due to one of the received errors, which said get_wavefrom is not available, did you mean get_fd_waveform.
+
+First human follow-up (forced): Fix your q-transform spectrogram. Do NOT use specgram(), but rather the q_transform function from GWpy. Also, your fd_waveform is in the frequency domain, you must use a td_waveform! 
+--> websurfer actually found a GWpy q-transform function (gwpy.signal.qtransform, not what I intended but whatever if it works it works), let's see.
+
+Second human follow-up (not forced): you need to use gwpy.signal.qtransform without the underscore. Lastly, your PSD implementation is wrong, try to surf the web for how to calculate a psd from a timeseries.
+--> more websurfer usage, this is promising. Looking up GWpy PSD and qtransform implementation details!
+
+
+Final criticism:
+    - Fetching and filtering perfect
+    - Q-Transform correctly calculated with alternative GQpy.signal.qtransform() method, plots are missing any color limits though. Slight flaw.
+    - PyCBC conversion correctly implemented!
+    - Task 5: Template generation seems to match documentation, but never managed to run as the PSD plotting task previously errored out.
+    - Task 6: PSD calculation correctly used timeseries. PSD and ran without errors, but was plotted incorrectly by trying to put psd.frequencies (which does not exist) on the x axis.
+    - Task 7: Would have failed due to attempted use of non-existent match() function (yet again).

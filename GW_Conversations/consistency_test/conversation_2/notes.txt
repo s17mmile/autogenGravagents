@@ -1,0 +1,17 @@
+Consistency test notes, written during system execution:
+
+First error: unmatched bracket in f-string
+Still uses the specgram... damn.
+However, event_gps worked!
+Template creation runs into nonetype errors after having gotten an error stating that the template SEOBNRv4_opt is not available (I have NOT figured out why that is) 
+
+First human follow-up (forced): idk Asked to fix q-transform, suggested fix for error in psd calculation. Neither really helped.
+Second human follow-up (forced): Execute the code (coding-criticism loop)
+
+Final criticism:
+    - Fetching and filtering worked perfectly
+    - Q-Transform failed due to specgram use
+    - PyCBC conversion probably worked, but did not use to_pycbc. Instead, it called the PyCBC TimeSeries constructor. Not sure if this works properly.
+    - Task 5: Templates ran into NoneType Errors. Not quite sure why, but it was also definitely expecting incorrect return arguments from get_td_waveform (not just hp and hc as it should).
+    - Task 6: TimeSeries.psd() kept running into type errors in seg_len = int(round(segment_duration * self.sample_rate)). As segment_duration was an int of 4, I'm pretty sure the pycbc conversion failed and the sample rate is undefined.
+    - Task 7: Would have failed due to attempted use of a nonexistent match() function instead of PyCBC's matched_filter().

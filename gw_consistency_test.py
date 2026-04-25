@@ -20,23 +20,25 @@ flexibleChat = agentChat.flexibleAgentChat(
 
 # Extended query for testing consistency across runs. As this is a long and tough query, full completion is likely not going to happen - at least not every time.
 query = """
-	Using the GW Coding Agent's knowledge about pycbc and gwpy (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. All plots should be saved in the current working directory with appropriate names. If stuck, ask the user for clarification.
+	Using the GW Coding Agent's knowledge about pycbc, gwosc and gwpy (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. All plots should be saved in the current working directory with appropriate names.
+
+	Avoid long agent loops! Code generated should be criticized and improved at most once before an execution attempt is made. If no progress is made in the last few messages, transition to the user. Also, if stuck or requiring extra information, ask the user for clarification once RAG or web surfing options have been exhausted.
     
 	Task 1: Data fetching
-		- Determine the start and end time of the GW150914 event. Fetching the event time gives a single GPS timestamp, so add offsets to get start and end times.
         - If the appropriate files (gwosc_gw150914_h1.hdf5 and gwosc_gw150914_l1.hdf5) already exist (they should be located in the parent folder of the current working directory), load the GWpy TimeSeries objects from disk.
-		- Else, Download the L1 and H1 strain data for GW150914 over a 12-second window centered on the merger (8s before, 4s after). Plot the strain vs time, save the plot and write the original time series data to disk as HDF5 in the parent directory.
+		- Else, determine the start and end time of the GW150914 event using gwosc. Fetching the event time gives a single GPS timestamp, so add offsets to get start and end times.
+		- If not loading from disk, download the L1 and H1 strain data for GW150914 over a 12-second window centered on the merger (8s before, 4s after). Plot the strain vs time, save the plot and write the original time series data to disk as HDF5 in the parent directory.
 	
 	Task 2: Data filtering
 		- Whiten each detector's signal using TimeSeries.whiten(). Plot and save the results.
 		- Apply a band-pass filter between 30 and 250 Hz to the whitened data. Plot and save the results.
 	
 	Task 3: Q-Transform
-		- Create the q_transform spectroscopy plot for both detectors' filtered data. Make sure there is normalised energy bar in the plot, and set final color limits (0,25) in the plot.
+		- Create the q-transform spectroscopy plot for both detectors' filtered data using GWpy. Make sure there is normalised energy bar in the plot, and set color limits (0,25) in the plot.
 
 	Task 4: Data format conversion
-		- Convert both detectors' filtered GWpy TimeSeries data into the appropriate PyCBC data type for matched filtering. Ensure that both detectors have consistent sample rates and lengths, resampling or trimming as necessary.
-		- Both the strain data and soon-to-be-created waveform templates need to be valid PyCBC TimeSeries objects with identical delta_t!
+		- Convert both detectors' NON-FILTERED GWpy TimeSeries data into the appropriate PyCBC data type for matched filtering. Ensure that both detectors have consistent sample rates and lengths, resampling or trimming as necessary.
+		- Both the raw strain data and soon-to-be-created waveform templates need to be valid PyCBC TimeSeries objects with identical delta_t!
 
 	Task 5: PyCBC template creation
 		- Generate time-domain PyCBC waveform templates/models for identical component masses of 10, 20, 30, and 40 solar masses with zero spins. Specify a valid approximant (e.g., "SEOBNRv4_opt" or "IMRPhenomD") to avoid NoneType errors. Keep only templates longer than 0.2 s, and pad or truncate them to match the data length.
@@ -44,7 +46,7 @@ query = """
 		- For each template, create a plot overlaying it on to the strain data of each detector with high contrast. Save each plot as well as the template array data to the current working directory.
 
 	Task 6: Calculating the Power Spectral Density
-		- Calculate the Power Spectral Density (PSD) of the filtered data for each detector using PyCBC.
+		- Calculate the Power Spectral Density (PSD) of the raw strain data for each detector using PyCBC.
 		- Interpolate and inverse spectrum truncate the PSD with a low frequency cutoff of 30 Hz to use it as a proper filter.
 		- Plot the PSDs on a log-log scale and save the plots.
 
@@ -56,8 +58,15 @@ query = """
 # Run ten tests into different outdirs
 basePath = os.path.join(os.path.dirname(__file__), "GW_Conversations/consistency_test")
 
-for i in range(10):
-	input(f"Press Enter to start conversation {i}...")
-	flexibleChat.setConversationPath(os.path.join(basePath, f"conversation_{i}"))
-	flexibleChat.startConversation(query)
-	input(f"Conversation {i} finished, record results! Then press Enter to continue...")
+i = 1
+while i <= 10:
+	if not os.path.exists(os.path.join(basePath, f"conversation_{i}", "conversation_1.txt")):
+		os.makedirs(os.path.join(basePath, f"conversation_{i}"))
+		with open(os.path.join(basePath, f"conversation_{i}", "notes.txt"), "w") as f:
+			f.write("Consistency test notes, written during system execution:\n\n")
+		flexibleChat.setConversationPath(os.path.join(basePath, f"conversation_{i}"))
+		flexibleChat.startConversation(query)
+		input(f"Conversation {i} finished, record results! Then press Enter to continue with conversation {i+1}...")
+	else:
+		warnings.warn(f"Conversation folder for conversation {i} already exists. Please move or delete it to run test {i}.")
+		i += 1

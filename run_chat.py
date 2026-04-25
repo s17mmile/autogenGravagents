@@ -18,7 +18,7 @@ conversationPath = os.path.join(basePath, f"conversation_{counter}")
 
 # Instantiate chat instance based on agent config file
 flexibleChat = agentChat.flexibleAgentChat(
-	configPath="flexibleAgents/agentConfigs/GWConfig.txt",
+	configPath="flexibleAgents/agentConfigs/exampleConfig.txt",
     conversationPath=conversationPath,
 	llm_config=commercial_llm_config_4o_mini,
 	maxRounds=maxRounds,

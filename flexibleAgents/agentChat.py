@@ -267,13 +267,14 @@ class flexibleAgentChat(QObject):
 
 		return
 	
-
 	def initGroupChatAndManager(self):
 		# Initialize a group chat with the instantiated agents and the query
+		# KeyboardInterrupt will be caught and used to give control back to the user, which can then exit!
 		agentList = list(self.chatGraph.agents.values())
 		self.groupchat = GroupChat(
 			agents=agentList,
 			messages=[],
+			admin_name = self.humanAgentName,
 			send_introductions=True,
 			max_round=self.maxRounds,
 			allowed_or_disallowed_speaker_transitions=self.chatGraph.transitions,
@@ -286,6 +287,7 @@ class flexibleAgentChat(QObject):
 		self.manager = GroupChatManager(
 			groupchat=self.groupchat,
 			llm_config=self.llm_config,
+			system_message="You orchestrate the conversation between agents. You should always try to ensure that agents do not end up in futile loops and that the conversation progresses. If it is not progressing, try to transition to the human agent or a query handler (if given) to either terminate or re-fuel the conversation. If the conversation is progressing well, you can ignore the human agent and let the agents talk among themselves. Always keep in mind the conversation history and the original query when making decisions.",
 			name = "ManagerAgent",
 			is_termination_msg = self.checkTermination
 		)
@@ -304,7 +306,7 @@ class flexibleAgentChat(QObject):
 		self.isConversationPathRandom = False
 
 		# Set up path for conversation history text file within the new conversation directory
-		self.setupConversationHistoryPath()
+		self.setupConversationTxtPath()
 		
 		return
 
@@ -339,7 +341,9 @@ class flexibleAgentChat(QObject):
 		else:
 			return False
 
-	def setupConversationHistoryPath(self):
+	def setupConversationTxtPath(self):
+		os.makedirs(self.conversationPath, exist_ok=True)
+
 		# Find non-duplicate conversation name for text file
 		counter = 1
 		while True:
@@ -348,17 +352,17 @@ class flexibleAgentChat(QObject):
 				break
 			counter += 1
 
-		self.conversationHistoryPath = os.path.join(self.conversationPath, filename)
+		self.conversationTxtPath = os.path.join(self.conversationPath, filename)
 
 	def initializeConversationHistory(self, query: str = None):
 		# Ensure conversation history file exists and is empty at the start of the conversation
-		with open(self.conversationHistoryPath, "w", encoding="utf-8") as f:
+		with open(self.conversationTxtPath, "w") as f:
 			f.write(f"Conversation Log for query: {query}\n\n")
 
 	# Save last msg in conversation history into text file
 	def saveLastMessageToConversationHistory(self, msg):
 		# Append last msg in conversation history to text file
-		with open(self.conversationHistoryPath, "a", encoding="utf-8") as f:
+		with open(self.conversationTxtPath, "a") as f:
 			name = msg.get("name", "unknown")
 			content = msg.get("content", "")
 
@@ -376,7 +380,11 @@ class flexibleAgentChat(QObject):
 			# Write to file and also print so manager/summary messages are visible in the terminal
 			f.write(f"{name}:\n{formatted}\n\n")
 
-
+	@Slot()
+	def reset(self):
+		for agent in self.groupchat.agents + [self.manager]:
+					agent.reset()
+		return
 
 	# Start the group chat using the pattern created from config file, adding in the agent chat config for evaluation
 	@Slot(str)
@@ -390,7 +398,7 @@ class flexibleAgentChat(QObject):
 		self.interruptRequested = False
 
 		# Init convo history file
-		self.setupConversationHistoryPath()
+		self.setupConversationTxtPath()
 		self.initializeConversationHistory(query)
 
 		# Start the conversation with the prompt coming from the human and being passed to the manager.
@@ -413,8 +421,7 @@ class flexibleAgentChat(QObject):
 
 			# Reset token usage for re-use of FlexibleAgents instance
 			if self.resetAfterConversation:
-				for agent in self.groupchat.agents + [self.manager]:
-					agent.reset()
+				self.reset()
 
 			return messageHistory, tokenUsage
 		else:

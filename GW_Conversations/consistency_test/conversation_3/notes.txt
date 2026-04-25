@@ -1,0 +1,19 @@
+Consistency test notes, written during system execution:
+
+The Web surfer agent got a really good run fetching signatures for GWpy, that's a rare one!
+Still tried to use specgram for the damn q-transform, wow! That appears to be MUCH harder with less specific info on the early tasks. Damn.
+After follow-ups, system ran the websurfer a few times to actually retrieve PyCBC docs, which seemed pretty useful! It found and properly returned the waveform docs.
+Then did a few last runs of the code before I quit it.
+
+First human follow-up (forced): Could pycbc.psd.estimate.welch or TimeSeries.psd(). asked for actual q-transforms with TimeSeries.q_transform().
+Second human follow-up (forced): Fix q_transform and execute - got stuck in a coding-critic-loop again.
+
+Quit after a few more failed attempts at proper template generation and filtering. BEst run so far though!
+
+Final criticism:
+    - Fetching and filtering worked perfectly
+    - Q-Transform was implemented with GWpy after some prodding, but plots were black (incorrect clim, probably?)
+    - PyCBC conversion failed. No conversion was done at all, it just tried "resampled = filtered"...
+    - Task 5: Template generation ran into issues with an absent "crop" function. Pretty sure the generation itself worked, though! It even took the correct output format, but screwed sth up later, which earned an error saying "Can only convert a TimeSeries to a FrequencySeries". Might be due to the failed pycbc conversion...?
+    - Task 6: PSD did create an output plot, but it just looks pretty worng - the interpolation and truncation steps were missed entirely. Flawed.
+    - Task 7: Incorrect function signature, again attempting a match() function that doesn't exist. Failure.

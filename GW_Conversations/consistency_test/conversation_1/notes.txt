@@ -1,0 +1,18 @@
+Consistency test notes, written during system execution:
+
+Again, the coding agent uses specgram() instead of computing a q-transform. That means the output is quite messed up, markig failure. 
+
+First follow-up: Reminder about GWOSC datasets... yet again.
+
+Second follow-up, forced: critique of q-transform logic (specgram), calls to psd (fully incorrect usage), and reminder about timeSeries waveforms (not Frequency series!)
+    --> specgram criticism was wholeheartedly ignored, it just kept doing it.
+
+Coding agent got stuck with incredibly long reply time, run forcefully ended as no prgress was made.
+
+Final criticism:
+    - Fetching and filtering worked perfectly
+    - Q-Transform failed due to specgram use --> failure
+    - PyCBC conversion worked perfectly
+    - Task 5: Pretty sure template creation worked, but checking for the "duration" attribute and testing its value always spat out an error. --> flawed
+    - Task 6: psd() called with too many arguments, and no explanation. Plotting would have failed too due to incorrect class attribute fetched. --> failure
+    - Task 7: incorrect function signature and argument passing for pycbc matched_filter() --> failure
