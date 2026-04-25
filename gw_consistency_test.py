@@ -20,10 +20,10 @@ flexibleChat = agentChat.flexibleAgentChat(
 
 # Extended query for testing consistency across runs. As this is a long and tough query, full completion is likely not going to happen - at least not every time.
 query = """
-	Using the GW Coding Agent's knowledge about pycbc and gwpy (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. All plots should be saved in the current working directory with appropriate names.
+	Using the GW Coding Agent's knowledge about pycbc and gwpy (accessible through the RAG agent), write a script that performs the following tasks in sequence and plots each result along the way. All plots should be saved in the current working directory with appropriate names. If stuck, ask the user for clarification.
     
 	Task 1: Data fetching
-		- Determine the start and end time of the GW150914 event. Fetching the event time gives you a single GPS time, so add the offsets yourself.
+		- Determine the start and end time of the GW150914 event. Fetching the event time gives a single GPS timestamp, so add offsets to get start and end times.
         - If the appropriate files (gwosc_gw150914_h1.hdf5 and gwosc_gw150914_l1.hdf5) already exist (they should be located in the parent folder of the current working directory), load the GWpy TimeSeries objects from disk.
 		- Else, Download the L1 and H1 strain data for GW150914 over a 12-second window centered on the merger (8s before, 4s after). Plot the strain vs time, save the plot and write the original time series data to disk as HDF5 in the parent directory.
 	
