@@ -1,0 +1,20 @@
+Consistency test notes, written during system execution:
+
+Constant note: this implementation show()s plots even though the code is asked not to!
+
+Regular issues so far. Q-transform uses specgram. Interestingly, this is the hardest failure on data type conversion so far!
+
+First follow-up: Your pycbc conversion is wrong, as well as your q-transform. You should cross-check the GWpy docs for both of these. Also, generate time-domain waveforms, not frequency domain ones as you are currently doing!
+
+--> looing coding/criticism again that's so annoying...
+
+Second follow-up: You're currently in a loop of coding and code criticism - you will need to execute your code at some point. Why not now?
+
+triggered execution as hoped. Ran into import error with gwpy.transform. then called websurfer for gwpy github research. Interesting!
+After the researcher, it still runs into the same issue damn. Second research attempt still didn't fix it, the coder is stubborn!
+
+Second follow-up (prompted after research agent): You do not need gwpy.transform. You can simply use the q-transform member function of GWpy time series!
+
+Ok, it used the correct function, but passed the wrong arguments (delta_t). Then prompted for input again, so I'll provide it this little extra bit (at least it asked on its own): The variable stored by the TimeSeries is "dt", not "delta_t".
+
+--> this failed, sa qtransform() doesn't take a dt argument at all. The system just got tricked. Later parts also would not have worked, looking at the code.

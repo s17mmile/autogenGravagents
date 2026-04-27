@@ -75,7 +75,7 @@ def executionAgent(chat, name = "ExecutionAgent") -> ConversableAgent:
 
 	description = """
 		The EXECUTION AGENT is responsible for executing code snippets from other agents' responses in a local command line environment.
-		It should only be called immediately after a coding agent's response that includes a code snippet to execute.
+		It will always execute the last code snippet in the message history.
 	"""
 
 	execution_llm_config = chat.llm_config.copy()

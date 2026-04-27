@@ -116,8 +116,6 @@ def ingestNewPDFs(doc_agent, corpusPath, parsedDocsPath):
 			md_path.write_text(full_md, encoding="utf-8")
 		
 			generatedPaths.append(str(md_path))
-	
-	doclist = ["A-Level-Chemistry.md", "cambridge international as and a level physics coursebook - public.md", "Pure Mathematics Textbook.md"]
 
 	if len(generatedPaths) > 0:
 		# Ingest all the newly parsed documents

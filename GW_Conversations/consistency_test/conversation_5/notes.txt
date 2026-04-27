@@ -1,0 +1,12 @@
+Consistency test notes, written during system execution:
+
+Issues: Coding agent occasionally fails to indent code properly lol. Ran into it two times already.
+Also, before follow-up, uses specgram() AGAIN. Now I wish I'd changed the prompt to be more specific, but I guess I was just making it hard for myself. Oh well.
+
+Follow-up 1: Try to avoid incorrect indentation! The line before the afflicted "else" is indented too little, causing a mismatch. Also, GWpy does give a dedicated q-transform function that should be used for GW data! If unsure, search the web for how that function should be used.
+
+This did not fix the indentation :/. However, there was some productive-looking web search about q-transforms, and an ALMOST-correct import is used. Just capitalization is wrong. Still, the waveform generation would not work as the code stands.
+
+Second follow-up: You need to be more robust! The gwpy import must include lowercase qtransform. Also, your code for generating waveform templates will fail due to use of an improper function - there is a specific one for time-domain waveforms that you should use.
+
+After this, the system got stuck in another coder-critic loop :/. However, usage of aLIGO() was not fixed, and neither was waveform generation. Seems to hit sheer intelligence limits like damn GPT-4o-mini is not doing too well even when it looks up any information it could need...

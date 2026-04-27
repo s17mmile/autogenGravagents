@@ -283,7 +283,7 @@ class flexibleAgentChat(QObject):
 		)
 
 		# Process flow within this group chat is managed by the following manager (necessary even when agents are choosing their own transitions, then it will simply not use an llm but the fixed rules)
-		# Termination condition: if interrupt requested by GUI or if agent signals termination through its output (default: only doable by queryAgent)
+		# Termination condition: if interrupt requested by GUI or if agent signals termination through its output in noHumanInput mode (default: only doable by queryAgent)
 		self.manager = GroupChatManager(
 			groupchat=self.groupchat,
 			llm_config=self.llm_config,
